@@ -8,12 +8,12 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming, runOnJS } from 
 import LiveVideoPlayer from '@/components/live/LiveVideoPlayer';
 import LiveOverlay from '@/components/live/LiveOverlay';
 
-import { TopBar } from '@/components/live/TopBar';
-import { CoinBalance } from '@/components/live/CoinBalance';
-import { FloatingGift } from '@/components/live/FloatingGift';
-import { BottomPanel } from '@/components/live/BottomPanel';
-import { ChatMessageList } from '@/components/live/ChatMessageList';
-import { SystemMessage } from '@/components/live/SystemMessage';
+import TopBar from '@/components/live/TopBar';
+import CoinBalance from '@/components/live/CoinBalance';
+import FloatingGift from '@/components/live/FloatingGift';
+import BottomPanel from '@/components/live/BottomPanel';
+import ChatMessageList from '@/components/live/ChatMessageList';
+import SystemMessage from '@/components/live/SystemMessage';
 
 export default function LiveViewerScreen() {
   const { hostId, hostName } = useLocalSearchParams();
