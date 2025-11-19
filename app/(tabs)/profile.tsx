@@ -5,8 +5,10 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { useRouter } from 'expo-router';
 
 export default function ProfileScreen() {
+  const router = useRouter();
   return (
     <ScrollView style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -102,13 +104,17 @@ export default function ProfileScreen() {
 
         <View style={styles.functionsGrid}>
           {[
-            { icon: require('@/assets/function/ic_level.png'), label: 'Level' },
-            { icon: require('@/assets/function/ic_fans.png'), label: 'Fans' },
-            { icon: require('@/assets/function/ic_income.png'), label: 'Income' },
-            { icon: require('@/assets/function/ic_game.png'), label: 'Game' },
-            { icon: require('@/assets/function/ic_bergabung.png'), label: 'Join' },
+            { icon: require('@/assets/function/ic_level.png'), label: 'Level', route: '/level' },
+            { icon: require('@/assets/function/ic_fans.png'), label: 'Fans', route: null },
+            { icon: require('@/assets/function/ic_income.png'), label: 'Income', route: null },
+            { icon: require('@/assets/function/ic_game.png'), label: 'Game', route: null },
+            { icon: require('@/assets/function/ic_bergabung.png'), label: 'Join', route: null },
           ].map((item, index) => (
-            <TouchableOpacity key={index} style={styles.functionItem}>
+            <TouchableOpacity 
+              key={index} 
+              style={styles.functionItem}
+              onPress={() => item.route && router.push(item.route)}
+            >
               <View style={styles.functionIcon}>
                 <Image source={item.icon} style={styles.functionIconImage} />
               </View>
