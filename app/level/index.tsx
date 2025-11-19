@@ -15,22 +15,9 @@ export default function LevelScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
       
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <IconSymbol name="chevron.left" size={24} color="#000" />
-        </TouchableOpacity>
-        <ThemedText style={styles.headerTitle}>Level</ThemedText>
-        <View style={styles.headerRight}>
-          <TouchableOpacity>
-            <ThemedText style={styles.rulesButton}>aturan level</ThemedText>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* User Level Card */}
         <LevelCard
           level={31}
@@ -92,34 +79,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 50,
-    paddingBottom: 16,
-    backgroundColor: '#fff',
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  headerRight: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  rulesButton: {
-    fontSize: 14,
-    color: '#666',
-  },
   content: {
     flex: 1,
+  },
+  scrollContent: {
     paddingHorizontal: 16,
+    paddingTop: 16,
   },
   section: {
     marginTop: 24,
