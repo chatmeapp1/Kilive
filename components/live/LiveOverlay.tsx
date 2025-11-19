@@ -1,8 +1,54 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 
-export default function LiveOverlay({ children }: { children: React.ReactNode }) {
-  return <View style={styles.overlay}>{children}</View>;
+import TopBar from './TopBar';
+import SystemMessage from './SystemMessage';
+import CoinBalance from './CoinBalance';
+import FloatingGift from './FloatingGift';
+import ChatMessageList from './ChatMessageList';
+import BottomPanel from './BottomPanel';
+
+export default function LiveOverlay({
+  hostName,
+  hostId,
+  children,
+}: {
+  hostName: string;
+  hostId: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <KeyboardAvoidingView
+      style={styles.overlay}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      {/* Semua UI Overlay */}
+      <TopBar hostName={hostName} hostId={hostId} isFollowing={false} onFollowPress={() => {}} />
+
+      <CoinBalance />
+
+      <SystemMessage message="Platform ini melarang menampilkan ketelanjangan." />
+
+      <FloatingGift />
+
+      <ChatMessageList
+        messages={[
+          { id: '1', username: 'user1', level: 22, message: 'halo host!' },
+          { id: '2', username: 'user2', level: 50, message: 'mantap nih host!' },
+        ]}
+      />
+
+      <BottomPanel />
+
+      {/* Jika ada child tambahan */}
+      {children}
+    </KeyboardAvoidingView>
+  );
 }
 
 const styles = StyleSheet.create({

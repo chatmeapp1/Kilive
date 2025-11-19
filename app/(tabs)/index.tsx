@@ -10,10 +10,10 @@ const { width } = Dimensions.get('window');
 const TABS = ['Follow', 'Hot', 'New'];
 
 const HOSTS_DATA = [
-  { id: 1, name: 'Ness', image: 'https://via.placeholder.com/200', viewers: 90, isLive: true },
-  { id: 2, name: 'Laya', image: 'https://via.placeholder.com/200', viewers: 85, isLive: true },
-  { id: 3, name: 'kady', image: 'https://via.placeholder.com/200', viewers: 90, isLive: false },
-  { id: 4, name: 'Jane', image: 'https://via.placeholder.com/200', viewers: 100, isLive: true },
+  { id: 1, name: 'Ness', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtYniY3o2IcVT3PLQgigDOohCwXorgYuzlPHl1OegKGA&s=10', viewers: 90, isLive: true },
+  { id: 2, name: 'Laya', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiO01qjBUC9NcZ1cSkunFFb1IxUy_0fD-1x_DUsBOKkQ&s=10', viewers: 85, isLive: true },
+  { id: 3, name: 'kady', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ9lDjQRh4PFc2fVhSXRcm_XaKV1dpozUptSXUi9eZ4J4-gERCvs7jrLXp&s=10', viewers: 90, isLive: false },
+  { id: 4, name: 'Jane', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUg-nMmK-oPbIbmjpylqnUMF28EtNqMSQOmW5-54zbPacNKW4g9KQbBas&s=10', viewers: 100, isLive: true },
 ];
 
 export default function HomeScreen() {
@@ -118,7 +118,7 @@ export default function HomeScreen() {
             {/* Banner */}
             <View style={styles.banner}>
               <Image
-                source={{ uri: 'https://via.placeholder.com/400x100' }}
+                source={{ uri: 'https://static.vecteezy.com/system/resources/thumbnails/003/582/701/small/coming-soon-background-illustration-template-design-free-vector.jpg' }}
                 style={styles.bannerImage}
               />
             </View>
