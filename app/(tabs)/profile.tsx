@@ -127,13 +127,18 @@ export default function ProfileScreen() {
         </View>
         
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.marketScroll}>
-          {[1, 2, 3, 4].map((item) => (
-            <View key={item} style={styles.marketItem}>
+          {[
+            { id: 1, image: require('@/assets/market/ic_market.png') },
+            { id: 2, image: require('@/assets/market/ic_market1.png') },
+            { id: 3, image: require('@/assets/market/ic_motor.png') },
+            { id: 4, image: require('@/assets/market/ic_sport.png') },
+          ].map((item) => (
+            <TouchableOpacity key={item.id} style={styles.marketItem}>
               <Image
-                source={{ uri: `https://via.placeholder.com/80` }}
+                source={item.image}
                 style={styles.marketImage}
               />
-            </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
