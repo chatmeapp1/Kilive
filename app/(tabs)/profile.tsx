@@ -102,15 +102,15 @@ export default function ProfileScreen() {
 
         <View style={styles.functionsGrid}>
           {[
-            { icon: '📈', label: 'Level' },
-            { icon: '💎', label: 'Fans' },
-            { icon: '💰', label: 'Income' },
-            { icon: '🎮', label: 'Game' },
-            { icon: '🤝', label: 'Join' },
+            { icon: require('@/assets/function/ic_level.png'), label: 'Level' },
+            { icon: require('@/assets/function/ic_fans.png'), label: 'Fans' },
+            { icon: require('@/assets/function/ic_income.png'), label: 'Income' },
+            { icon: require('@/assets/function/ic_game.png'), label: 'Game' },
+            { icon: require('@/assets/function/ic_bergabung.png'), label: 'Join' },
           ].map((item, index) => (
             <TouchableOpacity key={index} style={styles.functionItem}>
               <View style={styles.functionIcon}>
-                <ThemedText style={styles.functionEmoji}>{item.icon}</ThemedText>
+                <Image source={item.icon} style={styles.functionIconImage} />
               </View>
               <ThemedText style={styles.functionLabel}>{item.label}</ThemedText>
             </TouchableOpacity>
@@ -310,8 +310,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  functionEmoji: {
-    fontSize: 28,
+  functionIconImage: {
+    width: 40,
+    height: 40,
+    resizeMode: 'contain',
   },
   functionLabel: {
     fontSize: 12,
