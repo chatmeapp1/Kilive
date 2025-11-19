@@ -21,15 +21,17 @@ export default function RootLayout() {
     SplashScreen.preventAutoHideAsync();
   }, []);
 
+  useEffect(() => {
+    // Hide the splash screen once the assets have loaded.
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
   if (!loaded) {
     // Async font loading only occurs in development.
     return null;
   }
-
-  useEffect(() => {
-    // Hide the splash screen once the assets have loaded in the background.
-    SplashScreen.hideAsync();
-  }, [loaded]);
 
   if (Platform.OS === 'web') {
     return <WebOnly />;
