@@ -1,189 +1,26 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, StatusBar, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { StyleSheet, View, StatusBar, TouchableOpacity, Image, TextInput } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-
-// Separate components defined below
-
-const TopBar = ({ hostName, hostId, isFollowing, onFollowPress }: any) => {
-  const router = useRouter();
-  return (
-    <View style={styles.topBar}>
-      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-        <IconSymbol name="chevron.left" size={24} color="#fff" />
-      </TouchableOpacity>
-
-      {/* Host Info */}
-      <View style={styles.hostInfoContainer}>
-        <Image
-          source={{ uri: 'https://via.placeholder.com/40' }}
-          style={styles.hostAvatar}
-        />
-        <View style={styles.hostDetails}>
-          <ThemedText style={styles.hostName}>{hostName || 'Zoey'}</ThemedText>
-          <ThemedText style={styles.hostId}>ID: 90303</ThemedText>
-        </View>
-        <TouchableOpacity
-          style={styles.followButton}
-          onPress={onFollowPress}
-        >
-          <IconSymbol name={isFollowing ? "checkmark" : "plus"} size={16} color="#fff" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Top Right Badges */}
-      <View style={styles.topRightBadges}>
-        <View style={styles.badgeItem}>
-          <ThemedText style={styles.badgeText}>⭐</ThemedText>
-        </View>
-        <View style={styles.badgeItem}>
-          <ThemedText style={styles.badgeText}>F</ThemedText>
-          <ThemedText style={styles.badgeNumber}>25</ThemedText>
-        </View>
-        <View style={styles.viewerAvatars}>
-          <Image source={{ uri: 'https://via.placeholder.com/30' }} style={styles.miniAvatar} />
-          <Image source={{ uri: 'https://via.placeholder.com/30' }} style={styles.miniAvatar} />
-          <View style={styles.viewerCount}>
-            <ThemedText style={styles.viewerCountText}>67</ThemedText>
-          </View>
-        </View>
-      </View>
-
-      <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
-        <IconSymbol name="xmark" size={20} color="#fff" />
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-const CoinBalance = () => {
-  return (
-    <View style={styles.coinBalance}>
-      <View style={styles.coinBadge}>
-        <ThemedText style={styles.coinIcon}>🪙</ThemedText>
-        <ThemedText style={styles.coinText}>90</ThemedText>
-      </View>
-      <View style={styles.rankBadge}>
-        <ThemedText style={styles.rankText}>Tanpa Rank</ThemedText>
-      </View>
-    </View>
-  );
-};
-
-const FloatingGift = () => {
-  return (
-    <View style={styles.floatingGift}>
-      <LinearGradient
-        colors={['rgba(147, 112, 219, 0.9)', 'rgba(138, 43, 226, 0.9)']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.giftBubble}
-      >
-        <ThemedText style={styles.giftUser}>Matahari</ThemedText>
-        <ThemedText style={styles.giftText}>Menang 😊 4000</ThemedText>
-      </LinearGradient>
-    </View>
-  );
-};
-
-const BottomPanel = () => {
-  return (
-    <View style={styles.bottomPanel}>
-      {/* User Profile Section */}
-      <View style={styles.userProfileSection}>
-        <View style={styles.userNameRow}>
-          <Image
-            source={{ uri: 'https://via.placeholder.com/40' }}
-            style={styles.userProfileAvatar}
-          />
-          <ThemedText style={styles.userName}>Tara dito! 😍😭</ThemedText>
-        </View>
-
-        <View style={styles.userNameRow}>
-          <Image
-            source={{ uri: 'https://via.placeholder.com/40' }}
-            style={styles.userProfileAvatar}
-          />
-          <ThemedText style={styles.userName}>Zoey ✨</ThemedText>
-        </View>
-
-        {/* User Details */}
-        <View style={styles.userDetailsBox}>
-          <ThemedText style={styles.userDetailText}>Usia: 31 tahun</ThemedText>
-          <ThemedText style={styles.userDetailText}>Tinggi dan berat: 151cm/45kg</ThemedText>
-          <ThemedText style={styles.userDetailText}>Talent: Nyanyi, Menari, Memasak</ThemedText>
-
-          <View style={styles.statsRow}>
-            <View style={styles.statItem}>
-              <ThemedText style={styles.statNumber}>77119</ThemedText>
-            </View>
-            <View style={styles.statItem}>
-              <ThemedText style={styles.statIcon}>💜</ThemedText>
-              <ThemedText style={styles.statNumber}>43</ThemedText>
-            </View>
-            <View style={styles.statItem}>
-              <ThemedText style={styles.statText}>NH**Panda🐼</ThemedText>
-            </View>
-            <View style={styles.statItem}>
-              <ThemedText style={styles.statText}>Bergabung</ThemedText>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      {/* Warning Text */}
-      <ThemedText style={styles.warningText}>
-        Dilarang platform diakses melanggar aturan yang berlaku. Jika konten mengandung kekerasan, konten vulgar, atau konten ilegal lainnya, akun akan di blokir.
-      </ThemedText>
-
-      {/* Bottom Action Bar */}
-      <View style={styles.bottomActionBar}>
-        <TouchableOpacity style={styles.actionBarButton}>
-          <View style={styles.messageIconContainer}>
-            <IconSymbol name="paperplane.fill" size={24} color="#fff" />
-            <View style={styles.notificationBadge}>
-              <ThemedText style={styles.badgeNumber}>2</ThemedText>
-            </View>
-          </View>
-          <ThemedText style={styles.actionLabel}>Obrol...</ThemedText>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionBarButton}>
-          <IconSymbol name="sparkles" size={28} color="#A78BFA" />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionBarButton}>
-          <IconSymbol name="gamecontroller.fill" size={28} color="#60A5FA" />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionBarButton}>
-          <IconSymbol name="gift.fill" size={28} color="#F472B6" />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionBarButton}>
-          <IconSymbol name="ellipsis" size={28} color="#fff" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
-
-const JoinButton = () => {
-  const router = useRouter();
-  return (
-    <TouchableOpacity style={styles.joinButton} onPress={() => router.push('/join-live')}>
-      <ThemedText style={styles.joinButtonText}>+ Gabung</ThemedText>
-    </TouchableOpacity>
-  );
-};
-
+import { SystemMessage } from '@/components/live/SystemMessage';
+import { ChatMessageList, ChatMessage } from '@/components/live/ChatMessageList';
 
 export default function LiveViewerScreen() {
   const { hostId, hostName } = useLocalSearchParams();
+  const router = useRouter();
   const [isFollowing, setIsFollowing] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+
+  const systemMessage = "Selamat datang di room live! Harap patuhi peraturan platform, dilarang melanggar aturan yang berlaku. Jika konten mengandung kekerasan, konten vulgar, atau konten ilegal lainnya, akun akan di blokir.";
+  
+  const chatMessages: ChatMessage[] = [
+    { id: '1', username: 'gadanama', message: 'tahi 😊', level: 21 },
+    { id: '2', username: 'gadanama', message: 'pak ustad yeuh junaa gandeng', level: 21 },
+    { id: '3', username: 'gadanama', message: 'lagu mangu', level: 21 },
+    { id: '4', username: 'gadanama', message: '2rb', level: 21 },
+  ];
 
   return (
     <ThemedView style={styles.container}>
@@ -194,21 +31,125 @@ export default function LiveViewerScreen() {
         <ThemedText style={styles.streamPlaceholder}>Live Stream Video</ThemedText>
       </View>
 
-      {/* Components */}
-      <TopBar
-        hostName={hostName as string}
-        hostId={hostId as string}
-        isFollowing={isFollowing}
-        onFollowPress={() => setIsFollowing(!isFollowing)}
-      />
+      {/* Top Header Bar */}
+      <View style={styles.topBar}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <IconSymbol name="chevron.left" size={24} color="#fff" />
+        </TouchableOpacity>
 
-      <CoinBalance />
+        {/* Host Info with Follow Button */}
+        <View style={styles.hostInfoContainer}>
+          <Image
+            source={{ uri: 'https://via.placeholder.com/40' }}
+            style={styles.hostAvatar}
+          />
+          <View style={styles.hostDetails}>
+            <ThemedText style={styles.hostName}>{hostName || 'Jenaa'}</ThemedText>
+            <ThemedText style={styles.hostId}>ID: {hostId || '4396708'}</ThemedText>
+          </View>
+          <TouchableOpacity
+            style={styles.followButton}
+            onPress={() => setIsFollowing(!isFollowing)}
+          >
+            <IconSymbol name={isFollowing ? "checkmark" : "plus"} size={16} color="#fff" />
+          </TouchableOpacity>
+        </View>
 
-      <FloatingGift />
+        {/* Viewer List and Count */}
+        <View style={styles.viewerSection}>
+          <Image source={{ uri: 'https://via.placeholder.com/28' }} style={styles.viewerAvatar} />
+          <Image source={{ uri: 'https://via.placeholder.com/28' }} style={styles.viewerAvatar} />
+          <Image source={{ uri: 'https://via.placeholder.com/28' }} style={styles.viewerAvatar} />
+          <View style={styles.viewerCountBadge}>
+            <ThemedText style={styles.viewerCountText}>11</ThemedText>
+          </View>
+        </View>
 
-      <BottomPanel />
+        <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
+          <IconSymbol name="xmark" size={20} color="#fff" />
+        </TouchableOpacity>
+      </View>
 
-      <JoinButton />
+      {/* Income and Rank Display */}
+      <View style={styles.incomeSection}>
+        <View style={styles.incomeBadge}>
+          <ThemedText style={styles.incomeIcon}>🪙</ThemedText>
+          <ThemedText style={styles.incomeText}>302.38K</ThemedText>
+        </View>
+        <View style={styles.rankBadge}>
+          <ThemedText style={styles.rankText}>Tanpa Rank</ThemedText>
+        </View>
+      </View>
+
+      {/* Gift Notification Bubble */}
+      <View style={styles.giftNotification}>
+        <View style={styles.giftBubble}>
+          <Image source={{ uri: 'https://via.placeholder.com/24' }} style={styles.giftAvatar} />
+          <ThemedText style={styles.giftUserText}>SONIC ⚡</ThemedText>
+          <ThemedText style={styles.giftAmountText}>Menang 😊 500</ThemedText>
+        </View>
+      </View>
+
+      {/* Right Side Panel - Live Stats */}
+      <View style={styles.rightPanel}>
+        <View style={styles.liveStatsCard}>
+          <ThemedText style={styles.liveLabel}>Live Lainnya</ThemedText>
+          <ThemedText style={styles.liveRank}>Yasno</ThemedText>
+          <ThemedText style={styles.liveCount}>#200</ThemedText>
+        </View>
+      </View>
+
+      {/* System Message */}
+      <View style={styles.systemMessageWrapper}>
+        <SystemMessage message={systemMessage} />
+      </View>
+
+      {/* Chat Messages */}
+      <ChatMessageList messages={chatMessages} />
+
+      {/* Bottom Action Bar */}
+      <View style={styles.bottomActionBar}>
+        {/* Text Input */}
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Obrol..."
+            placeholderTextColor="#999"
+            value={chatInput}
+            onChangeText={setChatInput}
+          />
+        </View>
+
+        {/* Chat Icon */}
+        <TouchableOpacity style={styles.actionButton}>
+          <IconSymbol name="message.fill" size={24} color="#fff" />
+        </TouchableOpacity>
+
+        {/* Link/Chain Icon */}
+        <TouchableOpacity style={styles.actionButton}>
+          <IconSymbol name="link" size={24} color="#fff" />
+        </TouchableOpacity>
+
+        {/* Co-host Button */}
+        <TouchableOpacity style={styles.coHostButton}>
+          <ThemedText style={styles.coHostText}>co-host</ThemedText>
+        </TouchableOpacity>
+
+        {/* Game Icon */}
+        <TouchableOpacity style={styles.actionButton}>
+          <IconSymbol name="gamecontroller.fill" size={24} color="#60A5FA" />
+        </TouchableOpacity>
+
+        {/* Three Dots Menu */}
+        <TouchableOpacity style={styles.actionButton}>
+          <IconSymbol name="ellipsis" size={24} color="#fff" />
+        </TouchableOpacity>
+
+        {/* Gift Icon */}
+        <TouchableOpacity style={styles.giftButton}>
+          <IconSymbol name="gift.fill" size={28} color="#F472B6" />
+        </TouchableOpacity>
+      </View>
     </ThemedView>
   );
 }
@@ -237,13 +178,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 50,
     paddingHorizontal: 12,
-    paddingBottom: 12,
+    paddingBottom: 8,
     gap: 8,
   },
   backButton: {
     width: 36,
     height: 36,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
@@ -251,11 +192,11 @@ const styles = StyleSheet.create({
   hostInfoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    paddingVertical: 6,
-    paddingHorizontal: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
     borderRadius: 20,
-    gap: 8,
+    gap: 6,
   },
   hostAvatar: {
     width: 36,
@@ -266,55 +207,32 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
   },
   hostDetails: {
-    gap: 2,
+    gap: 1,
   },
   hostName: {
-    color: '#fff',
-    fontSize: 13,
-    fontWeight: 'bold',
-  },
-  hostId: {
-    color: '#fff',
-    fontSize: 10,
-    opacity: 0.8,
-  },
-  followButton: {
-    backgroundColor: '#9333EA',
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  topRightBadges: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginLeft: 'auto',
-  },
-  badgeItem: {
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    gap: 4,
-  },
-  badgeText: {
     color: '#fff',
     fontSize: 12,
     fontWeight: 'bold',
   },
-  badgeNumber: {
+  hostId: {
     color: '#fff',
-    fontSize: 11,
+    fontSize: 9,
+    opacity: 0.8,
   },
-  viewerAvatars: {
-    flexDirection: 'row',
+  followButton: {
+    backgroundColor: '#9333EA',
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  miniAvatar: {
+  viewerSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 'auto',
+  },
+  viewerAvatar: {
     width: 28,
     height: 28,
     borderRadius: 14,
@@ -322,8 +240,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#fff',
   },
-  viewerCount: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
+  viewerCountBadge: {
+    backgroundColor: 'rgba(0,0,0,0.6)',
     width: 32,
     height: 28,
     borderRadius: 14,
@@ -339,177 +257,151 @@ const styles = StyleSheet.create({
   closeButton: {
     width: 36,
     height: 36,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: 8,
   },
-  coinBalance: {
+  incomeSection: {
     position: 'absolute',
     left: 12,
     top: 110,
-    gap: 8,
+    gap: 6,
   },
-  coinBadge: {
+  incomeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.6)',
     paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingVertical: 5,
     borderRadius: 16,
     gap: 4,
   },
-  coinIcon: {
-    fontSize: 16,
-  },
-  coinText: {
-    color: '#fff',
+  incomeIcon: {
     fontSize: 14,
+  },
+  incomeText: {
+    color: '#fff',
+    fontSize: 13,
     fontWeight: 'bold',
   },
   rankBadge: {
     backgroundColor: 'rgba(255,255,255,0.3)',
     paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingVertical: 5,
     borderRadius: 12,
   },
   rankText: {
     color: '#fff',
-    fontSize: 11,
+    fontSize: 10,
   },
-  floatingGift: {
+  giftNotification: {
     position: 'absolute',
     left: 12,
-    top: 220,
+    top: 200,
   },
   giftBubble: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 215, 0, 0.3)',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderRadius: 20,
-    gap: 4,
+    gap: 6,
   },
-  giftUser: {
+  giftAvatar: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+  },
+  giftUserText: {
     color: '#fff',
     fontSize: 12,
     fontWeight: 'bold',
   },
-  giftText: {
+  giftAmountText: {
     color: '#fff',
-    fontSize: 13,
+    fontSize: 12,
   },
-  bottomPanel: {
+  rightPanel: {
+    position: 'absolute',
+    right: 12,
+    top: 110,
+  },
+  liveStatsCard: {
+    backgroundColor: 'rgba(139, 69, 19, 0.7)',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12,
+    alignItems: 'center',
+    gap: 4,
+  },
+  liveLabel: {
+    color: '#fff',
+    fontSize: 9,
+    opacity: 0.8,
+  },
+  liveRank: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  liveCount: {
+    color: '#fff',
+    fontSize: 10,
+  },
+  systemMessageWrapper: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 350,
+  },
+  bottomActionBar: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.7)',
-    paddingTop: 12,
-    paddingBottom: 8,
-  },
-  userProfileSection: {
-    paddingHorizontal: 16,
-    gap: 8,
-  },
-  userNameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
-  },
-  userProfileAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#333',
-  },
-  userName: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  userDetailsBox: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    padding: 12,
-    borderRadius: 12,
-    gap: 6,
-  },
-  userDetailText: {
-    color: '#fff',
-    fontSize: 12,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginTop: 6,
-  },
-  statItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  statNumber: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  statIcon: {
-    fontSize: 14,
-  },
-  statText: {
-    color: '#fff',
-    fontSize: 11,
-  },
-  warningText: {
-    color: '#999',
-    fontSize: 9,
-    paddingHorizontal: 16,
-    marginTop: 8,
-    lineHeight: 12,
-  },
-  bottomActionBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 8,
-  },
-  actionBarButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  messageIconContainer: {
-    position: 'relative',
-  },
-  notificationBadge: {
-    position: 'absolute',
-    top: -4,
-    right: -4,
-    backgroundColor: '#EF4444',
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  actionLabel: {
-    color: '#999',
-    fontSize: 11,
-    marginTop: 4,
-  },
-  joinButton: {
-    position: 'absolute',
-    right: 12,
-    bottom: 180,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     paddingVertical: 10,
-    borderRadius: 20,
+    gap: 8,
   },
-  joinButtonText: {
+  inputWrapper: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    height: 36,
+    justifyContent: 'center',
+  },
+  textInput: {
     color: '#fff',
     fontSize: 13,
-    fontWeight: '500',
+  },
+  actionButton: {
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  coHostButton: {
+    backgroundColor: 'rgba(147, 51, 234, 0.8)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  coHostText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  giftButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
