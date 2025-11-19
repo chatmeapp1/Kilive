@@ -1,10 +1,14 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+import { Platform } from 'react-native';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import WebOnly from './web-only';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -12,9 +16,23 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
+  // Prevent the splash screen from auto-hiding before asset loading is complete.
+  useEffect(() => {
+    SplashScreen.preventAutoHideAsync();
+  }, []);
+
   if (!loaded) {
     // Async font loading only occurs in development.
     return null;
+  }
+
+  useEffect(() => {
+    // Hide the splash screen once the assets have loaded in the background.
+    SplashScreen.hideAsync();
+  }, [loaded]);
+
+  if (Platform.OS === 'web') {
+    return <WebOnly />;
   }
 
   return (
