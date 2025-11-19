@@ -172,24 +172,24 @@ const styles = StyleSheet.create({
   levelBadge: {
     position: 'absolute',
     left: '50%',
-    bottom: -16,
-    transform: [{ translateX: -15 }],
-
-    width: 30,
-    height: 30,
+    bottom: -14,
+    transform: [{ translateX: -14 }],
+    width: 28,
+    height: 28,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   levelIconImage: {
-    width: 30,
-    height: 30,
+    width: 28,
+    height: 28,
     position: 'absolute',
+    resizeMode: 'contain',
   },
 
   levelBadgeText: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: 'bold',
     zIndex: 2,
   },

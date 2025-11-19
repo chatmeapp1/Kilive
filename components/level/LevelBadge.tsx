@@ -48,25 +48,24 @@ export default function LevelBadge({ level, type }: LevelBadgeProps) {
 
 const styles = StyleSheet.create({
   badgeContainer: {
-    width: 50,
-    height: 50,
+    width: 48,
+    height: 48,
     position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
   },
   badgeImage: {
-    width: 50,
-    height: 50,
+    width: 48,
+    height: 48,
     resizeMode: 'contain',
   },
   levelNumberContainer: {
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
-    right: 7,        // pindah ke kanan
   },
   levelNumber: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });
