@@ -6,7 +6,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SystemMessage } from '@/components/live/SystemMessage';
 import { ChatMessageList, ChatMessage } from '@/components/live/ChatMessageList';
-import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import { GestureDetector, Gesture, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, runOnJS } from 'react-native-reanimated';
 
 export default function LiveViewerScreen() {
@@ -45,9 +45,10 @@ export default function LiveViewerScreen() {
   }));
 
   return (
-    <GestureDetector gesture={panGesture}>
-      <ThemedView style={styles.container}>
-        <StatusBar barStyle="light-content" />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureDetector gesture={panGesture}>
+        <ThemedView style={styles.container}>
+          <StatusBar barStyle="light-content" />
 
         {/* Live Stream View */}
         <View style={styles.streamView}>
@@ -202,6 +203,7 @@ export default function LiveViewerScreen() {
         )}
       </ThemedView>
     </GestureDetector>
+    </GestureHandlerRootView>
   );
 }
 
