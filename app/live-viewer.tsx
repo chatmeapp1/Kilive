@@ -1,180 +1,214 @@
-
 import React, { useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, Image, ScrollView, StatusBar } from 'react-native';
+import { StyleSheet, View, StatusBar, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 
+// Separate components defined below
+
+const TopBar = ({ hostName, hostId, isFollowing, onFollowPress }: any) => {
+  const router = useRouter();
+  return (
+    <View style={styles.topBar}>
+      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <IconSymbol name="chevron.left" size={24} color="#fff" />
+      </TouchableOpacity>
+
+      {/* Host Info */}
+      <View style={styles.hostInfoContainer}>
+        <Image
+          source={{ uri: 'https://via.placeholder.com/40' }}
+          style={styles.hostAvatar}
+        />
+        <View style={styles.hostDetails}>
+          <ThemedText style={styles.hostName}>{hostName || 'Zoey'}</ThemedText>
+          <ThemedText style={styles.hostId}>ID: 90303</ThemedText>
+        </View>
+        <TouchableOpacity
+          style={styles.followButton}
+          onPress={onFollowPress}
+        >
+          <IconSymbol name={isFollowing ? "checkmark" : "plus"} size={16} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Top Right Badges */}
+      <View style={styles.topRightBadges}>
+        <View style={styles.badgeItem}>
+          <ThemedText style={styles.badgeText}>⭐</ThemedText>
+        </View>
+        <View style={styles.badgeItem}>
+          <ThemedText style={styles.badgeText}>F</ThemedText>
+          <ThemedText style={styles.badgeNumber}>25</ThemedText>
+        </View>
+        <View style={styles.viewerAvatars}>
+          <Image source={{ uri: 'https://via.placeholder.com/30' }} style={styles.miniAvatar} />
+          <Image source={{ uri: 'https://via.placeholder.com/30' }} style={styles.miniAvatar} />
+          <View style={styles.viewerCount}>
+            <ThemedText style={styles.viewerCountText}>67</ThemedText>
+          </View>
+        </View>
+      </View>
+
+      <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
+        <IconSymbol name="xmark" size={20} color="#fff" />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const CoinBalance = () => {
+  return (
+    <View style={styles.coinBalance}>
+      <View style={styles.coinBadge}>
+        <ThemedText style={styles.coinIcon}>🪙</ThemedText>
+        <ThemedText style={styles.coinText}>90</ThemedText>
+      </View>
+      <View style={styles.rankBadge}>
+        <ThemedText style={styles.rankText}>Tanpa Rank</ThemedText>
+      </View>
+    </View>
+  );
+};
+
+const FloatingGift = () => {
+  return (
+    <View style={styles.floatingGift}>
+      <LinearGradient
+        colors={['rgba(147, 112, 219, 0.9)', 'rgba(138, 43, 226, 0.9)']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.giftBubble}
+      >
+        <ThemedText style={styles.giftUser}>Matahari</ThemedText>
+        <ThemedText style={styles.giftText}>Menang 😊 4000</ThemedText>
+      </LinearGradient>
+    </View>
+  );
+};
+
+const BottomPanel = () => {
+  return (
+    <View style={styles.bottomPanel}>
+      {/* User Profile Section */}
+      <View style={styles.userProfileSection}>
+        <View style={styles.userNameRow}>
+          <Image
+            source={{ uri: 'https://via.placeholder.com/40' }}
+            style={styles.userProfileAvatar}
+          />
+          <ThemedText style={styles.userName}>Tara dito! 😍😭</ThemedText>
+        </View>
+
+        <View style={styles.userNameRow}>
+          <Image
+            source={{ uri: 'https://via.placeholder.com/40' }}
+            style={styles.userProfileAvatar}
+          />
+          <ThemedText style={styles.userName}>Zoey ✨</ThemedText>
+        </View>
+
+        {/* User Details */}
+        <View style={styles.userDetailsBox}>
+          <ThemedText style={styles.userDetailText}>Usia: 31 tahun</ThemedText>
+          <ThemedText style={styles.userDetailText}>Tinggi dan berat: 151cm/45kg</ThemedText>
+          <ThemedText style={styles.userDetailText}>Talent: Nyanyi, Menari, Memasak</ThemedText>
+
+          <View style={styles.statsRow}>
+            <View style={styles.statItem}>
+              <ThemedText style={styles.statNumber}>77119</ThemedText>
+            </View>
+            <View style={styles.statItem}>
+              <ThemedText style={styles.statIcon}>💜</ThemedText>
+              <ThemedText style={styles.statNumber}>43</ThemedText>
+            </View>
+            <View style={styles.statItem}>
+              <ThemedText style={styles.statText}>NH**Panda🐼</ThemedText>
+            </View>
+            <View style={styles.statItem}>
+              <ThemedText style={styles.statText}>Bergabung</ThemedText>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      {/* Warning Text */}
+      <ThemedText style={styles.warningText}>
+        Dilarang platform diakses melanggar aturan yang berlaku. Jika konten mengandung kekerasan, konten vulgar, atau konten ilegal lainnya, akun akan di blokir.
+      </ThemedText>
+
+      {/* Bottom Action Bar */}
+      <View style={styles.bottomActionBar}>
+        <TouchableOpacity style={styles.actionBarButton}>
+          <View style={styles.messageIconContainer}>
+            <IconSymbol name="paperplane.fill" size={24} color="#fff" />
+            <View style={styles.notificationBadge}>
+              <ThemedText style={styles.badgeNumber}>2</ThemedText>
+            </View>
+          </View>
+          <ThemedText style={styles.actionLabel}>Obrol...</ThemedText>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.actionBarButton}>
+          <IconSymbol name="sparkles" size={28} color="#A78BFA" />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.actionBarButton}>
+          <IconSymbol name="gamecontroller.fill" size={28} color="#60A5FA" />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.actionBarButton}>
+          <IconSymbol name="gift.fill" size={28} color="#F472B6" />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.actionBarButton}>
+          <IconSymbol name="ellipsis" size={28} color="#fff" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+const JoinButton = () => {
+  const router = useRouter();
+  return (
+    <TouchableOpacity style={styles.joinButton} onPress={() => router.push('/join-live')}>
+      <ThemedText style={styles.joinButtonText}>+ Gabung</ThemedText>
+    </TouchableOpacity>
+  );
+};
+
+
 export default function LiveViewerScreen() {
   const { hostId, hostName } = useLocalSearchParams();
-  const router = useRouter();
   const [isFollowing, setIsFollowing] = useState(false);
 
   return (
     <ThemedView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      
+
       {/* Live Stream View */}
       <View style={styles.streamView}>
         <ThemedText style={styles.streamPlaceholder}>Live Stream Video</ThemedText>
       </View>
 
-      {/* Top Bar */}
-      <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <IconSymbol name="chevron.left" size={24} color="#fff" />
-        </TouchableOpacity>
+      {/* Components */}
+      <TopBar
+        hostName={hostName as string}
+        hostId={hostId as string}
+        isFollowing={isFollowing}
+        onFollowPress={() => setIsFollowing(!isFollowing)}
+      />
 
-        {/* Host Info */}
-        <View style={styles.hostInfoContainer}>
-          <Image
-            source={{ uri: 'https://via.placeholder.com/40' }}
-            style={styles.hostAvatar}
-          />
-          <View style={styles.hostDetails}>
-            <ThemedText style={styles.hostName}>{hostName || 'Zoey'}</ThemedText>
-            <ThemedText style={styles.hostId}>ID: 90303</ThemedText>
-          </View>
-          <TouchableOpacity 
-            style={styles.followButton}
-            onPress={() => setIsFollowing(!isFollowing)}
-          >
-            <IconSymbol name={isFollowing ? "checkmark" : "plus"} size={16} color="#fff" />
-          </TouchableOpacity>
-        </View>
+      <CoinBalance />
 
-        {/* Top Right Badges */}
-        <View style={styles.topRightBadges}>
-          <View style={styles.badgeItem}>
-            <ThemedText style={styles.badgeText}>⭐</ThemedText>
-          </View>
-          <View style={styles.badgeItem}>
-            <ThemedText style={styles.badgeText}>F</ThemedText>
-            <ThemedText style={styles.badgeNumber}>25</ThemedText>
-          </View>
-          <View style={styles.viewerAvatars}>
-            <Image source={{ uri: 'https://via.placeholder.com/30' }} style={styles.miniAvatar} />
-            <Image source={{ uri: 'https://via.placeholder.com/30' }} style={styles.miniAvatar} />
-            <View style={styles.viewerCount}>
-              <ThemedText style={styles.viewerCountText}>67</ThemedText>
-            </View>
-          </View>
-        </View>
+      <FloatingGift />
 
-        <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
-          <IconSymbol name="xmark" size={20} color="#fff" />
-        </TouchableOpacity>
-      </View>
+      <BottomPanel />
 
-      {/* Left Side - Coin Balance */}
-      <View style={styles.coinBalance}>
-        <View style={styles.coinBadge}>
-          <ThemedText style={styles.coinIcon}>🪙</ThemedText>
-          <ThemedText style={styles.coinText}>90</ThemedText>
-        </View>
-        <View style={styles.rankBadge}>
-          <ThemedText style={styles.rankText}>Tanpa Rank</ThemedText>
-        </View>
-      </View>
-
-      {/* Floating Gift Message */}
-      <View style={styles.floatingGift}>
-        <LinearGradient
-          colors={['rgba(147, 112, 219, 0.9)', 'rgba(138, 43, 226, 0.9)']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.giftBubble}
-        >
-          <ThemedText style={styles.giftUser}>Matahari</ThemedText>
-          <ThemedText style={styles.giftText}>Menang 😊 4000</ThemedText>
-        </LinearGradient>
-      </View>
-
-      {/* Bottom User Info Panel */}
-      <View style={styles.bottomPanel}>
-        {/* User Profile Section */}
-        <View style={styles.userProfileSection}>
-          <View style={styles.userNameRow}>
-            <Image
-              source={{ uri: 'https://via.placeholder.com/40' }}
-              style={styles.userProfileAvatar}
-            />
-            <ThemedText style={styles.userName}>Tara dito! 😍😭</ThemedText>
-          </View>
-          
-          <View style={styles.userNameRow}>
-            <Image
-              source={{ uri: 'https://via.placeholder.com/40' }}
-              style={styles.userProfileAvatar}
-            />
-            <ThemedText style={styles.userName}>Zoey ✨</ThemedText>
-          </View>
-
-          {/* User Details */}
-          <View style={styles.userDetailsBox}>
-            <ThemedText style={styles.userDetailText}>Usia: 31 tahun</ThemedText>
-            <ThemedText style={styles.userDetailText}>Tinggi dan berat: 151cm/45kg</ThemedText>
-            <ThemedText style={styles.userDetailText}>Talent: Nyanyi, Menari, Memasak</ThemedText>
-            
-            <View style={styles.statsRow}>
-              <View style={styles.statItem}>
-                <ThemedText style={styles.statNumber}>77119</ThemedText>
-              </View>
-              <View style={styles.statItem}>
-                <ThemedText style={styles.statIcon}>💜</ThemedText>
-                <ThemedText style={styles.statNumber}>43</ThemedText>
-              </View>
-              <View style={styles.statItem}>
-                <ThemedText style={styles.statText}>NH**Panda🐼</ThemedText>
-              </View>
-              <View style={styles.statItem}>
-                <ThemedText style={styles.statText}>Bergabung</ThemedText>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        {/* Warning Text */}
-        <ThemedText style={styles.warningText}>
-          Dilarang platform diakses melanggar aturan yang berlaku. Jika konten mengandung kekerasan, konten vulgar, atau konten ilegal lainnya, akun akan di blokir.
-        </ThemedText>
-
-        {/* Bottom Action Bar */}
-        <View style={styles.bottomActionBar}>
-          <TouchableOpacity style={styles.actionBarButton}>
-            <View style={styles.messageIconContainer}>
-              <IconSymbol name="paperplane.fill" size={24} color="#fff" />
-              <View style={styles.notificationBadge}>
-                <ThemedText style={styles.badgeNumber}>2</ThemedText>
-              </View>
-            </View>
-            <ThemedText style={styles.actionLabel}>Obrol...</ThemedText>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionBarButton}>
-            <IconSymbol name="sparkles" size={28} color="#A78BFA" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionBarButton}>
-            <IconSymbol name="gamecontroller.fill" size={28} color="#60A5FA" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionBarButton}>
-            <IconSymbol name="gift.fill" size={28} color="#F472B6" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionBarButton}>
-            <IconSymbol name="ellipsis" size={28} color="#fff" />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Right Side Gabung Button */}
-      <TouchableOpacity style={styles.joinButton}>
-        <ThemedText style={styles.joinButtonText}>+ Gabung</ThemedText>
-      </TouchableOpacity>
+      <JoinButton />
     </ThemedView>
   );
 }
