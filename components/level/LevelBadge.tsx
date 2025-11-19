@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { StyleSheet, View, Image } from 'react-native';
+import { ThemedText } from '@/components/ThemedText';
 
 interface LevelBadgeProps {
   level: number;
@@ -9,29 +9,63 @@ interface LevelBadgeProps {
 }
 
 export default function LevelBadge({ level, type }: LevelBadgeProps) {
+  const getBadgeImage = () => {
+    if (level >= 1 && level <= 9) {
+      return require('@/assets/level/ic_blue.png');
+    } else if (level >= 10 && level <= 19) {
+      return require('@/assets/level/ic_green.png');
+    } else if (level >= 20 && level <= 29) {
+      return require('@/assets/level/ic_yellow.png');
+    } else if (level >= 30 && level <= 49) {
+      return require('@/assets/level/ic_orange.png');
+    } else if (level >= 50 && level <= 75) {
+      return require('@/assets/level/ic_red.png');
+    } else if (level >= 76 && level <= 100) {
+      return require('@/assets/level/ic_black.png');
+    }
+    // Default to blue if outside range
+    return require('@/assets/level/ic_blue.png');
+  };
+
+  const getLevelTextColor = () => {
+    if (level >= 76 && level <= 100) {
+      return '#fff'; // White text for black badge
+    }
+    return '#000'; // Black text for other badges
+  };
+
   return (
-    <View style={[styles.badge, type === 'host' ? styles.hostBadge : styles.userBadge]}>
-      <IconSymbol 
-        name={type === 'host' ? 'crown.fill' : 'star.fill'} 
-        size={32} 
-        color="#FFD700" 
-      />
+    <View style={styles.badgeContainer}>
+      <Image source={getBadgeImage()} style={styles.badgeImage} />
+      <View style={styles.levelNumberContainer}>
+        <ThemedText style={[styles.levelNumber, { color: getLevelTextColor() }]}>
+          {level}
+        </ThemedText>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  badge: {
-    width: 60,
-    height: 60,
-    borderRadius: 12,
+  badgeContainer: {
+    width: 50,
+    height: 50,
+    position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  userBadge: {
-    backgroundColor: 'rgba(255, 215, 0, 0.2)',
+  badgeImage: {
+    width: 50,
+    height: 50,
+    resizeMode: 'contain',
   },
-  hostBadge: {
-    backgroundColor: 'rgba(0, 217, 181, 0.2)',
+  levelNumberContainer: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  levelNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
