@@ -81,123 +81,123 @@ export default function LiveViewerScreen() {
             {/* Full View - All UI Elements */}
             {/* Top Header Bar */}
             <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <IconSymbol name="chevron.left" size={24} color="#fff" />
-        </TouchableOpacity>
+              <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                <IconSymbol name="chevron.left" size={24} color="#fff" />
+              </TouchableOpacity>
 
-        {/* Host Info with Follow Button */}
-        <View style={styles.hostInfoContainer}>
-          <Image
-            source={{ uri: 'https://via.placeholder.com/40' }}
-            style={styles.hostAvatar}
-          />
-          <View style={styles.hostDetails}>
-            <ThemedText style={styles.hostName}>{hostName || 'Jenaa'}</ThemedText>
-            <ThemedText style={styles.hostId}>ID: {hostId || '4396708'}</ThemedText>
-          </View>
-          <TouchableOpacity
-            style={styles.followButton}
-            onPress={() => setIsFollowing(!isFollowing)}
-          >
-            <IconSymbol name={isFollowing ? "checkmark" : "plus"} size={16} color="#fff" />
-          </TouchableOpacity>
-        </View>
+              {/* Host Info with Follow Button */}
+              <View style={styles.hostInfoContainer}>
+                <Image
+                  source={{ uri: 'https://via.placeholder.com/40' }}
+                  style={styles.hostAvatar}
+                />
+                <View style={styles.hostDetails}>
+                  <ThemedText style={styles.hostName}>{hostName || 'Jenaa'}</ThemedText>
+                  <ThemedText style={styles.hostId}>ID: {hostId || '4396708'}</ThemedText>
+                </View>
+                <TouchableOpacity
+                  style={styles.followButton}
+                  onPress={() => setIsFollowing(!isFollowing)}
+                >
+                  <IconSymbol name={isFollowing ? "checkmark" : "plus"} size={16} color="#fff" />
+                </TouchableOpacity>
+              </View>
 
-        {/* Viewer List and Count */}
-        <View style={styles.viewerSection}>
-          <Image source={{ uri: 'https://via.placeholder.com/28' }} style={styles.viewerAvatar} />
-          <Image source={{ uri: 'https://via.placeholder.com/28' }} style={styles.viewerAvatar} />
-          <Image source={{ uri: 'https://via.placeholder.com/28' }} style={styles.viewerAvatar} />
-          <View style={styles.viewerCountBadge}>
-            <ThemedText style={styles.viewerCountText}>11</ThemedText>
-          </View>
-        </View>
+              {/* Viewer List and Count */}
+              <View style={styles.viewerSection}>
+                <Image source={{ uri: 'https://via.placeholder.com/28' }} style={styles.viewerAvatar} />
+                <Image source={{ uri: 'https://via.placeholder.com/28' }} style={styles.viewerAvatar} />
+                <Image source={{ uri: 'https://via.placeholder.com/28' }} style={styles.viewerAvatar} />
+                <View style={styles.viewerCountBadge}>
+                  <ThemedText style={styles.viewerCountText}>11</ThemedText>
+                </View>
+              </View>
 
-        <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
-          <IconSymbol name="xmark" size={20} color="#fff" />
-        </TouchableOpacity>
-      </View>
+              <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
+                <IconSymbol name="xmark" size={20} color="#fff" />
+              </TouchableOpacity>
+            </View>
 
-      {/* Income and Rank Display */}
-      <View style={styles.incomeSection}>
-        <View style={styles.incomeBadge}>
-          <ThemedText style={styles.incomeIcon}>🪙</ThemedText>
-          <ThemedText style={styles.incomeText}>302.38K</ThemedText>
-        </View>
-        <View style={styles.rankBadge}>
-          <ThemedText style={styles.rankText}>Tanpa Rank</ThemedText>
-        </View>
-      </View>
+            {/* Income and Rank Display */}
+            <View style={styles.incomeSection}>
+              <View style={styles.incomeBadge}>
+                <ThemedText style={styles.incomeIcon}>🪙</ThemedText>
+                <ThemedText style={styles.incomeText}>302.38K</ThemedText>
+              </View>
+              <View style={styles.rankBadge}>
+                <ThemedText style={styles.rankText}>Tanpa Rank</ThemedText>
+              </View>
+            </View>
 
-      {/* Gift Notification Bubble */}
-      <View style={styles.giftNotification}>
-        <View style={styles.giftBubble}>
-          <Image source={{ uri: 'https://via.placeholder.com/24' }} style={styles.giftAvatar} />
-          <ThemedText style={styles.giftUserText}>SONIC ⚡</ThemedText>
-          <ThemedText style={styles.giftAmountText}>Menang 😊 500</ThemedText>
-        </View>
-      </View>
+            {/* Gift Notification Bubble */}
+            <View style={styles.giftNotification}>
+              <View style={styles.giftBubble}>
+                <Image source={{ uri: 'https://via.placeholder.com/24' }} style={styles.giftAvatar} />
+                <ThemedText style={styles.giftUserText}>SONIC ⚡</ThemedText>
+                <ThemedText style={styles.giftAmountText}>Menang 😊 500</ThemedText>
+              </View>
+            </View>
 
-      {/* Right Side Panel - Live Stats */}
-      <View style={styles.rightPanel}>
-        <View style={styles.liveStatsCard}>
-          <ThemedText style={styles.liveLabel}>Live Lainnya</ThemedText>
-          <ThemedText style={styles.liveRank}>Yasno</ThemedText>
-          <ThemedText style={styles.liveCount}>#200</ThemedText>
-        </View>
-      </View>
+            {/* Right Side Panel - Live Stats */}
+            <View style={styles.rightPanel}>
+              <View style={styles.liveStatsCard}>
+                <ThemedText style={styles.liveLabel}>Live Lainnya</ThemedText>
+                <ThemedText style={styles.liveRank}>Yasno</ThemedText>
+                <ThemedText style={styles.liveCount}>#200</ThemedText>
+              </View>
+            </View>
 
-      {/* System Message */}
-      <View style={styles.systemMessageWrapper}>
-        <SystemMessage message={systemMessage} />
-      </View>
+            {/* System Message */}
+            <View style={styles.systemMessageWrapper}>
+              <SystemMessage message={systemMessage} />
+            </View>
 
-      {/* Chat Messages */}
-      <ChatMessageList messages={chatMessages} />
+            {/* Chat Messages */}
+            <ChatMessageList messages={chatMessages} />
 
-      {/* Bottom Action Bar */}
-      <View style={styles.bottomActionBar}>
-        {/* Text Input */}
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Obrol..."
-            placeholderTextColor="#999"
-            value={chatInput}
-            onChangeText={setChatInput}
-          />
-        </View>
+            {/* Bottom Action Bar */}
+            <View style={styles.bottomActionBar}>
+              {/* Text Input */}
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Obrol..."
+                  placeholderTextColor="#999"
+                  value={chatInput}
+                  onChangeText={setChatInput}
+                />
+              </View>
 
-        {/* Chat Icon */}
-        <TouchableOpacity style={styles.actionButton}>
-          <IconSymbol name="message.fill" size={24} color="#fff" />
-        </TouchableOpacity>
+              {/* Chat Icon */}
+              <TouchableOpacity style={styles.actionButton}>
+                <IconSymbol name="message.fill" size={24} color="#fff" />
+              </TouchableOpacity>
 
-        {/* Link/Chain Icon */}
-        <TouchableOpacity style={styles.actionButton}>
-          <IconSymbol name="link" size={24} color="#fff" />
-        </TouchableOpacity>
+              {/* Link/Chain Icon */}
+              <TouchableOpacity style={styles.actionButton}>
+                <IconSymbol name="link" size={24} color="#fff" />
+              </TouchableOpacity>
 
-        {/* Co-host Button */}
-        <TouchableOpacity style={styles.coHostButton}>
-          <ThemedText style={styles.coHostText}>co-host</ThemedText>
-        </TouchableOpacity>
+              {/* Co-host Button */}
+              <TouchableOpacity style={styles.coHostButton}>
+                <ThemedText style={styles.coHostText}>co-host</ThemedText>
+              </TouchableOpacity>
 
-        {/* Game Icon */}
-        <TouchableOpacity style={styles.actionButton}>
-          <IconSymbol name="gamecontroller.fill" size={24} color="#60A5FA" />
-        </TouchableOpacity>
+              {/* Game Icon */}
+              <TouchableOpacity style={styles.actionButton}>
+                <IconSymbol name="gamecontroller.fill" size={24} color="#60A5FA" />
+              </TouchableOpacity>
 
-        {/* Three Dots Menu */}
-        <TouchableOpacity style={styles.actionButton}>
-          <IconSymbol name="ellipsis" size={24} color="#fff" />
-        </TouchableOpacity>
+              {/* Three Dots Menu */}
+              <TouchableOpacity style={styles.actionButton}>
+                <IconSymbol name="ellipsis" size={24} color="#fff" />
+              </TouchableOpacity>
 
-        {/* Gift Icon */}
-        <TouchableOpacity style={styles.giftButton}>
-          <IconSymbol name="gift.fill" size={28} color="#F472B6" />
-        </TouchableOpacity>
-      </View>
+              {/* Gift Icon */}
+              <TouchableOpacity style={styles.giftButton}>
+                <IconSymbol name="gift.fill" size={28} color="#F472B6" />
+              </TouchableOpacity>
+            </View>
           </>
         )}
       </ThemedView>
