@@ -1,96 +1,53 @@
-
 import React from 'react';
 import { View, TouchableOpacity, Image, StyleSheet, TextInput } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
-export function BottomPanel() {
+export default function BottomPanel() {
   return (
-    <View style={styles.bottomPanel}>
-      {/* User Profile Section */}
-      <View style={styles.userProfileSection}>
-        <View style={styles.userNameRow}>
-          <Image
-            source={{ uri: 'https://via.placeholder.com/40' }}
-            style={styles.userProfileAvatar}
-          />
-          <ThemedText style={styles.userName}>Tara dito! 😍😭</ThemedText>
-        </View>
-        
-        <View style={styles.userNameRow}>
-          <Image
-            source={{ uri: 'https://via.placeholder.com/40' }}
-            style={styles.userProfileAvatar}
-          />
-          <ThemedText style={styles.userName}>Zoey ✨</ThemedText>
-        </View>
-
-        <View style={styles.userDetailsBox}>
-          <ThemedText style={styles.userDetailText}>Usia: 31 tahun</ThemedText>
-          <ThemedText style={styles.userDetailText}>Tinggi dan berat: 151cm/45kg</ThemedText>
-          <ThemedText style={styles.userDetailText}>Talent: Nyanyi, Menari, Memasak</ThemedText>
-          
-          <View style={styles.statsRow}>
-            <View style={styles.statItem}>
-              <ThemedText style={styles.statNumber}>77119</ThemedText>
-            </View>
-            <View style={styles.statItem}>
-              <ThemedText style={styles.statIcon}>💜</ThemedText>
-              <ThemedText style={styles.statNumber}>43</ThemedText>
-            </View>
-            <View style={styles.statItem}>
-              <ThemedText style={styles.statText}>NH**Panda🐼</ThemedText>
-            </View>
-            <View style={styles.statItem}>
-              <ThemedText style={styles.statText}>Bergabung</ThemedText>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      <ThemedText style={styles.warningText}>
-        Dilarang platform diakses melanggar aturan yang berlaku. Jika konten mengandung kekerasan, konten vulgar, atau konten ilegal lainnya, akun akan di blokir.
+    <View style={styles.container}>
+      {/* WARNING / RULES */}
+      <ThemedText style={styles.warning}>
+        Selamat datang di room live! Patuhi aturan platform. Konten kekerasan, vulgar, atau ilegal akan menyebabkan akun diblokir.
       </ThemedText>
 
-      {/* Bottom Action Bar - Updated Layout */}
-      <View style={styles.bottomActionBar}>
-        {/* Input Text Field */}
-        <View style={styles.inputContainer}>
+      {/* CHAT + ACTION BAR */}
+      <View style={styles.row}>
+        {/* INPUT */}
+        <View style={styles.inputBox}>
           <TextInput
-            style={styles.textInput}
-            placeholder="Obrol..."
-            placeholderTextColor="#999"
+            placeholder="Ketik pesan..."
+            placeholderTextColor="rgba(255,255,255,0.5)"
+            style={styles.input}
           />
         </View>
 
-        {/* Message/Notification Icon */}
-        <TouchableOpacity style={styles.actionButton}>
-          <View style={styles.iconWrapper}>
-            <IconSymbol name="envelope.fill" size={26} color="#fff" />
-            <View style={styles.notificationBadge}>
-              <ThemedText style={styles.badgeNumber}>1</ThemedText>
-            </View>
+        {/* MESSAGE */}
+        <TouchableOpacity style={styles.actionBtn}>
+          <IconSymbol name="envelope.fill" size={22} color="#fff" />
+          <View style={styles.badge}>
+            <ThemedText style={styles.badgeText}>1</ThemedText>
           </View>
         </TouchableOpacity>
 
-        {/* Co-Host Icon (Chain/Link) */}
-        <TouchableOpacity style={[styles.actionButton, styles.coHostButton]}>
-          <IconSymbol name="link" size={26} color="#fff" />
+        {/* LINK / CHAIN */}
+        <TouchableOpacity style={[styles.actionBtn, styles.linkBtn]}>
+          <IconSymbol name="link" size={24} color="#fff" />
         </TouchableOpacity>
 
-        {/* Game Icon */}
-        <TouchableOpacity style={[styles.actionButton, styles.gameButton]}>
-          <IconSymbol name="gamecontroller.fill" size={26} color="#fff" />
+        {/* GAME */}
+        <TouchableOpacity style={[styles.actionBtn, styles.gameBtn]}>
+          <IconSymbol name="gamecontroller.fill" size={24} color="#60A5FA" />
         </TouchableOpacity>
 
-        {/* Gift Icon */}
-        <TouchableOpacity style={[styles.actionButton, styles.giftButton]}>
-          <IconSymbol name="gift.fill" size={26} color="#fff" />
+        {/* GIFT */}
+        <TouchableOpacity style={[styles.actionBtn, styles.giftBtn]}>
+          <IconSymbol name="gift.fill" size={26} color="#F472B6" />
         </TouchableOpacity>
 
-        {/* More Menu (3 dots) */}
-        <TouchableOpacity style={[styles.actionButton, styles.moreButton]}>
-          <IconSymbol name="ellipsis" size={26} color="#fff" />
+        {/* MORE MENU */}
+        <TouchableOpacity style={styles.actionBtn}>
+          <IconSymbol name="ellipsis" size={22} color="#fff" />
         </TouchableOpacity>
       </View>
     </View>
@@ -98,133 +55,80 @@ export function BottomPanel() {
 }
 
 const styles = StyleSheet.create({
-  bottomPanel: {
+  container: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    paddingTop: 12,
-    paddingBottom: 8,
+    paddingVertical: 10,
+    backgroundColor: 'rgba(0,0,0,0.35)',
   },
-  userProfileSection: {
+
+  warning: {
+    color: '#ddd',
+    fontSize: 10,
     paddingHorizontal: 16,
-    gap: 8,
+    marginBottom: 6,
+    lineHeight: 13,
   },
-  userNameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
-  },
-  userProfileAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#333',
-  },
-  userName: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  userDetailsBox: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    padding: 12,
-    borderRadius: 12,
-    gap: 6,
-  },
-  userDetailText: {
-    color: '#fff',
-    fontSize: 12,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginTop: 6,
-  },
-  statItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  statNumber: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  statIcon: {
-    fontSize: 14,
-  },
-  statText: {
-    color: '#fff',
-    fontSize: 11,
-  },
-  warningText: {
-    color: '#999',
-    fontSize: 9,
-    paddingHorizontal: 16,
-    marginTop: 8,
-    lineHeight: 12,
-  },
-  bottomActionBar: {
+
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
-    paddingTop: 12,
-    paddingBottom: 8,
-    gap: 10,
+    gap: 8,
   },
-  inputContainer: {
+
+  inputBox: {
     flex: 1,
     backgroundColor: 'rgba(255,255,255,0.15)',
     borderRadius: 20,
-    paddingHorizontal: 16,
-    height: 40,
+    height: 38,
     justifyContent: 'center',
+    paddingHorizontal: 12,
   },
-  textInput: {
+
+  input: {
     color: '#fff',
     fontSize: 13,
   },
-  actionButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+
+  actionBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: 'rgba(255,255,255,0.15)',
   },
-  iconWrapper: {
-    position: 'relative',
+
+  linkBtn: {
+    backgroundColor: 'rgba(147, 51, 234, 0.8)',
   },
-  notificationBadge: {
+
+  gameBtn: {
+    backgroundColor: 'rgba(59,131,246,0.3)',
+  },
+
+  giftBtn: {
+    backgroundColor: 'rgba(244,114,182,0.25)',
+  },
+
+  badge: {
     position: 'absolute',
-    top: -6,
-    right: -6,
+    right: -4,
+    top: -4,
     backgroundColor: '#EF4444',
-    width: 18,
-    height: 18,
-    borderRadius: 9,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  badgeNumber: {
+
+  badgeText: {
     color: '#fff',
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: 'bold',
-  },
-  coHostButton: {
-    backgroundColor: '#9333EA',
-  },
-  gameButton: {
-    backgroundColor: '#3B82F6',
-  },
-  giftButton: {
-    backgroundColor: '#EC4899',
-  },
-  moreButton: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
   },
 });

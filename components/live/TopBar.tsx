@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { View, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
@@ -8,171 +7,132 @@ import { useRouter } from 'expo-router';
 interface TopBarProps {
   hostName: string;
   hostId?: string;
+  avatar?: string;
   isFollowing: boolean;
   onFollowPress: () => void;
 }
 
-export function TopBar({ hostName, hostId, isFollowing, onFollowPress }: TopBarProps) {
+export default function TopBar({
+  hostName,
+  hostId,
+  avatar,
+  isFollowing,
+  onFollowPress,
+}: TopBarProps) {
   const router = useRouter();
 
   return (
-    <View style={styles.topBar}>
-      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-        <IconSymbol name="chevron.left" size={24} color="#fff" />
+    <View style={styles.wrapper}>
+      
+      {/* BACK BUTTON */}
+      <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+        <IconSymbol name="chevron.left" size={22} color="#fff" />
       </TouchableOpacity>
 
-      <View style={styles.hostInfoContainer}>
+      {/* HOST INFO */}
+      <View style={styles.hostBox}>
         <Image
-          source={{ uri: 'https://via.placeholder.com/40' }}
-          style={styles.hostAvatar}
+          source={{ uri: avatar || 'https://via.placeholder.com/80' }}
+          style={styles.avatar}
         />
-        <View style={styles.hostDetails}>
-          <ThemedText style={styles.hostName}>{hostName || 'Zoey'}</ThemedText>
-          <ThemedText style={styles.hostId}>ID: {hostId || '90303'}</ThemedText>
+
+        <View style={styles.texts}>
+          <ThemedText style={styles.name}>{hostName || 'Host'}</ThemedText>
+          <ThemedText style={styles.id}>ID: {hostId || '0000'}</ThemedText>
         </View>
-        <TouchableOpacity 
-          style={styles.followButton}
-          onPress={onFollowPress}
-        >
-          <IconSymbol name={isFollowing ? "checkmark" : "plus"} size={16} color="#fff" />
+
+        {/* FOLLOW BUTTON */}
+        <TouchableOpacity style={styles.followBtn} onPress={onFollowPress}>
+          <IconSymbol
+            name={isFollowing ? 'checkmark' : 'plus'}
+            size={16}
+            color="#fff"
+          />
         </TouchableOpacity>
       </View>
 
-      <View style={styles.topRightBadges}>
-        <View style={styles.badgeItem}>
-          <ThemedText style={styles.badgeText}>⭐</ThemedText>
-        </View>
-        <View style={styles.badgeItem}>
-          <ThemedText style={styles.badgeText}>F</ThemedText>
-          <ThemedText style={styles.badgeNumber}>25</ThemedText>
-        </View>
-        <View style={styles.viewerAvatars}>
-          <Image source={{ uri: 'https://via.placeholder.com/30' }} style={styles.miniAvatar} />
-          <Image source={{ uri: 'https://via.placeholder.com/30' }} style={styles.miniAvatar} />
-          <View style={styles.viewerCount}>
-            <ThemedText style={styles.viewerCountText}>67</ThemedText>
-          </View>
-        </View>
-      </View>
-
-      <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
+      {/* CLOSE BUTTON */}
+      <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
         <IconSymbol name="xmark" size={20} color="#fff" />
       </TouchableOpacity>
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  topBar: {
+  wrapper: {
+    position: 'absolute',
+    top: 48,
+    left: 10,
+    right: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 50,
-    paddingHorizontal: 12,
-    paddingBottom: 12,
-    gap: 8,
+    zIndex: 20,
   },
-  backButton: {
-    width: 36,
-    height: 36,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    borderRadius: 18,
+
+  backBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  hostInfoContainer: {
+
+  hostBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    paddingVertical: 6,
+    backgroundColor: 'rgba(0,0,0,0.45)',
     paddingHorizontal: 10,
-    borderRadius: 20,
-    gap: 8,
+    paddingVertical: 6,
+    borderRadius: 24,
+    marginLeft: 8,
+    flex: 1,
   },
-  hostAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#333',
+
+  avatar: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     borderWidth: 2,
     borderColor: '#fff',
   },
-  hostDetails: {
-    gap: 2,
+
+  texts: {
+    marginLeft: 8,
+    flex: 1,
   },
-  hostName: {
+
+  name: {
     color: '#fff',
-    fontSize: 13,
     fontWeight: 'bold',
+    fontSize: 13,
   },
-  hostId: {
+
+  id: {
     color: '#fff',
     fontSize: 10,
     opacity: 0.8,
   },
-  followButton: {
-    backgroundColor: '#9333EA',
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+
+  followBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: '#A855F7',
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: 6,
   },
-  topRightBadges: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginLeft: 'auto',
-  },
-  badgeItem: {
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    gap: 4,
-  },
-  badgeText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  badgeNumber: {
-    color: '#fff',
-    fontSize: 11,
-  },
-  viewerAvatars: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  miniAvatar: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    marginLeft: -8,
-    borderWidth: 2,
-    borderColor: '#fff',
-  },
-  viewerCount: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    width: 32,
-    height: 28,
-    borderRadius: 14,
+
+  closeBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: -8,
-  },
-  viewerCountText: {
-    color: '#fff',
-    fontSize: 11,
-    fontWeight: 'bold',
-  },
-  closeButton: {
-    width: 36,
-    height: 36,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginLeft: 8,
   },
 });

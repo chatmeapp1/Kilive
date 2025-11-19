@@ -1,12 +1,15 @@
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { BlurView } from 'expo-blur';
 import { StyleSheet } from 'react-native';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
+/**
+ * Background blur untuk TabBar.
+ * Otomatis mengikuti tema iOS (systemChromeMaterial)
+ * dan tetap smooth di Android.
+ */
 export default function BlurTabBarBackground() {
   return (
     <BlurView
-      // System chrome material automatically adapts to the system's theme
-      // and matches the native tab bar appearance on iOS.
       tint="systemChromeMaterial"
       intensity={100}
       style={StyleSheet.absoluteFill}
@@ -14,6 +17,10 @@ export default function BlurTabBarBackground() {
   );
 }
 
+/**
+ * Hook untuk mengetahui tinggi tab bar,
+ * dipakai jika ingin menambah padding di layar.
+ */
 export function useBottomTabOverflow() {
   return useBottomTabBarHeight();
 }
