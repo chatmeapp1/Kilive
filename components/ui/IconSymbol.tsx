@@ -18,6 +18,19 @@ const MAPPING = {
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'chevron.left': 'chevron-left',
+  'xmark': 'close',
+  'plus': 'add',
+  'checkmark': 'check',
+  'message.fill': 'message',
+  'link': 'link',
+  'gamecontroller.fill': 'sports-esports',
+  'ellipsis': 'more-horiz',
+  'gift.fill': 'card-giftcard',
+  'eye.fill': 'visibility',
+  'camera.rotate': 'flip-camera-android',
+  'sparkles': 'auto-awesome',
+  'mic.fill': 'mic',
 } as IconMapping;
 
 /**

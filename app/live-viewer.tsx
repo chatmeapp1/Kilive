@@ -6,12 +6,30 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SystemMessage } from '@/components/live/SystemMessage';
 import { ChatMessageList, ChatMessage } from '@/components/live/ChatMessageList';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, runOnJS } from 'react-native-reanimated';
 
 export default function LiveViewerScreen() {
   const { hostId, hostName } = useLocalSearchParams();
   const router = useRouter();
   const [isFollowing, setIsFollowing] = useState(false);
   const [chatInput, setChatInput] = useState('');
+  const [showSimpleView, setShowSimpleView] = useState(false);
+  
+  const translateX = useSharedValue(0);
+
+  const panGesture = Gesture.Pan()
+    .onUpdate((event) => {
+      translateX.value = event.translationX;
+    })
+    .onEnd((event) => {
+      if (event.translationX > 100) {
+        runOnJS(setShowSimpleView)(true);
+      } else if (event.translationX < -100) {
+        runOnJS(setShowSimpleView)(false);
+      }
+      translateX.value = withTiming(0);
+    });
 
   const systemMessage = "Selamat datang di room live! Harap patuhi peraturan platform, dilarang melanggar aturan yang berlaku. Jika konten mengandung kekerasan, konten vulgar, atau konten ilegal lainnya, akun akan di blokir.";
   
@@ -22,17 +40,47 @@ export default function LiveViewerScreen() {
     { id: '4', username: 'gadanama', message: '2rb', level: 21 },
   ];
 
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
+
   return (
-    <ThemedView style={styles.container}>
-      <StatusBar barStyle="light-content" />
+    <GestureDetector gesture={panGesture}>
+      <ThemedView style={styles.container}>
+        <StatusBar barStyle="light-content" />
 
-      {/* Live Stream View */}
-      <View style={styles.streamView}>
-        <ThemedText style={styles.streamPlaceholder}>Live Stream Video</ThemedText>
-      </View>
+        {/* Live Stream View */}
+        <View style={styles.streamView}>
+          <ThemedText style={styles.streamPlaceholder}>Live Stream Video</ThemedText>
+        </View>
 
-      {/* Top Header Bar */}
-      <View style={styles.topBar}>
+        {showSimpleView ? (
+          <>
+            {/* Simple View - Only Host Info */}
+            <View style={styles.simpleViewContainer}>
+              <TouchableOpacity onPress={() => router.back()} style={styles.simpleBackButton}>
+                <IconSymbol name="chevron.left" size={24} color="#fff" />
+              </TouchableOpacity>
+              
+              <View style={styles.simpleHostInfo}>
+                <Image
+                  source={{ uri: 'https://via.placeholder.com/60' }}
+                  style={styles.simpleHostAvatar}
+                />
+                <ThemedText style={styles.simpleHostName}>{hostName || 'Jenaa'}</ThemedText>
+                <ThemedText style={styles.simpleHostId}>ID: {hostId || '4396708'}</ThemedText>
+              </View>
+
+              <TouchableOpacity style={styles.simpleCloseButton} onPress={() => router.back()}>
+                <IconSymbol name="xmark" size={24} color="#fff" />
+              </TouchableOpacity>
+            </View>
+          </>
+        ) : (
+          <>
+            {/* Full View - All UI Elements */}
+            {/* Top Header Bar */}
+            <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <IconSymbol name="chevron.left" size={24} color="#fff" />
         </TouchableOpacity>
@@ -150,7 +198,10 @@ export default function LiveViewerScreen() {
           <IconSymbol name="gift.fill" size={28} color="#F472B6" />
         </TouchableOpacity>
       </View>
-    </ThemedView>
+          </>
+        )}
+      </ThemedView>
+    </GestureDetector>
   );
 }
 
@@ -364,7 +415,7 @@ const styles = StyleSheet.create({
     right: 0,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: 'rgba(0,0,0,0.3)',
     paddingHorizontal: 12,
     paddingVertical: 10,
     gap: 8,
@@ -401,6 +452,56 @@ const styles = StyleSheet.create({
   giftButton: {
     width: 40,
     height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  simpleViewContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingTop: 50,
+    paddingHorizontal: 12,
+    paddingBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+  },
+  simpleBackButton: {
+    width: 36,
+    height: 36,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  simpleHostInfo: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  simpleHostAvatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#333',
+    borderWidth: 3,
+    borderColor: '#fff',
+  },
+  simpleHostName: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  simpleHostId: {
+    color: '#fff',
+    fontSize: 12,
+    opacity: 0.8,
+  },
+  simpleCloseButton: {
+    width: 36,
+    height: 36,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
   },
