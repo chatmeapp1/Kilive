@@ -138,13 +138,13 @@ const styles = StyleSheet.create({
   },
   crown: {
     position: 'absolute',
-    top: -20,
+    top: -26,
     zIndex: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
   crownEmoji: {
-    fontSize: 30,
+    fontSize: 25,
   },
   avatar: {
     width: 60,

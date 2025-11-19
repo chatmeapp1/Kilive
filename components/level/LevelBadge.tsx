@@ -31,7 +31,7 @@ export default function LevelBadge({ level, type }: LevelBadgeProps) {
     if (level >= 76 && level <= 100) {
       return '#fff'; // White text for black badge
     }
-    return '#000'; // Black text for other badges
+    return '#fff'; // Black text for other badges
   };
 
   return (
@@ -63,9 +63,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
+    right: 7,        // pindah ke kanan
   },
   levelNumber: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
   },
 });

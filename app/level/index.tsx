@@ -57,11 +57,11 @@ export default function LevelScreen() {
 
           <TopRanking
             rankings={[
-              { rank: 1, username: 'mo', level: 57, avatar: 'https://via.placeholder.com/80', hasCrown: true },
-              { rank: 2, username: 'user2', level: 52, avatar: 'https://via.placeholder.com/80', hasCrown: false },
-              { rank: 3, username: 'oRLin ...', level: 49, avatar: 'https://via.placeholder.com/80', hasCrown: false },
-              { rank: 4, username: '☆☆☆SU...', level: 17, avatar: 'https://via.placeholder.com/80', hasCrown: false },
-              { rank: 5, username: 'R', level: 15, avatar: 'https://via.placeholder.com/80', hasCrown: false },
+              { rank: 1, username: 'mo', level: 57, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBLG-OMXWXKkokkRiX_JmZmnX0ch8IUB3OR6K0HQ9qLA&s=10', hasCrown: true },
+              { rank: 2, username: 'user2', level: 52, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPLEujmvxZMrWdCI2Rf6OdBSWnqAdwFMtH1BZGrIaG5A&s=10', hasCrown: false },
+              { rank: 3, username: 'hana ...', level: 49, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3hIV0YkPTrBHgKdXi6BORSmqk_XPyORdZBBwBZfZOtA&s=10', hasCrown: false },
+              { rank: 4, username: '☆☆☆SU...', level: 17, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHnnCypKUMznh74khV1XWbnNDpNperfk9UnFvula4Dow&s=10', hasCrown: false },
+              { rank: 5, username: 'R', level: 15, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTegxD1iaRNE6Z9tx1axbRwpOlRdUyFnr7wbCDrVBOlHngz0k80Q58VXYo&s=10', hasCrown: false },
             ]}
           />
         </View>
@@ -72,11 +72,11 @@ export default function LevelScreen() {
 
           <TopRanking
             rankings={[
-              { rank: 1, username: 'host1', level: 60, avatar: 'https://via.placeholder.com/80', hasCrown: true },
-              { rank: 2, username: 'oRLin ...', level: 40, avatar: 'https://via.placeholder.com/80', hasCrown: false },
-              { rank: 3, username: 'cellcdc', level: 14, avatar: 'https://via.placeholder.com/80', hasCrown: false },
-              { rank: 4, username: 'user4', level: 5, avatar: 'https://via.placeholder.com/80', hasCrown: false },
-              { rank: 5, username: 'nacol', level: 3, avatar: 'https://via.placeholder.com/80', hasCrown: false },
+              { rank: 1, username: 'host1', level: 60, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTY-eH4olfUjGxRMrF18XTKa0fyx0dzjKN49w&s', hasCrown: true },
+              { rank: 2, username: 'jaka ...', level: 40, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpRhK8VZOU0BvuQ4shpI9LqPRuzhNDcSJ7gf4_PZvXk9u6cigT5OYakhjx&s=10', hasCrown: false },
+              { rank: 3, username: 'cellcdc', level: 14, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUtYTlcuxD8jslGmsmTGrNS3VxGs-xHMXn9TMEzk2KRTvb7l88IgQhi3M&s=10', hasCrown: false },
+              { rank: 4, username: 'user4', level: 5, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEcUPBRu0ie1w-Uk40prvdG7cWDtExGCbqOFh9uD5PuA65DqIHr43W6vfE&s=10', hasCrown: false },
+              { rank: 5, username: 'nacol', level: 3, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvmBI-FpC78Q4gxpOQosbtWSS4B0MtX68O8ZQJErP6zOglaA3a-TYKzFU&s=10', hasCrown: false },
             ]}
           />
         </View>
