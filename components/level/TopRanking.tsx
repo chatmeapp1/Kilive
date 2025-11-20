@@ -111,14 +111,16 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     paddingHorizontal: 16,
     gap: 12,
-    height: 200,
+    height: 220,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 20,
   },
 
   rank1Container: { flex: 1, alignItems: 'center' },
   rank2Container: { flex: 1, alignItems: 'center', marginTop: 30 },
   rank3Container: { flex: 1, alignItems: 'center', marginTop: 30 },
 
-  topRank: { transform: [{ scale: 1.1 }] },
+  topRank: { transform: [{ scale: 1.05 }] },
 
   rankItem: {
     alignItems: 'center',
@@ -149,63 +151,64 @@ const styles = StyleSheet.create({
 
   crown: {
     position: 'absolute',
-    top: -26,
+    top: -28,
     zIndex: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   crownEmoji: {
-    fontSize: 25,
+    fontSize: 28,
   },
 
   avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     backgroundColor: '#ddd',
     borderWidth: 3,
     borderColor: '#fff',
   },
 
-  /* ONLY ICON + NUMBER INSIDE ICON */
   levelBadge: {
     position: 'absolute',
     left: '50%',
-    bottom: -12,
-    transform: [{ translateX: -14 }],
-    width: 28,
-    height: 28,
+    bottom: -14,
+    transform: [{ translateX: -16 }],
+    width: 32,
+    height: 32,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   levelIconImage: {
-    width: 28,
-    height: 28,
+    width: 32,
+    height: 32,
     position: 'absolute',
     resizeMode: 'contain',
   },
 
   levelBadgeText: {
     color: '#fff',
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: 'bold',
     zIndex: 2,
   },
 
   username: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#333',
     fontWeight: '600',
-    maxWidth: 80,
+    maxWidth: 85,
     textAlign: 'center',
   },
 
   bottomRanks: {
     flexDirection: 'row',
-    backgroundColor: '#F9F9F9',
-    paddingVertical: 12,
+    backgroundColor: '#f5f5f5',
+    paddingVertical: 16,
+    marginTop: 8,
+    borderRadius: 20,
   },
 
   bottomRankRow: {
