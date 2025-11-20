@@ -105,10 +105,10 @@ export default function ProfileScreen() {
         <View style={styles.functionsGrid}>
           {[
             { icon: require('@/assets/function/ic_level.png'), label: 'Level', route: '/level' },
-            { icon: require('@/assets/function/ic_fans.png'), label: 'Fans', route: null },
-            { icon: require('@/assets/function/ic_income.png'), label: 'Income', route: null },
-            { icon: require('@/assets/function/ic_game.png'), label: 'Game', route: null },
-            { icon: require('@/assets/function/ic_bergabung.png'), label: 'Join', route: null },
+            { icon: require('@/assets/function/ic_fans.png'), label: 'Fans', route: '/fans' },
+            { icon: require('@/assets/function/ic_income.png'), label: 'Income', route: '/income' },
+            { icon: require('@/assets/function/ic_game.png'), label: 'Game', route: '/game' },
+            { icon: require('@/assets/function/ic_bergabung.png'), label: 'Join', route: '/join' },
           ].map((item, index) => (
             <TouchableOpacity 
               key={index} 
