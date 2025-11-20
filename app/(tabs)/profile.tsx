@@ -84,7 +84,10 @@ export default function ProfileScreen() {
         <View style={styles.balanceLeft}>
           <ThemedText style={styles.balanceText}>Saldo akun: 38</ThemedText>
         </View>
-        <TouchableOpacity style={styles.rechargeButton}>
+        <TouchableOpacity 
+          style={styles.rechargeButton}
+          onPress={() => router.push('/recharge')}
+        >
           <ThemedText style={styles.rechargeText}>recharge</ThemedText>
         </TouchableOpacity>
       </LinearGradient>
