@@ -4,7 +4,6 @@ import { StyleSheet, View, TextInput, TouchableOpacity, Image, StatusBar } from 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { LinearGradient } from 'expo-linear-gradient';
-import { SvgIcon } from '@/components/ui/SvgIcon';
 import { useRouter } from 'expo-router';
 
 export default function LiveScreen() {
@@ -48,8 +47,8 @@ export default function LiveScreen() {
         <View style={styles.inviteSection}>
           <ThemedText style={styles.inviteText}>Invite friends to join in</ThemedText>
           <View style={styles.socialIcons}>
-            <IconSymbol name="logo.twitter" size={24} color="#fff" />
-            <IconSymbol name="logo.facebook" size={24} color="#fff" />
+            <View />
+            <View />
           </View>
         </View>
       </View>
@@ -69,12 +68,12 @@ export default function LiveScreen() {
 
         <View style={styles.bottomControls}>
           <TouchableOpacity style={styles.controlButton}>
-            <IconSymbol name="sparkles" size={24} color="#fff" />
+            <View />
             <ThemedText style={styles.controlText}>Beauty</ThemedText>
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.controlButton}>
-            <IconSymbol name="camera.rotate" size={24} color="#fff" />
+            <View />
             <ThemedText style={styles.controlText}>Reverse</ThemedText>
           </TouchableOpacity>
         </View>

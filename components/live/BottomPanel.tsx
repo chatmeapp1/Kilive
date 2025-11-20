@@ -13,7 +13,6 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SvgIcon } from '@/components/ui/SvgIcon';
 
 export default function BottomPanel() {
   const insets = useSafeAreaInsets();
@@ -76,7 +75,7 @@ export default function BottomPanel() {
               Keyboard.dismiss();
             }}
           >
-            <IconSymbol name="paperplane.fill" size={20} color="#fff" />
+            <View />
           </TouchableOpacity>
 
         </Animated.View>
@@ -98,27 +97,27 @@ export default function BottomPanel() {
               placeholderTextColor="#ccc"
               style={styles.inputBubbleText}
             />
-            <IconSymbol name="line.3.horizontal" size={18} color="#ccc" />
+            <View />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.iconBtn}>
-            <IconSymbol name="message.fill" size={22} color="#fff" />
+            <View />
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.iconBtn, styles.linkBtn]}>
-            <IconSymbol name="link" size={22} color="#fff" />
+            <View />
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.iconBtn, styles.gameBtn]}>
-            <IconSymbol name="gamecontroller.fill" size={22} color="#fff" />
+            <View />
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.iconBtn, styles.giftBtn]}>
-            <IconSymbol name="gift.fill" size={22} color="#fff" />
+            <View />
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.iconBtn, styles.moreBtn]}>
-            <IconSymbol name="ellipsis" size={20} color="#fff" />
+            <View />
           </TouchableOpacity>
         </View>
       )}

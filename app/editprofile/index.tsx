@@ -24,18 +24,18 @@ export default function EditProfileScreen() {
           colors={['#A8FF78', '#78FFD6']}
           style={styles.header}
         >
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.backButton}
             onPress={() => router.back()}
           >
-            <IconSymbol name="chevron.left" size={24} color="#000" />
+            <View />
           </TouchableOpacity>
 
           <ThemedText style={styles.headerTitle}>Personal information</ThemedText>
         </LinearGradient>
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          
+
           {/* Profile Image */}
           <ProfileImageSection />
 

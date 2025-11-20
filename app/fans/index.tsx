@@ -23,7 +23,7 @@ export default function FansScreen() {
       />
 
       <View style={styles.container}>
-        
+
         {/* Header dengan gradient */}
         <LinearGradient
           colors={['#A8FF78', '#78FFD6']}
@@ -31,7 +31,7 @@ export default function FansScreen() {
         >
           <View style={styles.headerContent}>
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-              <IconSymbol name="chevron.left" size={24} color="#000" />
+              <View />
             </TouchableOpacity>
 
             <ThemedText style={styles.headerTitle}>Fans Ranking</ThemedText>

@@ -2,7 +2,6 @@
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface ProfileFieldItemProps {
   label: string;
@@ -18,7 +17,7 @@ export default function ProfileFieldItem({ label, value, onPress }: ProfileField
       </View>
       <View style={styles.rightSection}>
         <ThemedText style={styles.value}>{value}</ThemedText>
-        <IconSymbol name="chevron.right" size={20} color="#999" />
+        <View />
       </View>
     </TouchableOpacity>
   );

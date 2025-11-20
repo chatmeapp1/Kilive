@@ -25,7 +25,7 @@ export default function GameScreen() {
         >
           <View style={styles.headerContent}>
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-              <IconSymbol name="chevron.left" size={24} color="#000" />
+              <View />
             </TouchableOpacity>
 
             <ThemedText style={styles.headerTitle}>Game Center</ThemedText>

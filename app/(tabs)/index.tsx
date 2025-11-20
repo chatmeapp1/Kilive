@@ -39,7 +39,7 @@ export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      
+
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
@@ -47,7 +47,7 @@ export default function HomeScreen() {
         </View>
         <View style={styles.headerRight}>
           <TouchableOpacity>
-            <IconSymbol name="magnifyingglass" size={24} color="#FF6B6B" />
+            <View />
           </TouchableOpacity>
         </View>
       </View>
@@ -71,9 +71,9 @@ export default function HomeScreen() {
             {activeTab === index && <View style={styles.activeTabIndicator} />}
           </TouchableOpacity>
         ))}
-        
+
         <TouchableOpacity style={styles.giftButton}>
-          <IconSymbol name="gift.fill" size={24} color="#FF6B6B" />
+          <View />
         </TouchableOpacity>
       </View>
 
@@ -100,7 +100,7 @@ export default function HomeScreen() {
                     <View style={styles.hostInfo}>
                       <ThemedText style={styles.hostName}>{host.name}</ThemedText>
                       <View style={styles.viewersBadge}>
-                        <IconSymbol name="eye.fill" size={12} color="#fff" />
+                        <View />
                         <ThemedText style={styles.viewersText}>{host.viewers}</ThemedText>
                       </View>
                     </View>
@@ -135,7 +135,7 @@ export default function HomeScreen() {
                     <View style={styles.hostInfo}>
                       <ThemedText style={styles.hostName}>{host.name}</ThemedText>
                       <View style={styles.viewersBadge}>
-                        <IconSymbol name="eye.fill" size={12} color="#fff" />
+                        <View />
                         <ThemedText style={styles.viewersText}>{host.viewers}</ThemedText>
                       </View>
                     </View>
