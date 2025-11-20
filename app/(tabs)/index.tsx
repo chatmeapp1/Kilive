@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 12,
-    background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   hostInfo: {
     flexDirection: 'row',
