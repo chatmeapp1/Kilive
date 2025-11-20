@@ -172,17 +172,17 @@ const styles = StyleSheet.create({
   levelBadge: {
     position: 'absolute',
     left: '50%',
-    bottom: -14,
-    transform: [{ translateX: -14 }],
-    width: 28,
-    height: 28,
+    bottom: -10,
+    transform: [{ translateX: -10 }],
+    width: 50,
+    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   levelIconImage: {
-    width: 28,
-    height: 28,
+    width: 50,
+    height: 50,
     position: 'absolute',
     resizeMode: 'contain',
   },
