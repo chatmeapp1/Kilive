@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 
 interface LiveActionsHostProps {
   onSwitchCamera?: () => void;
@@ -28,12 +28,12 @@ export default function LiveActionsHost({
 
       {/* Switch Camera */}
       <TouchableOpacity style={styles.button} onPress={onSwitchCamera}>
-        <IconSymbol name="camera.rotate" size={22} color="#fff" />
+        <SvgIcon name="camera-switch" size={22} color="#fff" />
       </TouchableOpacity>
 
       {/* Beauty */}
       <TouchableOpacity style={styles.button} onPress={onToggleBeauty}>
-        <IconSymbol name="sparkles" size={22} color="#fff" />
+        <SvgIcon name="beauty" size={22} color="#fff" />
       </TouchableOpacity>
 
       {/* Flash */}
@@ -41,8 +41,8 @@ export default function LiveActionsHost({
         style={[styles.button, isFlashOn && styles.buttonActive]}
         onPress={onToggleFlash}
       >
-        <IconSymbol
-          name={isFlashOn ? "flash.on" : "flash.off"}
+        <SvgIcon
+          name={isFlashOn ? "flash" : "flash-off"}
           size={22}
           color="#fff"
         />
@@ -53,8 +53,8 @@ export default function LiveActionsHost({
         style={[styles.button, isMicMuted && styles.buttonMuted]}
         onPress={onToggleMic}
       >
-        <IconSymbol
-          name={isMicMuted ? "mic.slash" : "mic"}
+        <SvgIcon
+          name={isMicMuted ? "mic-off" : "mic"}
           size={22}
           color="#fff"
         />
@@ -62,12 +62,12 @@ export default function LiveActionsHost({
 
       {/* Invite Co-host */}
       <TouchableOpacity style={styles.button} onPress={onInviteCoHost}>
-        <IconSymbol name="person.add" size={22} color="#fff" />
+        <SvgIcon name="person-add" size={22} color="#fff" />
       </TouchableOpacity>
 
       {/* End Live */}
       <TouchableOpacity style={styles.endButton} onPress={onEndLive}>
-        <IconSymbol name="xmark" size={26} color="#fff" />
+        <SvgIcon name="close" size={26} color="#fff" />
       </TouchableOpacity>
 
     </View>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 
 interface LiveActionsCoHostProps {
   onSwitchCamera?: () => void;
@@ -20,7 +20,7 @@ export default function LiveActionsCoHost({
 
       {/* Switch Camera */}
       <TouchableOpacity style={styles.button} onPress={onSwitchCamera}>
-        <IconSymbol name="camera.rotate" size={20} color="#fff" />
+        <SvgIcon name="camera-switch" size={20} color="#fff" />
       </TouchableOpacity>
 
       {/* Mic On/Off */}
@@ -28,8 +28,8 @@ export default function LiveActionsCoHost({
         style={[styles.button, isMicMuted && styles.buttonMuted]}
         onPress={onToggleMic}
       >
-        <IconSymbol
-          name={isMicMuted ? "mic.slash" : "mic"}
+        <SvgIcon
+          name={isMicMuted ? "mic-off" : "mic"}
           size={20}
           color="#fff"
         />
@@ -37,7 +37,7 @@ export default function LiveActionsCoHost({
 
       {/* Leave Seat */}
       <TouchableOpacity style={styles.leaveButton} onPress={onLeave}>
-        <IconSymbol name="xmark" size={22} color="#fff" />
+        <SvgIcon name="close" size={22} color="#fff" />
       </TouchableOpacity>
 
     </View>

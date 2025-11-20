@@ -2,7 +2,7 @@
 import React from 'react';
 import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 
 export default function ProfileImageSection() {
   return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 
 interface LiveTopInfoProps {
   hostName: string;
@@ -50,7 +50,7 @@ export default function LiveTopInfo({
       {/* END LIVE BUTTON */}
       {onEndLive && (
         <TouchableOpacity style={styles.endButton} onPress={onEndLive}>
-          <IconSymbol name="xmark" size={20} color="#fff" />
+          <SvgIcon name="close" size={20} color="#fff" />
         </TouchableOpacity>
       )}
     </View>

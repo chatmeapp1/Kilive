@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 
 interface GiftButtonProps {
   onPress?: () => void;
@@ -10,7 +10,7 @@ interface GiftButtonProps {
 export default function GiftButton({ onPress, style }: GiftButtonProps) {
   return (
     <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
-      <IconSymbol name="gift" size={22} color="#FFD54F" />
+      <SvgIcon name="gift" size={22} color="#FFD54F" />
     </TouchableOpacity>
   );
 }

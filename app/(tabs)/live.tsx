@@ -4,7 +4,7 @@ import { StyleSheet, View, TextInput, TouchableOpacity, Image, StatusBar } from 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { LinearGradient } from 'expo-linear-gradient';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { useRouter } from 'expo-router';
 
 export default function LiveScreen() {
