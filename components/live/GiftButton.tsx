@@ -1,29 +1,33 @@
-
 import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface GiftButtonProps {
   onPress?: () => void;
+  style?: ViewStyle;
 }
 
-export default function GiftButton({ onPress }: GiftButtonProps) {
+export default function GiftButton({ onPress, style }: GiftButtonProps) {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
-      <IconSymbol name="gift.fill" size={28} color="#FFD700" />
+    <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
+      <Ionicons name="gift-outline" size={22} color="#FFD54F" />
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   button: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'rgba(255, 215, 0, 0.3)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,215,0,0.35)',
+    position: 'absolute',
+    right: 16,
+    bottom: 90,
+    zIndex: 60,
   },
 });

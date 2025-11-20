@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 interface TopBarProps {
@@ -25,12 +25,12 @@ export default function TopBar({
     <View style={styles.wrapper}>
       
       {/* BACK BUTTON */}
-      <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-        <IconSymbol name="chevron.left" size={22} color="#fff" />
+      <TouchableOpacity onPress={() => router.back()} style={styles.smallBtn}>
+        <Ionicons name="chevron-back" size={20} color="#fff" />
       </TouchableOpacity>
 
       {/* HOST INFO */}
-      <View style={styles.hostBox}>
+      <View style={styles.hostBubble}>
         <Image
           source={{ uri: avatar || 'https://via.placeholder.com/80' }}
           style={styles.avatar}
@@ -43,8 +43,8 @@ export default function TopBar({
 
         {/* FOLLOW BUTTON */}
         <TouchableOpacity style={styles.followBtn} onPress={onFollowPress}>
-          <IconSymbol
-            name={isFollowing ? 'checkmark' : 'plus'}
+          <Ionicons
+            name={isFollowing ? "checkmark" : "add"}
             size={16}
             color="#fff"
           />
@@ -52,8 +52,8 @@ export default function TopBar({
       </View>
 
       {/* CLOSE BUTTON */}
-      <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
-        <IconSymbol name="xmark" size={20} color="#fff" />
+      <TouchableOpacity onPress={() => router.back()} style={styles.smallBtn}>
+        <Ionicons name="close" size={20} color="#fff" />
       </TouchableOpacity>
 
     </View>
@@ -63,15 +63,16 @@ export default function TopBar({
 const styles = StyleSheet.create({
   wrapper: {
     position: 'absolute',
-    top: 48,
-    left: 10,
-    right: 10,
+    top: 44,
+    left: 12,
+    right: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    zIndex: 20,
+    zIndex: 50,
+    justifyContent: 'space-between',
   },
 
-  backBtn: {
+  smallBtn: {
     width: 34,
     height: 34,
     borderRadius: 17,
@@ -80,23 +81,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  hostBox: {
+  hostBubble: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.45)',
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 24,
-    marginLeft: 8,
-    flex: 1,
+    borderRadius: 22,
+    marginHorizontal: 8,
   },
 
   avatar: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    borderWidth: 2,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     borderColor: '#fff',
+    borderWidth: 1.2,
   },
 
   texts: {
@@ -106,14 +107,13 @@ const styles = StyleSheet.create({
 
   name: {
     color: '#fff',
-    fontWeight: 'bold',
     fontSize: 13,
+    fontWeight: '600',
   },
 
   id: {
-    color: '#fff',
+    color: 'rgba(255,255,255,0.75)',
     fontSize: 10,
-    opacity: 0.8,
   },
 
   followBtn: {
@@ -124,15 +124,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 6,
-  },
-
-  closeBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 8,
   },
 });

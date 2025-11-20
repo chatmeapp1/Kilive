@@ -1,63 +1,65 @@
-// Fallback untuk Android & Web menggunakan MaterialIcons
-// SF Symbols hanya ada di iOS, jadi mapping manual diperlukan.
-
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { SymbolViewProps } from 'expo-symbols';
 import { ComponentProps } from 'react';
-import { OpaqueColorValue, StyleProp, TextStyle } from 'react-native';
+import { StyleProp, TextStyle, OpaqueColorValue } from 'react-native';
 
-type IconMapping = Record<
-  SymbolViewProps['name'],
-  ComponentProps<typeof MaterialIcons>['name']
->;
-
-type IconSymbolName = keyof typeof MAPPING;
+type MaterialIconName = ComponentProps<typeof MaterialIcons>['name'];
 
 /**
- * Tambahkan mapping icon SF Symbols → Material Icons di sini.
- * Pastikan nama sesuai dengan daftar icon Material pada halaman Expo Icons.
+ * Mapping SF Symbols → Material Icons
+ * Tambahkan icon sesuai kebutuhan.
  */
 const MAPPING = {
-  'house.fill': 'home',
-  'paperplane.fill': 'send',
-  'chevron.left.forwardslash.chevron.right': 'code',
-  'chevron.right': 'chevron-right',
+  // NAVIGATION
   'chevron.left': 'chevron-left',
+  'chevron.right': 'chevron-right',
   'xmark': 'close',
   'plus': 'add',
   'checkmark': 'check',
-  'message.fill': 'message',
-  'link': 'link',
-  'gamecontroller.fill': 'sports-esports',
-  'ellipsis': 'more-horiz',
+
+  // CHAT + ACTIONS
+  'paperplane.fill': 'send',
   'gift.fill': 'card-giftcard',
+
+  // LIVE STREAMING
   'eye.fill': 'visibility',
+  'mic.fill': 'mic',
+  'mic.slash.fill': 'mic-off',
   'camera.rotate': 'flip-camera-android',
   'sparkles': 'auto-awesome',
-  'mic.fill': 'mic',
-} as IconMapping;
 
-/**
- * Komponen icon universal.
- * - iOS akan menggunakan expo-symbols (jika file IconSymbol.ios.tsx tersedia)
- * - Android & Web akan memakai MaterialIcons sebagai fallback
- */
+  // FLASH
+  'flash': 'flash-on',
+  'flash.off': 'flash-off',
+
+  // GAME
+  'gamecontroller.fill': 'sports-esports',
+
+  // MESSAGE
+  'message.fill': 'message',
+
+  // FALLBACK
+  'default': 'help-outline',
+} as const;
+
 export function IconSymbol({
   name,
   size = 24,
-  color,
+  color = '#fff',
   style,
 }: {
-  name: IconSymbolName;
+  name: keyof typeof MAPPING | string;
   size?: number;
-  color: string | OpaqueColorValue;
+  color?: string | OpaqueColorValue;
   style?: StyleProp<TextStyle>;
 }) {
+  // fallback jika name tidak ditemukan
+  const iconName = (MAPPING as any)[name] ?? MAPPING['default'];
+
   return (
     <MaterialIcons
-      color={color}
+      name={iconName as MaterialIconName}
       size={size}
-      name={MAPPING[name]}
+      color={color}
       style={style}
     />
   );

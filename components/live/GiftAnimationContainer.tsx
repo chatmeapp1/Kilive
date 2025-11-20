@@ -1,6 +1,5 @@
-
-import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, StyleSheet, Text, Animated } from 'react-native';
 
 interface GiftAnimation {
   id: string;
@@ -10,57 +9,107 @@ interface GiftAnimation {
   amount?: number;
 }
 
-interface GiftAnimationContainerProps {
+interface Props {
   gifts?: GiftAnimation[];
 }
 
-export default function GiftAnimationContainer({ gifts = [] }: GiftAnimationContainerProps) {
+export default function GiftAnimationContainer({ gifts = [] }: Props) {
   return (
     <View style={styles.container}>
       {gifts.map((gift) => (
-        <View key={gift.id} style={styles.giftItem}>
-          <Text style={styles.giftIcon}>{gift.giftIcon}</Text>
-          <View style={styles.giftInfo}>
-            <Text style={styles.username}>{gift.username}</Text>
-            <Text style={styles.giftText}>
-              sent {gift.giftName}
-              {gift.amount && ` x${gift.amount}`}
-            </Text>
-          </View>
-        </View>
+        <AnimatedGiftItem key={gift.id} gift={gift} />
       ))}
     </View>
+  );
+}
+
+function AnimatedGiftItem({ gift }: { gift: GiftAnimation }) {
+  const slideAnim = useRef(new Animated.Value(-50)).current;
+  const opacityAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // Slide in + fade in
+    Animated.parallel([
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Slide out after 2.5s
+    setTimeout(() => {
+      Animated.parallel([
+        Animated.timing(slideAnim, {
+          toValue: -50,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityAnim, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }, 2500);
+  }, []);
+
+  return (
+    <Animated.View
+      style={[
+        styles.giftItem,
+        {
+          opacity: opacityAnim,
+          transform: [{ translateX: slideAnim }],
+        },
+      ]}
+    >
+      <Text style={styles.giftIcon}>{gift.giftIcon}</Text>
+
+      <View style={styles.textWrapper}>
+        <Text style={styles.username}>{gift.username}</Text>
+        <Text style={styles.giftText}>
+          sent {gift.giftName}
+          {gift.amount ? ` ×${gift.amount}` : ''}
+        </Text>
+      </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 120,
+    bottom: 160, // tepat di atas chat list
     left: 12,
-    gap: 8,
+    gap: 6,
+    zIndex: 40,
   },
   giftItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 215, 0, 0.15)',
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 215, 0, 0.3)',
-    gap: 10,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 14,
+    marginBottom: 4,
   },
   giftIcon: {
-    fontSize: 32,
+    fontSize: 20,
+    marginRight: 6,
   },
-  giftInfo: {
-    flex: 1,
+  textWrapper: {
+    flexDirection: 'column',
   },
   username: {
-    color: '#FFD700',
+    color: '#FFD54F',
+    fontWeight: '600',
     fontSize: 12,
-    fontWeight: 'bold',
   },
   giftText: {
     color: '#fff',

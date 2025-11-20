@@ -17,8 +17,7 @@ export default function BroadcastScreen() {
   const [isMicMuted, setIsMicMuted] = useState(false);
   const [isFlashOn, setIsFlashOn] = useState(false);
 
-  // Co-host state
-  const [coHosts, setCoHosts] = useState<Array<{ id: string; username: string }>>([]);
+  const [coHosts, setCoHosts] = useState([]);
 
   const messages = [
     { id: '1', username: 'user1', level: 22, message: 'Hello host!' },
@@ -30,70 +29,65 @@ export default function BroadcastScreen() {
     { id: '1', username: 'richUser', giftName: 'Rose', giftIcon: '🌹', amount: 5 },
   ];
 
-  const handleEndLive = () => {
-    router.back();
-  };
-
-  const handleSendMessage = (message: string) => {
-    console.log('Send message:', message);
-  };
+  const handleEndLive = () => router.back();
 
   const renderVideoLayout = () => {
     if (coHosts.length === 0) {
-      // Full screen host only
       return (
         <View style={styles.videoFullScreen}>
           <LiveVideoBox username="Host" isHost={true} isMuted={isMicMuted} />
         </View>
       );
-    } else if (coHosts.length === 1) {
-      // 2 grid layout
+    }
+
+    if (coHosts.length === 1) {
       return (
-        <View style={styles.videoGrid2}>
+        <View style={styles.gridRow}>
           <LiveVideoBox username="Host" isHost={true} isMuted={isMicMuted} />
           <LiveVideoBox username={coHosts[0].username} isMuted={false} />
         </View>
       );
-    } else if (coHosts.length === 2) {
-      // 3 grid layout
+    }
+
+    if (coHosts.length === 2) {
       return (
-        <View style={styles.videoGrid3}>
-          <View style={styles.videoRow}>
-            <LiveVideoBox username="Host" isHost={true} isMuted={isMicMuted} />
+        <View style={styles.grid2Rows}>
+          <View style={styles.gridRow}>
+            <LiveVideoBox username="Host" isHost={true} />
             <LiveVideoBox username={coHosts[0].username} />
           </View>
           <LiveVideoBox username={coHosts[1].username} />
         </View>
       );
-    } else {
-      // 4 grid layout
-      return (
-        <View style={styles.videoGrid4}>
-          <View style={styles.videoRow}>
-            <LiveVideoBox username="Host" isHost={true} isMuted={isMicMuted} />
-            <LiveVideoBox username={coHosts[0].username} />
-          </View>
-          <View style={styles.videoRow}>
-            <LiveVideoBox username={coHosts[1].username} />
-            <LiveVideoBox username={coHosts[2].username} />
-          </View>
-        </View>
-      );
     }
+
+    return (
+      <View style={styles.grid2Rows}>
+        <View style={styles.gridRow}>
+          <LiveVideoBox username="Host" isHost={true} />
+          <LiveVideoBox username={coHosts[0].username} />
+        </View>
+        <View style={styles.gridRow}>
+          <LiveVideoBox username={coHosts[1].username} />
+          <LiveVideoBox username={coHosts[2].username} />
+        </View>
+      </View>
+    );
   };
 
   return (
     <ThemedView style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      {/* Video Background */}
+      {/* VIDEO BACKGROUND */}
       <View style={styles.videoBackground}>
         {renderVideoLayout()}
       </View>
 
-      {/* UI Overlay */}
-      <View style={styles.overlay}>
-        {/* Top Info */}
+      {/* ALL UI OVERLAY ABSOLUTE */}
+      <View style={StyleSheet.absoluteFill}>
+        
+        {/* TOP INFO */}
         <LiveTopInfo
           hostName="My Channel"
           viewerCount={viewers}
@@ -101,28 +95,28 @@ export default function BroadcastScreen() {
           onEndLive={handleEndLive}
         />
 
-        {/* Right Actions */}
+        {/* RIGHT ACTION BUTTONS */}
         <LiveActionsHost
-          onSwitchCamera={() => console.log('Switch camera')}
-          onToggleBeauty={() => console.log('Toggle beauty')}
+          onSwitchCamera={() => {}}
+          onToggleBeauty={() => {}}
           onToggleFlash={() => setIsFlashOn(!isFlashOn)}
           onToggleMic={() => setIsMicMuted(!isMicMuted)}
-          onInviteCoHost={() => console.log('Invite co-host')}
+          onInviteCoHost={() => {}}
           onEndLive={handleEndLive}
           isMicMuted={isMicMuted}
           isFlashOn={isFlashOn}
         />
 
-        {/* Gift Animations */}
+        {/* GIFT ANIMATIONS */}
         <GiftAnimationContainer gifts={gifts} />
 
-        {/* Chat List */}
+        {/* CHAT LIST */}
         <LiveChatList messages={messages} />
 
-        {/* Chat Input */}
+        {/* CHAT INPUT */}
         <LiveChatInput
-          onSend={handleSendMessage}
-          onGiftPress={() => console.log('Open gift panel')}
+          onSend={(msg) => console.log(msg)}
+          onGiftPress={() => console.log('Open gifts')}
         />
       </View>
     </ThemedView>
@@ -134,31 +128,25 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
   },
+
   videoBackground: {
     position: 'absolute',
     top: 0,
+    bottom: 0,
     left: 0,
     right: 0,
-    bottom: 0,
   },
+
   videoFullScreen: {
     flex: 1,
   },
-  videoGrid2: {
-    flex: 1,
+
+  gridRow: {
     flexDirection: 'row',
-  },
-  videoGrid3: {
     flex: 1,
   },
-  videoGrid4: {
-    flex: 1,
-  },
-  videoRow: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  overlay: {
+
+  grid2Rows: {
     flex: 1,
   },
 });

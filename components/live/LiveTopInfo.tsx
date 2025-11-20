@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { View, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Ionicons } from '@expo/vector-icons';
 
 interface LiveTopInfoProps {
   hostName: string;
@@ -13,33 +12,44 @@ interface LiveTopInfoProps {
 
 export default function LiveTopInfo({ 
   hostName, 
-  hostAvatar, 
+  hostAvatar,
   viewerCount, 
   duration,
   onEndLive 
 }: LiveTopInfoProps) {
   return (
     <View style={styles.container}>
-      <View style={styles.leftSection}>
-        <View style={styles.hostInfo}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>👤</Text>
+
+      {/* LEFT SIDE */}
+      <View style={styles.leftWrapper}>
+
+        {/* HOST INFO */}
+        <View style={styles.hostPill}>
+          <View style={styles.avatarBox}>
+            {hostAvatar ? (
+              <Image source={{ uri: hostAvatar }} style={styles.avatarImg} />
+            ) : (
+              <Ionicons name="person-circle" size={28} color="#fff" />
+            )}
           </View>
+
           <View>
             <Text style={styles.hostName}>{hostName}</Text>
             <Text style={styles.duration}>{duration}</Text>
           </View>
         </View>
-        
+
+        {/* VIEWER COUNT */}
         <View style={styles.viewerBadge}>
-          <IconSymbol name="eye.fill" size={14} color="#fff" />
+          <Ionicons name="eye" size={14} color="#fff" />
           <Text style={styles.viewerCount}>{viewerCount}</Text>
         </View>
       </View>
 
+      {/* END LIVE BUTTON */}
       {onEndLive && (
         <TouchableOpacity style={styles.endButton} onPress={onEndLive}>
-          <IconSymbol name="xmark" size={18} color="#fff" />
+          <Ionicons name="close" size={20} color="#fff" />
         </TouchableOpacity>
       )}
     </View>
@@ -48,66 +58,80 @@ export default function LiveTopInfo({
 
 const styles = StyleSheet.create({
   container: {
+    position: 'absolute',
+    top: 44,
+    left: 16,
+    right: 16,
+    zIndex: 50,
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 50,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
+    alignItems: 'center',
   },
-  leftSection: {
+
+  leftWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 10,
   },
-  hostInfo: {
+
+  hostPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    paddingRight: 12,
-    paddingVertical: 4,
-    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 50,
     gap: 8,
   },
-  avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+
+  avatarBox: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#888',
   },
-  avatarText: {
-    fontSize: 18,
+
+  avatarImg: {
+    width: '100%',
+    height: '100%',
   },
+
   hostName: {
     color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 13,
+    fontWeight: '600',
   },
+
   duration: {
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: '#fff',
+    opacity: 0.8,
     fontSize: 11,
   },
+
   viewerBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 107, 107, 0.9)',
+    backgroundColor: 'rgba(255,77,77,0.9)',
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 14,
+    borderRadius: 20,
     gap: 4,
   },
+
   viewerCount: {
     color: '#fff',
-    fontSize: 13,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    fontSize: 12,
   },
+
   endButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#FF4444',
+    backgroundColor: '#FF4040',
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Ionicons } from '@expo/vector-icons';
 
 interface LiveActionsCoHostProps {
   onSwitchCamera?: () => void;
@@ -18,20 +17,29 @@ export default function LiveActionsCoHost({
 }: LiveActionsCoHostProps) {
   return (
     <View style={styles.container}>
+
+      {/* Switch Camera */}
       <TouchableOpacity style={styles.button} onPress={onSwitchCamera}>
-        <IconSymbol name="camera.rotate" size={24} color="#fff" />
+        <Ionicons name="camera-reverse-outline" size={20} color="#fff" />
       </TouchableOpacity>
 
-      <TouchableOpacity 
-        style={[styles.button, isMicMuted && styles.buttonMuted]} 
+      {/* Mic On/Off */}
+      <TouchableOpacity
+        style={[styles.button, isMicMuted && styles.buttonMuted]}
         onPress={onToggleMic}
       >
-        <IconSymbol name="mic.fill" size={24} color="#fff" />
+        <Ionicons
+          name={isMicMuted ? "mic-off" : "mic"}
+          size={20}
+          color="#fff"
+        />
       </TouchableOpacity>
 
+      {/* Leave Seat */}
       <TouchableOpacity style={styles.leaveButton} onPress={onLeave}>
-        <IconSymbol name="xmark" size={24} color="#fff" />
+        <Ionicons name="close" size={22} color="#fff" />
       </TouchableOpacity>
+
     </View>
   );
 }
@@ -40,27 +48,32 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     right: 16,
-    top: 120,
+    top: 150,
+    alignItems: 'center',
     gap: 12,
+    zIndex: 50,
   },
+
   button: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   buttonMuted: {
-    backgroundColor: 'rgba(255, 68, 68, 0.6)',
+    backgroundColor: 'rgba(255,60,60,0.6)',
   },
+
   leaveButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#FF4444',
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: '#FF4040',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 4,
   },
 });

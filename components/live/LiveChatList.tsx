@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 
 interface ChatMessage {
@@ -14,18 +13,29 @@ interface LiveChatListProps {
 }
 
 export default function LiveChatList({ messages }: LiveChatListProps) {
+  const scrollRef = useRef<ScrollView>(null);
+
+  // auto scroll to bottom setiap ada pesan baru
+  useEffect(() => {
+    scrollRef.current?.scrollToEnd({ animated: true });
+  }, [messages]);
+
   return (
-    <ScrollView 
+    <ScrollView
+      ref={scrollRef}
       style={styles.container}
       showsVerticalScrollIndicator={false}
     >
       {messages.map((msg) => (
-        <View key={msg.id} style={styles.messageItem}>
-          <Text style={styles.username}>
-            {msg.level && <Text style={styles.level}>[Lv.{msg.level}] </Text>}
+        <View key={msg.id} style={styles.chatBubble}>
+          <Text style={styles.username} numberOfLines={1}>
+            {msg.level && (
+              <Text style={styles.levelBadge}>Lv.{msg.level} </Text>
+            )}
             {msg.username}:
           </Text>
-          <Text style={styles.messageText}> {msg.message}</Text>
+
+          <Text style={styles.message}>{msg.message}</Text>
         </View>
       ))}
     </ScrollView>
@@ -35,34 +45,40 @@ export default function LiveChatList({ messages }: LiveChatListProps) {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 80,
-    left: 0,
-    right: 70,
-    maxHeight: 250,
-    paddingHorizontal: 12,
+    bottom: 90,
+    left: 12,
+    right: 80,
+    maxHeight: 240,
   },
-  messageItem: {
+
+  chatBubble: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 16,
-    marginBottom: 8,
     alignSelf: 'flex-start',
+    backgroundColor: 'rgba(0,0,0,0.35)', // lebih ringan dari sebelumnya
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
+    marginBottom: 6,
     maxWidth: '85%',
   },
+
   username: {
-    color: '#FFD700',
-    fontSize: 13,
-    fontWeight: 'bold',
+    color: '#FFD54F',
+    fontWeight: '600',
+    fontSize: 12,
   },
-  level: {
-    color: '#4CAF50',
+
+  levelBadge: {
+    color: '#4ADE80', // hijau soft
+    fontWeight: '700',
     fontSize: 11,
   },
-  messageText: {
+
+  message: {
     color: '#fff',
-    fontSize: 13,
+    fontSize: 12,
+    marginLeft: 4,
+    flexShrink: 1,
   },
 });

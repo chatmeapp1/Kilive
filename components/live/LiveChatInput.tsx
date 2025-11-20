@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Ionicons } from '@expo/vector-icons';
 
 interface LiveChatInputProps {
   onSend?: (message: string) => void;
@@ -20,22 +19,27 @@ export default function LiveChatInput({ onSend, onGiftPress }: LiveChatInputProp
 
   return (
     <View style={styles.container}>
+
+      {/* GIFT BUTTON */}
       <TouchableOpacity style={styles.giftButton} onPress={onGiftPress}>
-        <IconSymbol name="gift.fill" size={24} color="#FFD700" />
+        <Ionicons name="gift-outline" size={22} color="#FFD54F" />
       </TouchableOpacity>
 
+      {/* INPUT */}
       <TextInput
         style={styles.input}
         placeholder="Say something..."
-        placeholderTextColor="#999"
+        placeholderTextColor="rgba(255,255,255,0.6)"
         value={message}
         onChangeText={setMessage}
         onSubmitEditing={handleSend}
       />
 
+      {/* SEND BUTTON */}
       <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-        <IconSymbol name="paperplane.fill" size={20} color="#fff" />
+        <Ionicons name="send" size={18} color="#fff" />
       </TouchableOpacity>
+
     </View>
   );
 }
@@ -48,29 +52,32 @@ const styles = StyleSheet.create({
     right: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
   },
+
   giftButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   input: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 24,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     color: '#fff',
     fontSize: 14,
   },
+
   sendButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     backgroundColor: '#4CAF50',
     justifyContent: 'center',
     alignItems: 'center',

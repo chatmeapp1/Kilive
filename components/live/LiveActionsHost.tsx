@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Ionicons } from '@expo/vector-icons';
 
 interface LiveActionsHostProps {
   onSwitchCamera?: () => void;
@@ -26,35 +25,51 @@ export default function LiveActionsHost({
 }: LiveActionsHostProps) {
   return (
     <View style={styles.container}>
+
+      {/* Switch Camera */}
       <TouchableOpacity style={styles.button} onPress={onSwitchCamera}>
-        <IconSymbol name="camera.rotate" size={24} color="#fff" />
+        <Ionicons name="camera-reverse-outline" size={22} color="#fff" />
       </TouchableOpacity>
 
+      {/* Beauty */}
       <TouchableOpacity style={styles.button} onPress={onToggleBeauty}>
-        <IconSymbol name="sparkles" size={24} color="#fff" />
+        <Ionicons name="sparkles-outline" size={22} color="#fff" />
       </TouchableOpacity>
 
-      <TouchableOpacity 
-        style={[styles.button, isFlashOn && styles.buttonActive]} 
+      {/* Flash */}
+      <TouchableOpacity
+        style={[styles.button, isFlashOn && styles.buttonActive]}
         onPress={onToggleFlash}
       >
-        <IconSymbol name="sparkles" size={24} color="#fff" />
+        <Ionicons
+          name={isFlashOn ? "flash" : "flash-outline"}
+          size={22}
+          color="#fff"
+        />
       </TouchableOpacity>
 
-      <TouchableOpacity 
-        style={[styles.button, isMicMuted && styles.buttonMuted]} 
+      {/* Mic */}
+      <TouchableOpacity
+        style={[styles.button, isMicMuted && styles.buttonMuted]}
         onPress={onToggleMic}
       >
-        <IconSymbol name="mic.fill" size={24} color="#fff" />
+        <Ionicons
+          name={isMicMuted ? "mic-off" : "mic"}
+          size={22}
+          color="#fff"
+        />
       </TouchableOpacity>
 
+      {/* Invite Co-host */}
       <TouchableOpacity style={styles.button} onPress={onInviteCoHost}>
-        <IconSymbol name="plus" size={24} color="#fff" />
+        <Ionicons name="person-add-outline" size={22} color="#fff" />
       </TouchableOpacity>
 
+      {/* End Live */}
       <TouchableOpacity style={styles.endButton} onPress={onEndLive}>
-        <IconSymbol name="xmark" size={24} color="#fff" />
+        <Ionicons name="close" size={26} color="#fff" />
       </TouchableOpacity>
+
     </View>
   );
 }
@@ -63,28 +78,34 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     right: 16,
-    top: 120,
-    gap: 12,
+    top: 140,
+    alignItems: 'center',
+    gap: 14,
+    zIndex: 50,
   },
+
   button: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   buttonActive: {
-    backgroundColor: 'rgba(255, 215, 0, 0.6)',
+    backgroundColor: 'rgba(255,215,0,0.6)', // gold-yellow
   },
+
   buttonMuted: {
-    backgroundColor: 'rgba(255, 68, 68, 0.6)',
+    backgroundColor: 'rgba(255,60,60,0.6)', // red
   },
+
   endButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#FF4444',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#FF4040',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 8,
