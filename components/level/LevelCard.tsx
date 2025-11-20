@@ -8,7 +8,6 @@ interface LevelCardProps {
   level: number;
   experience: number;
   percentage: number;
-  type: 'user' | 'host';
 }
 
 const getLevelIcon = (level: number) => {
@@ -28,7 +27,7 @@ const getLevelIcon = (level: number) => {
   return require('@/assets/level/ic_blue.png');
 };
 
-export default function LevelCard({ level, experience, percentage, type }: LevelCardProps) {
+export default function LevelCard({ level, experience, percentage }: LevelCardProps) {
   const levelIcon = getLevelIcon(level);
 
   return (

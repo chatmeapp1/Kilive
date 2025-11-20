@@ -9,12 +9,20 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
+localPort = 5001
+externalPort = 3002
+
+[[ports]]
 localPort = 8081
 externalPort = 80
 
 [[ports]]
 localPort = 8082
 externalPort = 3000
+
+[[ports]]
+localPort = 37165
+externalPort = 3001
 
 [workflows]
 runButton = "Project"
@@ -68,24 +76,8 @@ author = "agent"
 task = "workflow.run"
 args = "Start Expo Web"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Start Expo"
-
 [[workflows.workflow]]
 name = "Start Expo Web"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npx expo start --web --port 5000"
-waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
-
-[[workflows.workflow]]
-name = "Start Expo"
 author = "agent"
 
 [[workflows.workflow.tasks]]

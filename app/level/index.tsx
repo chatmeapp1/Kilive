@@ -2,17 +2,12 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, StatusBar } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import LevelCard from '@/components/level/LevelCard';
 import HostCard from '@/components/level/HostCard';
 import TopRanking from '@/components/level/TopRanking';
 
 export default function LevelScreen() {
-  const router = useRouter();
-
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
@@ -23,7 +18,6 @@ export default function LevelScreen() {
           level={31}
           experience={4137700}
           percentage={37}
-          type="user"
         />
 
         {/* User Host Card */}
