@@ -17,17 +17,17 @@ interface TopRankingProps {
 
 const getLevelIcon = (level: number) => {
   if (level >= 1 && level <= 9) {
-    return require('../../assets/level/ic_blue.png');
+    return require('@/assets/level/ic_blue.png');
   } else if (level >= 10 && level <= 19) {
-    return require('../../assets/level/ic_green.png');
+    return require('@/assets/level/ic_green.png');
   } else if (level >= 20 && level <= 29) {
-    return require('../../assets/level/ic_yellow.png');
+    return require('@/assets/level/ic_yellow.png');
   } else if (level >= 30 && level <= 49) {
-    return require('../../assets/level/ic_orange.png');
+    return require('@/assets/level/ic_orange.png');
   } else if (level >= 50 && level <= 75) {
-    return require('../../assets/level/ic_red.png');
+    return require('@/assets/level/ic_red.png');
   } else if (level >= 76 && level <= 100) {
-    return require('../../assets/level/ic_black.png');
+    return require('@/assets/level/ic_black.png');
   }
   return null;
 };
@@ -173,16 +173,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: '50%',
     bottom: -10,
-    transform: [{ translateX: -10 }],
-    width: 50,
-    height: 50,
+    transform: [{ translateX: -14 }],
+    width: 28,
+    height: 30,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   levelIconImage: {
-    width: 50,
-    height: 50,
+    width: 28,
+    height: 28,
     position: 'absolute',
     resizeMode: 'contain',
   },
