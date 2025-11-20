@@ -1,32 +1,28 @@
-
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { useRouter } from 'expo-router';
+import { StyleSheet, View, Image, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 
 export default function ProfileScreen() {
   const router = useRouter();
-
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Header with Profile Info */}
+    <ScrollView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      
+      {/* Header */}
       <LinearGradient
         colors={['#A8FF78', '#78FFD6']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
         style={styles.header}
       >
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => router.push('/editprofile')}
-        >
+        <TouchableOpacity style={styles.editButton}>
           <ThemedText style={styles.editButtonText}>Edit</ThemedText>
         </TouchableOpacity>
 
         <View style={styles.profileImageContainer}>
           <Image
-            source={{ uri: 'https://via.placeholder.com/100' }}
+            source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBLG-OMXWXKkokkRiX_JmZmnX0ch8IUB3OR6K0HQ9qLA&s=10' }}
             style={styles.profileImage}
           />
         </View>
@@ -34,10 +30,7 @@ export default function ProfileScreen() {
         <View style={styles.userInfo}>
           <View style={styles.nameRow}>
             <ThemedText style={styles.username}>GOPAY</ThemedText>
-            <View style={styles.badges}>
-              <View style={styles.badge} />
-              <View style={styles.badge} />
-            </View>
+            <View style={styles.badges}></View>
           </View>
 
           <ThemedText style={styles.userId}>ID:703256893</ThemedText>
@@ -48,7 +41,9 @@ export default function ProfileScreen() {
               <ThemedText style={styles.statNumber}>100</ThemedText>
               <ThemedText style={styles.statLabel}>Follow</ThemedText>
             </View>
+
             <View style={styles.divider} />
+
             <View style={styles.statItem}>
               <ThemedText style={styles.statNumber}>0</ThemedText>
               <ThemedText style={styles.statLabel}>Fans</ThemedText>
@@ -61,36 +56,28 @@ export default function ProfileScreen() {
       <View style={styles.achievementRow}>
         <LinearGradient
           colors={['#FFB347', '#FF8C42']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
           style={styles.achievementButton}
         >
-          <View style={styles.achievementIcon} />
           <ThemedText style={styles.achievementText}>Nobel ›</ThemedText>
         </LinearGradient>
 
         <LinearGradient
           colors={['#B8A3FF', '#8B7FE8']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
           style={styles.achievementButton}
         >
-          <View style={styles.achievementIcon} />
           <ThemedText style={styles.achievementText}>Pretty ›</ThemedText>
         </LinearGradient>
       </View>
 
-      {/* Balance Card */}
+      {/* Balance */}
       <LinearGradient
         colors={['#4ADE80', '#22C55E']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
         style={styles.balanceCard}
       >
         <View style={styles.balanceLeft}>
-          <View style={styles.balanceIcon} />
           <ThemedText style={styles.balanceText}>Saldo akun: 38</ThemedText>
         </View>
+
         <TouchableOpacity style={styles.rechargeButton}>
           <ThemedText style={styles.rechargeText}>recharge</ThemedText>
         </TouchableOpacity>
@@ -99,7 +86,6 @@ export default function ProfileScreen() {
       {/* Common Functions */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <View style={styles.sectionIcon} />
           <ThemedText style={styles.sectionTitle}>Common functions</ThemedText>
         </View>
 
@@ -111,10 +97,10 @@ export default function ProfileScreen() {
             { icon: require('@/assets/function/ic_game.png'), label: 'Game', route: '/game' },
             { icon: require('@/assets/function/ic_bergabung.png'), label: 'Join', route: '/join' },
           ].map((item, index) => (
-            <TouchableOpacity
-              key={index}
+            <TouchableOpacity 
+              key={index} 
               style={styles.functionItem}
-              onPress={() => item.route && router.push(item.route)}
+              onPress={() => router.push(item.route)}
             >
               <View style={styles.functionIcon}>
                 <Image source={item.icon} style={styles.functionIconImage} />
@@ -125,14 +111,12 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      {/* Market Section */}
+      {/* Market – WITHOUT ICONSYMBOL */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <View style={styles.sectionIcon} />
           <ThemedText style={styles.sectionTitle}>Market</ThemedText>
-          <View style={{ marginLeft: 'auto' }} />
         </View>
-
+        
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.marketScroll}>
           {[
             { id: 1, image: require('@/assets/market/ic_market.png') },
@@ -154,10 +138,7 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
+  container: { flex: 1, backgroundColor: '#f5f5f5' },
   header: {
     padding: 20,
     paddingTop: 60,
@@ -173,14 +154,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
   },
-  editButtonText: {
-    color: '#000',
-    fontWeight: 'bold',
-  },
-  profileImageContainer: {
-    alignItems: 'center',
-    marginBottom: 16,
-  },
+  editButtonText: { color: '#000', fontWeight: 'bold' },
+  profileImageContainer: { alignItems: 'center', marginBottom: 16 },
   profileImage: {
     width: 100,
     height: 100,
@@ -188,87 +163,26 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: '#fff',
   },
-  userInfo: {
-    alignItems: 'center',
-  },
-  nameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 8,
-  },
-  username: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  badges: {
-    flexDirection: 'row',
-    gap: 4,
-  },
-  badge: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.5)',
-  },
-  userId: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 8,
-  },
-  bio: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 16,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 20,
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statNumber: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#666',
-  },
-  divider: {
-    width: 1,
-    height: 30,
-    backgroundColor: '#ccc',
-  },
-  achievementRow: {
-    flexDirection: 'row',
-    padding: 20,
-    gap: 12,
-  },
+  userInfo: { alignItems: 'center' },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
+  username: { fontSize: 24, fontWeight: 'bold', color: '#000' },
+  badges: { flexDirection: 'row', gap: 4 },
+  userId: { fontSize: 14, color: '#555', marginBottom: 8 },
+  bio: { fontSize: 12, color: '#666', marginBottom: 16 },
+  statsRow: { flexDirection: 'row', alignItems: 'center', gap: 20 },
+  statItem: { alignItems: 'center' },
+  statNumber: { fontSize: 20, fontWeight: 'bold', color: '#000' },
+  statLabel: { fontSize: 12, color: '#666' },
+  divider: { width: 1, height: 30, backgroundColor: '#ccc' },
+  achievementRow: { flexDirection: 'row', padding: 20, gap: 12 },
   achievementButton: {
     flex: 1,
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
     borderRadius: 16,
-    gap: 8,
   },
-  achievementIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-  },
-  achievementText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
+  achievementText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   balanceCard: {
     marginHorizontal: 20,
     padding: 16,
@@ -278,32 +192,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  balanceLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  balanceIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-  },
-  balanceText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
+  balanceLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  balanceText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   rechargeButton: {
     backgroundColor: '#fff',
     paddingHorizontal: 20,
     paddingVertical: 8,
     borderRadius: 20,
   },
-  rechargeText: {
-    color: '#22C55E',
-    fontWeight: 'bold',
-  },
+  rechargeText: { color: '#22C55E', fontWeight: 'bold' },
   section: {
     backgroundColor: '#fff',
     marginHorizontal: 20,
@@ -311,33 +208,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 16,
   },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 16,
-  },
-  sectionIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: '#f0f0f0',
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  functionsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 16,
-  },
-  functionItem: {
-    width: '18%',
-    alignItems: 'center',
-    gap: 8,
-  },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
+  sectionTitle: { fontSize: 16, fontWeight: 'bold', color: '#000' },
+  functionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 16 },
+  functionItem: { width: '18%', alignItems: 'center', gap: 8 },
   functionIcon: {
     width: 60,
     height: 60,
@@ -346,27 +220,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  functionIconImage: {
-    width: 40,
-    height: 40,
-    resizeMode: 'contain',
-  },
-  functionLabel: {
-    fontSize: 12,
-    color: '#666',
-    textAlign: 'center',
-  },
-  marketScroll: {
-    marginHorizontal: -16,
-    paddingHorizontal: 16,
-  },
-  marketItem: {
-    marginRight: 12,
-  },
-  marketImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 12,
-    backgroundColor: '#f0f0f0',
-  },
+  functionIconImage: { width: 40, height: 40, resizeMode: 'contain' },
+  functionLabel: { fontSize: 12, color: '#666', textAlign: 'center' },
+  marketScroll: { marginHorizontal: -16, paddingHorizontal: 16 },
+  marketItem: { marginRight: 12 },
+  marketImage: { width: 80, height: 80, borderRadius: 12, backgroundColor: '#f0f0f0' },
 });

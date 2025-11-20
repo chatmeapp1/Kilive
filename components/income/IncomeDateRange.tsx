@@ -1,8 +1,6 @@
-
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface IncomeDateRangeProps {
   startDate: string;
@@ -12,16 +10,21 @@ interface IncomeDateRangeProps {
 export default function IncomeDateRange({ startDate, endDate }: IncomeDateRangeProps) {
   return (
     <View style={styles.container}>
+      
+      {/* Start Date */}
       <View style={styles.dateItem}>
         <View style={styles.iconCircle}>
-          <IconSymbol name="clock" size={16} color="#fff" />
+          <View style={styles.iconDot} />
         </View>
         <ThemedText style={styles.dateText}>{startDate}</ThemedText>
       </View>
 
+      {/* Separator */}
       <ThemedText style={styles.separator}>To</ThemedText>
 
+      {/* End Date */}
       <ThemedText style={styles.dateText}>{endDate}</ThemedText>
+
     </View>
   );
 }
@@ -42,6 +45,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
+
+  /* Ganti IconSymbol → icon circle sederhana */
   iconCircle: {
     width: 32,
     height: 32,
@@ -50,6 +55,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  iconDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#fff',
+  },
+
   dateText: {
     fontSize: 14,
     color: '#000',
