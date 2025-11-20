@@ -14,10 +14,16 @@ import FloatingGift from '@/components/live/FloatingGift';
 import BottomPanel from '@/components/live/BottomPanel';
 import ChatMessageList from '@/components/live/ChatMessageList';
 import SystemMessage from '@/components/live/SystemMessage';
+import LiveActionsCoHost from '@/components/live/LiveActionsCoHost';
+import LiveVideoBox from '@/components/live/LiveVideoBox';
 
 export default function LiveViewerScreen() {
   const { hostId, hostName } = useLocalSearchParams();
   const [simpleMode, setSimpleMode] = useState(false);
+  
+  // Co-host mode state
+  const [isCoHost, setIsCoHost] = useState(false); // Set true untuk test co-host mode
+  const [isMicMuted, setIsMicMuted] = useState(false);
 
   const translateX = useSharedValue(0);
 
@@ -47,7 +53,18 @@ export default function LiveViewerScreen() {
           <StatusBar barStyle="light-content" />
 
           {/* VIDEO */}
-          <LiveVideoPlayer hostId={hostId} hostName={hostName} />
+          {isCoHost ? (
+            // Co-host mode: Show grid layout
+            <View style={styles.coHostVideoContainer}>
+              <View style={styles.coHostGrid}>
+                <LiveVideoBox username="Host" isHost={true} />
+                <LiveVideoBox username="You (Co-host)" isMuted={isMicMuted} />
+              </View>
+            </View>
+          ) : (
+            // Normal viewer mode
+            <LiveVideoPlayer hostId={hostId} hostName={hostName} />
+          )}
 
           {/* UI OVERLAY */}
           {!simpleMode && (
@@ -56,7 +73,7 @@ export default function LiveViewerScreen() {
 
                 <TopBar hostName={hostName} hostId={hostId} isFollowing={false} onFollowPress={() => {}} />
 
-                <CoinBalance />
+                {!isCoHost && <CoinBalance />}
 
                 <FloatingGift />
 
@@ -64,7 +81,18 @@ export default function LiveViewerScreen() {
 
                 <ChatMessageList messages={messages} />
 
-                <BottomPanel />
+                {isCoHost ? (
+                  // Co-host actions
+                  <LiveActionsCoHost
+                    onSwitchCamera={() => console.log('Switch camera')}
+                    onToggleMic={() => setIsMicMuted(!isMicMuted)}
+                    onLeave={() => setIsCoHost(false)}
+                    isMicMuted={isMicMuted}
+                  />
+                ) : (
+                  // Normal viewer panel
+                  <BottomPanel />
+                )}
 
               </LiveOverlay>
             </Animated.View>
@@ -79,5 +107,13 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   overlayLayer: {
     ...StyleSheet.absoluteFillObject,
+  },
+  coHostVideoContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  coHostGrid: {
+    flex: 1,
+    flexDirection: 'row',
   },
 });

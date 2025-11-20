@@ -1,77 +1,129 @@
-
 import React, { useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, Image, TextInput, ScrollView, StatusBar } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
+import { StyleSheet, View, StatusBar } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useRouter } from 'expo-router';
+
+import LiveVideoBox from '@/components/live/LiveVideoBox';
+import LiveTopInfo from '@/components/live/LiveTopInfo';
+import LiveActionsHost from '@/components/live/LiveActionsHost';
+import LiveChatList from '@/components/live/LiveChatList';
+import LiveChatInput from '@/components/live/LiveChatInput';
+import GiftAnimationContainer from '@/components/live/GiftAnimationContainer';
 
 export default function BroadcastScreen() {
   const router = useRouter();
-  const [viewers, setViewers] = useState(0);
-  const [comments, setComments] = useState<any[]>([]);
+  const [viewers, setViewers] = useState(127);
+  const [duration, setDuration] = useState('12:34');
+  const [isMicMuted, setIsMicMuted] = useState(false);
+  const [isFlashOn, setIsFlashOn] = useState(false);
+
+  // Co-host state
+  const [coHosts, setCoHosts] = useState<Array<{ id: string; username: string }>>([]);
+
+  const messages = [
+    { id: '1', username: 'user1', level: 22, message: 'Hello host!' },
+    { id: '2', username: 'user2', level: 50, message: 'Amazing stream!' },
+    { id: '3', username: 'user3', message: 'Can I be co-host?' },
+  ];
+
+  const gifts = [
+    { id: '1', username: 'richUser', giftName: 'Rose', giftIcon: '🌹', amount: 5 },
+  ];
+
+  const handleEndLive = () => {
+    router.back();
+  };
+
+  const handleSendMessage = (message: string) => {
+    console.log('Send message:', message);
+  };
+
+  const renderVideoLayout = () => {
+    if (coHosts.length === 0) {
+      // Full screen host only
+      return (
+        <View style={styles.videoFullScreen}>
+          <LiveVideoBox username="Host" isHost={true} isMuted={isMicMuted} />
+        </View>
+      );
+    } else if (coHosts.length === 1) {
+      // 2 grid layout
+      return (
+        <View style={styles.videoGrid2}>
+          <LiveVideoBox username="Host" isHost={true} isMuted={isMicMuted} />
+          <LiveVideoBox username={coHosts[0].username} isMuted={false} />
+        </View>
+      );
+    } else if (coHosts.length === 2) {
+      // 3 grid layout
+      return (
+        <View style={styles.videoGrid3}>
+          <View style={styles.videoRow}>
+            <LiveVideoBox username="Host" isHost={true} isMuted={isMicMuted} />
+            <LiveVideoBox username={coHosts[0].username} />
+          </View>
+          <LiveVideoBox username={coHosts[1].username} />
+        </View>
+      );
+    } else {
+      // 4 grid layout
+      return (
+        <View style={styles.videoGrid4}>
+          <View style={styles.videoRow}>
+            <LiveVideoBox username="Host" isHost={true} isMuted={isMicMuted} />
+            <LiveVideoBox username={coHosts[0].username} />
+          </View>
+          <View style={styles.videoRow}>
+            <LiveVideoBox username={coHosts[1].username} />
+            <LiveVideoBox username={coHosts[2].username} />
+          </View>
+        </View>
+      );
+    }
+  };
 
   return (
     <ThemedView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      
-      {/* Camera View */}
-      <View style={styles.cameraView}>
-        <ThemedText style={styles.cameraPlaceholder}>Broadcasting...</ThemedText>
+
+      {/* Video Background */}
+      <View style={styles.videoBackground}>
+        {renderVideoLayout()}
       </View>
 
-      {/* Top Bar */}
-      <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.closeButton}>
-          <IconSymbol name="xmark" size={20} color="#fff" />
-        </TouchableOpacity>
+      {/* UI Overlay */}
+      <View style={styles.overlay}>
+        {/* Top Info */}
+        <LiveTopInfo
+          hostName="My Channel"
+          viewerCount={viewers}
+          duration={duration}
+          onEndLive={handleEndLive}
+        />
 
-        <View style={styles.viewersBox}>
-          <IconSymbol name="eye.fill" size={16} color="#fff" />
-          <ThemedText style={styles.viewersText}>{viewers}</ThemedText>
-        </View>
-      </View>
+        {/* Right Actions */}
+        <LiveActionsHost
+          onSwitchCamera={() => console.log('Switch camera')}
+          onToggleBeauty={() => console.log('Toggle beauty')}
+          onToggleFlash={() => setIsFlashOn(!isFlashOn)}
+          onToggleMic={() => setIsMicMuted(!isMicMuted)}
+          onInviteCoHost={() => console.log('Invite co-host')}
+          onEndLive={handleEndLive}
+          isMicMuted={isMicMuted}
+          isFlashOn={isFlashOn}
+        />
 
-      {/* Right Actions */}
-      <View style={styles.rightActions}>
-        <TouchableOpacity style={styles.actionButton}>
-          <IconSymbol name="camera.rotate" size={28} color="#fff" />
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.actionButton}>
-          <IconSymbol name="sparkles" size={28} color="#fff" />
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.actionButton}>
-          <IconSymbol name="mic.fill" size={28} color="#fff" />
-        </TouchableOpacity>
-      </View>
+        {/* Gift Animations */}
+        <GiftAnimationContainer gifts={gifts} />
 
-      {/* Comments */}
-      <View style={styles.commentsSection}>
-        <ScrollView style={styles.commentsList}>
-          {comments.map((comment, index) => (
-            <View key={index} style={styles.commentItem}>
-              <ThemedText style={styles.commentUser}>{comment.user}: </ThemedText>
-              <ThemedText style={styles.commentText}>{comment.text}</ThemedText>
-            </View>
-          ))}
-        </ScrollView>
-      </View>
+        {/* Chat List */}
+        <LiveChatList messages={messages} />
 
-      {/* Bottom Controls */}
-      <View style={styles.bottomControls}>
-        <TouchableOpacity style={styles.giftButton}>
-          <IconSymbol name="gift.fill" size={24} color="#FFD700" />
-        </TouchableOpacity>
-
-        <View style={styles.messageBox}>
-          <ThemedText style={styles.messagePlaceholder}>Say something...</ThemedText>
-        </View>
-
-        <TouchableOpacity style={styles.shareButton}>
-          <IconSymbol name="square.and.arrow.up" size={24} color="#fff" />
-        </TouchableOpacity>
+        {/* Chat Input */}
+        <LiveChatInput
+          onSend={handleSendMessage}
+          onGiftPress={() => console.log('Open gift panel')}
+        />
       </View>
     </ThemedView>
   );
@@ -82,126 +134,31 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
   },
-  cameraView: {
+  videoBackground: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: '#1a1a1a',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  cameraPlaceholder: {
-    color: '#666',
-    fontSize: 16,
-  },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: 50,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    gap: 12,
-  },
-  closeButton: {
-    width: 40,
-    height: 40,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  viewersBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,107,107,0.8)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    gap: 6,
-  },
-  viewersText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  rightActions: {
-    position: 'absolute',
-    right: 16,
-    top: 120,
-    gap: 20,
-  },
-  actionButton: {
-    width: 50,
-    height: 50,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  commentsSection: {
-    position: 'absolute',
-    bottom: 80,
-    left: 0,
-    right: 60,
-    maxHeight: 200,
-  },
-  commentsList: {
-    paddingHorizontal: 16,
-  },
-  commentItem: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    padding: 8,
-    borderRadius: 16,
-    marginBottom: 8,
-    alignSelf: 'flex-start',
-    maxWidth: '80%',
-  },
-  commentUser: {
-    color: '#FFD700',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  commentText: {
-    color: '#fff',
-    fontSize: 14,
-  },
-  bottomControls: {
-    position: 'absolute',
-    bottom: 20,
-    left: 16,
-    right: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  giftButton: {
-    width: 50,
-    height: 50,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  messageBox: {
+  videoFullScreen: {
     flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 25,
   },
-  messagePlaceholder: {
-    color: '#999',
-    fontSize: 14,
+  videoGrid2: {
+    flex: 1,
+    flexDirection: 'row',
   },
-  shareButton: {
-    width: 50,
-    height: 50,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
+  videoGrid3: {
+    flex: 1,
+  },
+  videoGrid4: {
+    flex: 1,
+  },
+  videoRow: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  overlay: {
+    flex: 1,
   },
 });
