@@ -14,7 +14,7 @@ export default function LevelScreen() {
   const router = useRouter();
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#fff',
   },
   rulesButtonGreen: {
     backgroundColor: '#4ADE80',
