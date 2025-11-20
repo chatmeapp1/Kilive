@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface LiveActionsHostProps {
   onSwitchCamera?: () => void;
@@ -28,12 +28,12 @@ export default function LiveActionsHost({
 
       {/* Switch Camera */}
       <TouchableOpacity style={styles.button} onPress={onSwitchCamera}>
-        <Ionicons name="camera-reverse-outline" size={22} color="#fff" />
+        <IconSymbol name="camera.rotate" size={22} color="#fff" />
       </TouchableOpacity>
 
       {/* Beauty */}
       <TouchableOpacity style={styles.button} onPress={onToggleBeauty}>
-        <Ionicons name="sparkles-outline" size={22} color="#fff" />
+        <IconSymbol name="sparkles" size={22} color="#fff" />
       </TouchableOpacity>
 
       {/* Flash */}
@@ -41,8 +41,8 @@ export default function LiveActionsHost({
         style={[styles.button, isFlashOn && styles.buttonActive]}
         onPress={onToggleFlash}
       >
-        <Ionicons
-          name={isFlashOn ? "flash" : "flash-outline"}
+        <IconSymbol
+          name={isFlashOn ? "flash.on" : "flash.off"}
           size={22}
           color="#fff"
         />
@@ -53,8 +53,8 @@ export default function LiveActionsHost({
         style={[styles.button, isMicMuted && styles.buttonMuted]}
         onPress={onToggleMic}
       >
-        <Ionicons
-          name={isMicMuted ? "mic-off" : "mic"}
+        <IconSymbol
+          name={isMicMuted ? "mic.slash" : "mic"}
           size={22}
           color="#fff"
         />
@@ -62,12 +62,12 @@ export default function LiveActionsHost({
 
       {/* Invite Co-host */}
       <TouchableOpacity style={styles.button} onPress={onInviteCoHost}>
-        <Ionicons name="person-add-outline" size={22} color="#fff" />
+        <IconSymbol name="person.add" size={22} color="#fff" />
       </TouchableOpacity>
 
       {/* End Live */}
       <TouchableOpacity style={styles.endButton} onPress={onEndLive}>
-        <Ionicons name="close" size={26} color="#fff" />
+        <IconSymbol name="xmark" size={26} color="#fff" />
       </TouchableOpacity>
 
     </View>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface GiftButtonProps {
   onPress?: () => void;
@@ -10,7 +10,7 @@ interface GiftButtonProps {
 export default function GiftButton({ onPress, style }: GiftButtonProps) {
   return (
     <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
-      <Ionicons name="gift-outline" size={22} color="#FFD54F" />
+      <IconSymbol name="gift" size={22} color="#FFD54F" />
     </TouchableOpacity>
   );
 }

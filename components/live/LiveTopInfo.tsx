@@ -49,7 +49,7 @@ export default function LiveTopInfo({
       {/* END LIVE BUTTON */}
       {onEndLive && (
         <TouchableOpacity style={styles.endButton} onPress={onEndLive}>
-          <Ionicons name="close" size={20} color="#fff" />
+          <IconSymbol name="xmark" size={20} color="#fff" />
         </TouchableOpacity>
       )}
     </View>

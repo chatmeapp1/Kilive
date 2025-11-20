@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface LiveChatInputProps {
   onSend?: (message: string) => void;
@@ -22,7 +22,7 @@ export default function LiveChatInput({ onSend, onGiftPress }: LiveChatInputProp
 
       {/* GIFT BUTTON */}
       <TouchableOpacity style={styles.giftButton} onPress={onGiftPress}>
-        <Ionicons name="gift-outline" size={22} color="#FFD54F" />
+        <IconSymbol name="gift" size={22} color="#FFD54F" />
       </TouchableOpacity>
 
       {/* INPUT */}
@@ -37,7 +37,7 @@ export default function LiveChatInput({ onSend, onGiftPress }: LiveChatInputProp
 
       {/* SEND BUTTON */}
       <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-        <Ionicons name="send" size={18} color="#fff" />
+        <IconSymbol name="paperplane.fill" size={18} color="#fff" />
       </TouchableOpacity>
 
     </View>
