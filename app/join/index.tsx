@@ -3,7 +3,6 @@ import { StyleSheet, View, StatusBar, TouchableOpacity } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { LinearGradient } from 'expo-linear-gradient';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import JoinOption from '@/components/join/JoinOption';
 
 export default function JoinScreen() {

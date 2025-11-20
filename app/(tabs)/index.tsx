@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, Image, Dimensions, StatusBar } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useRouter } from 'expo-router';
 
 const { width } = Dimensions.get('window');

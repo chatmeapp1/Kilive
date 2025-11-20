@@ -3,7 +3,6 @@ import { StyleSheet, View, ScrollView, StatusBar, TouchableOpacity, Image } from
 import { Stack, useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { LinearGradient } from 'expo-linear-gradient';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import GameCard from '@/components/game/GameCard';
 
 export default function GameScreen() {

@@ -3,7 +3,6 @@ import { StyleSheet, View, ScrollView, TouchableOpacity, StatusBar } from 'react
 import { Stack, useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { LinearGradient } from 'expo-linear-gradient';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import ProfileImageSection from '@/components/editprofile/ProfileImageSection';
 import ProfileFieldItem from '@/components/editprofile/ProfileFieldItem';
 

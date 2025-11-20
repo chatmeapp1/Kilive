@@ -4,7 +4,6 @@ import { StyleSheet, View, Image, TouchableOpacity, ScrollView, StatusBar } from
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { LinearGradient } from 'expo-linear-gradient';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useRouter } from 'expo-router';
 
 export default function ProfileScreen() {

@@ -4,7 +4,6 @@ import { Stack } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import FansRankingTabs from '@/components/fans/FansRankingTabs';
 
 export default function FansScreen() {

@@ -2,7 +2,6 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface JoinOptionProps {
   title: string;
@@ -13,7 +12,6 @@ export default function JoinOption({ title, onPress }: JoinOptionProps) {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <ThemedText style={styles.title}>{title}</ThemedText>
-      <IconSymbol name="chevron.right" size={20} color="#999" />
     </TouchableOpacity>
   );
 }
