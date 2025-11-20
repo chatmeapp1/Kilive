@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   levelTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#fff',
     marginBottom: 4,
   },
   experienceText: {
