@@ -18,7 +18,10 @@ export default function ProfileScreen() {
         colors={['#A8FF78', '#78FFD6']}
         style={styles.header}
       >
-        <TouchableOpacity style={styles.editButton}>
+        <TouchableOpacity 
+          style={styles.editButton}
+          onPress={() => router.push('/editprofile')}
+        >
           <ThemedText style={styles.editButtonText}>Edit</ThemedText>
         </TouchableOpacity>
 
