@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, StatusBar } from 'react-native';
+import { Stack } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { LinearGradient } from 'expo-linear-gradient';
 import LevelCard from '@/components/level/LevelCard';
@@ -9,62 +9,72 @@ import TopRanking from '@/components/level/TopRanking';
 
 export default function LevelScreen() {
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        {/* User Level Card */}
-        <LevelCard
-          level={31}
-          experience={4137700}
-          percentage={37}
-        />
+    <>
+      {/* Hilangkan header default Expo Router */}
+      <Stack.Screen options={{ headerShown: false }} />
 
-        {/* User Host Card */}
-        <HostCard
-          level={0}
-          experience={0}
-          percentage={0}
-        />
+      {/* StatusBar benar-benar transparan */}
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
 
-        {/* User Level Top 5 */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>User level Top5</ThemedText>
-            <TouchableOpacity style={styles.rulesButtonGreen}>
-              <ThemedText style={styles.rulesButtonText}>aturan naik papan</ThemedText>
-            </TouchableOpacity>
+      <View style={styles.container}>
+        <ScrollView
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {/* User Level Card */}
+          <LevelCard
+            level={31}
+            experience={4137700}
+            percentage={37}
+          />
+
+          {/* User Host Card */}
+          <HostCard
+            level={0}
+            experience={0}
+            percentage={0}
+          />
+
+          {/* User Level Top 5 */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <ThemedText style={styles.sectionTitle}>User level Top5</ThemedText>
+              <TouchableOpacity style={styles.rulesButtonGreen}>
+                <ThemedText style={styles.rulesButtonText}>aturan naik papan</ThemedText>
+              </TouchableOpacity>
+            </View>
+
+            <TopRanking
+              rankings={[
+                { rank: 1, username: 'mo', level: 57, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBLG-OMXWXKkokkRiX_JmZmnX0ch8IUB3OR6K0HQ9qLA&s=10', hasCrown: true },
+                { rank: 2, username: 'user2', level: 52, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPLEujmvxZMrWdCI2Rf6OdBSWnqAdwFMtH1BZGrIaG5A&s=10', hasCrown: false },
+                { rank: 3, username: 'hana ...', level: 49, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3hIV0YkPTrBHgKdXi6BORSmqk_XPyORdZBBwBZfZOtA&s=10', hasCrown: false },
+                { rank: 4, username: '☆☆☆SU...', level: 17, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHnnCypKUMznh74khV1XWbnNDpNperfk9UnFvula4Dow&s=10', hasCrown: false },
+                { rank: 5, username: 'R', level: 15, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTegxD1iaRNE6Z9tx1axbRwpOlRdUyFnr7wbCDrVBOlHngz0k80Q58VXYo&s=10', hasCrown: false },
+              ]}
+            />
           </View>
 
-          <TopRanking
-            rankings={[
-              { rank: 1, username: 'mo', level: 57, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBLG-OMXWXKkokkRiX_JmZmnX0ch8IUB3OR6K0HQ9qLA&s=10', hasCrown: true },
-              { rank: 2, username: 'user2', level: 52, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPLEujmvxZMrWdCI2Rf6OdBSWnqAdwFMtH1BZGrIaG5A&s=10', hasCrown: false },
-              { rank: 3, username: 'hana ...', level: 49, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3hIV0YkPTrBHgKdXi6BORSmqk_XPyORdZBBwBZfZOtA&s=10', hasCrown: false },
-              { rank: 4, username: '☆☆☆SU...', level: 17, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHnnCypKUMznh74khV1XWbnNDpNperfk9UnFvula4Dow&s=10', hasCrown: false },
-              { rank: 5, username: 'R', level: 15, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTegxD1iaRNE6Z9tx1axbRwpOlRdUyFnr7wbCDrVBOlHngz0k80Q58VXYo&s=10', hasCrown: false },
-            ]}
-          />
-        </View>
+          {/* User Host Top 5 */}
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>User host Top5</ThemedText>
 
-        {/* User Host Top 5 */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>User host Top5</ThemedText>
+            <TopRanking
+              rankings={[
+                { rank: 1, username: 'host1', level: 60, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTY-eH4olfUjGxRMrF18XTKa0fyx0dzjKN49w&s', hasCrown: true },
+                { rank: 2, username: 'jaka ...', level: 40, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpRhK8VZOU0BvuQ4shpI9LqPRuzhNDcSJ7gf4_PZvXk9u6cigT5OYakhjx&s=10', hasCrown: false },
+                { rank: 3, username: 'cellcdc', level: 14, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUtYTlcuxD8jslGmsmTGrNS3VxGs-xHMXn9TMEzk2KRTvb7l88IgQhi3M&s=10', hasCrown: false },
+                { rank: 4, username: 'user4', level: 5, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEcUPBRu0ie1w-Uk40prvdG7cWDtExGCbqOFh9uD5PuA65DqIHr43W6vfE&s=10', hasCrown: false },
+                { rank: 5, username: 'nacol', level: 3, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvmBI-FpC78Q4gxpOQosbtWSS4B0MtX68O8ZQJErP6zOglaA3a-TYKzFU&s=10', hasCrown: false },
+              ]}
+            />
+          </View>
 
-          <TopRanking
-            rankings={[
-              { rank: 1, username: 'host1', level: 60, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTY-eH4olfUjGxRMrF18XTKa0fyx0dzjKN49w&s', hasCrown: true },
-              { rank: 2, username: 'jaka ...', level: 40, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpRhK8VZOU0BvuQ4shpI9LqPRuzhNDcSJ7gf4_PZvXk9u6cigT5OYakhjx&s=10', hasCrown: false },
-              { rank: 3, username: 'cellcdc', level: 14, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUtYTlcuxD8jslGmsmTGrNS3VxGs-xHMXn9TMEzk2KRTvb7l88IgQhi3M&s=10', hasCrown: false },
-              { rank: 4, username: 'user4', level: 5, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEcUPBRu0ie1w-Uk40prvdG7cWDtExGCbqOFh9uD5PuA65DqIHr43W6vfE&s=10', hasCrown: false },
-              { rank: 5, username: 'nacol', level: 3, avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvmBI-FpC78Q4gxpOQosbtWSS4B0MtX68O8ZQJErP6zOglaA3a-TYKzFU&s=10', hasCrown: false },
-            ]}
-          />
-        </View>
-
-        <View style={{ height: 40 }} />
-      </ScrollView>
-    </View>
+          <View style={{ height: 60 }} />
+        </ScrollView>
+      </View>
+    </>
   );
 }
 
@@ -79,7 +89,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: 24,      // sedikit padding, tidak terlalu jauh dari atas
     backgroundColor: '#fff',
   },
   section: {

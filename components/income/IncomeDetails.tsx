@@ -2,7 +2,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { DiamondIcon } from '@/components/ui/DiamondIcon';
+import DiamondIcon from '@/components/ui/DiamondIcon';
 
 interface IncomeDetailsProps {
   date: string;
@@ -25,7 +25,7 @@ export default function IncomeDetails({ date, poin, luxury, lucky, sLucky }: Inc
       <View style={styles.detailRow}>
         <View style={styles.labelWithIcon}>
           <ThemedText style={styles.label}>Poin</ThemedText>
-          <DiamondIcon size={16} />
+          <DiamondIcon size={16} color="#22C55E" />
           <ThemedText style={styles.label}>:</ThemedText>
         </View>
         <ThemedText style={styles.value}>{poin}</ThemedText>

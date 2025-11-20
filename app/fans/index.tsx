@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView, StatusBar, TouchableOpacity } from 'react-native';
+import { Stack } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -12,48 +12,63 @@ export default function FansScreen() {
   const [activeTab, setActiveTab] = useState<'daily' | 'weekly' | 'totally'>('daily');
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      
-      {/* Header with gradient background */}
-      <LinearGradient
-        colors={['#A8FF78', '#78FFD6']}
-        style={styles.header}
-      >
-        <View style={styles.headerContent}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <IconSymbol name="chevron.left" size={24} color="#000" />
+    <>
+      {/* HILANGKAN HEADER EXPO → TANPA BAR HITAM */}
+      <Stack.Screen options={{ headerShown: false }} />
+
+      {/* FULLSCREEN STATUS BAR */}
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="dark-content"
+      />
+
+      <View style={styles.container}>
+        
+        {/* Header dengan gradient */}
+        <LinearGradient
+          colors={['#A8FF78', '#78FFD6']}
+          style={styles.header}
+        >
+          <View style={styles.headerContent}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+              <IconSymbol name="chevron.left" size={24} color="#000" />
+            </TouchableOpacity>
+
+            <ThemedText style={styles.headerTitle}>Fans Ranking</ThemedText>
+
+            <TouchableOpacity onPress={() => router.back()}>
+              <ThemedText style={styles.closeButton}>Close</ThemedText>
+            </TouchableOpacity>
+          </View>
+
+          <FansRankingTabs activeTab={activeTab} onTabChange={setActiveTab} />
+        </LinearGradient>
+
+        {/* Konten */}
+        <ScrollView style={styles.content}>
+          <View style={styles.emptyContainer}>
+            <ThemedText style={styles.emptyText}>No ranking data available</ThemedText>
+          </View>
+        </ScrollView>
+
+        {/* Bottom Info */}
+        <View style={styles.bottomInfo}>
+          <View style={styles.userAvatar}>
+            <View style={styles.avatarPlaceholder} />
+          </View>
+
+          <View style={styles.userInfoContainer}>
+            <ThemedText style={styles.ratingText}>Rating display: Not on the list</ThemedText>
+            <ThemedText style={styles.contributeText}>contribute: 0</ThemedText>
+          </View>
+
+          <TouchableOpacity style={styles.hideButton}>
+            <ThemedText style={styles.hideButtonText}>Hide ranking</ThemedText>
           </TouchableOpacity>
-          <ThemedText style={styles.headerTitle}>Fans Ranking</ThemedText>
-          <TouchableOpacity onPress={() => router.back()}>
-            <ThemedText style={styles.closeButton}>Close</ThemedText>
-          </TouchableOpacity>
         </View>
-
-        <FansRankingTabs activeTab={activeTab} onTabChange={setActiveTab} />
-      </LinearGradient>
-
-      {/* Content Area */}
-      <ScrollView style={styles.content}>
-        <View style={styles.emptyContainer}>
-          <ThemedText style={styles.emptyText}>No ranking data available</ThemedText>
-        </View>
-      </ScrollView>
-
-      {/* Bottom Info */}
-      <View style={styles.bottomInfo}>
-        <View style={styles.userAvatar}>
-          <View style={styles.avatarPlaceholder} />
-        </View>
-        <View style={styles.userInfoContainer}>
-          <ThemedText style={styles.ratingText}>Rating display: Not on the list</ThemedText>
-          <ThemedText style={styles.contributeText}>contribute: 0</ThemedText>
-        </View>
-        <TouchableOpacity style={styles.hideButton}>
-          <ThemedText style={styles.hideButtonText}>Hide ranking</ThemedText>
-        </TouchableOpacity>
       </View>
-    </View>
+    </>
   );
 }
 
@@ -63,7 +78,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    paddingTop: 50,
+    paddingTop: 60,         // naikkan sedikit agar melewati status bar
     paddingBottom: 20,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
