@@ -14,15 +14,15 @@ export default function LevelScreen() {
   const router = useRouter();
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* User Level Card */}
         <LevelCard
           level={31}
-          experience={4134900}
-          percentage={34}
+          experience={4137700}
+          percentage={37}
           type="user"
         />
 
@@ -70,7 +70,7 @@ export default function LevelScreen() {
 
         <View style={{ height: 40 }} />
       </ScrollView>
-    </ThemedView>
+    </View>
   );
 }
 
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingTop: 60,
+    paddingTop: 16,
     backgroundColor: '#fff',
   },
   section: {
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#000',
   },
   rulesButtonGreen: {
     backgroundColor: '#4ADE80',
