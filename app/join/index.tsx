@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { StyleSheet, View, StatusBar, TouchableOpacity } from 'react-native';
+import { Stack, useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import JoinOption from '@/components/join/JoinOption';
 
@@ -11,46 +10,55 @@ export default function JoinScreen() {
   const router = useRouter();
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
-      
-      {/* Header with gradient background */}
-      <LinearGradient
-        colors={['#A8FF78', '#78FFD6']}
-        style={styles.header}
-      >
-        <View style={styles.headerContent}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <IconSymbol name="chevron.left" size={24} color="#000" />
-          </TouchableOpacity>
-          <ThemedText style={styles.headerTitle}>Join Us</ThemedText>
-          <TouchableOpacity onPress={() => router.back()}>
-            <ThemedText style={styles.closeButton}>Close</ThemedText>
-          </TouchableOpacity>
+    <>
+      {/* Hilangkan header default Expo Router */}
+      <Stack.Screen options={{ headerShown: false }} />
+
+      {/* StatusBar transparan agar gradient full sampai atas */}
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+
+      <View style={styles.container}>
+
+        {/* Header with gradient background */}
+        <LinearGradient
+          colors={['#A8FF78', '#78FFD6']}
+          style={styles.header}
+        >
+          <View style={styles.headerContent}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+              <IconSymbol name="chevron.left" size={24} color="#000" />
+            </TouchableOpacity>
+
+            <ThemedText style={styles.headerTitle}>Join Us</ThemedText>
+
+            <TouchableOpacity onPress={() => router.back()}>
+              <ThemedText style={styles.closeButton}>Close</ThemedText>
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
+
+        {/* Purple Gradient Section */}
+        <LinearGradient
+          colors={['#8B5CF6', '#6366F1', '#3B82F6']}
+          style={styles.purpleSection}
+        >
+          <ThemedText style={styles.mainTitle}>Join Us</ThemedText>
+        </LinearGradient>
+
+        {/* Options Section */}
+        <View style={styles.optionsContainer}>
+          <JoinOption
+            title="Apply for Agency"
+            onPress={() => {}}
+          />
+
+          <JoinOption
+            title="Apply for Host"
+            onPress={() => {}}
+          />
         </View>
-      </LinearGradient>
-
-      {/* Purple Gradient Section */}
-      <LinearGradient
-        colors={['#8B5CF6', '#6366F1', '#3B82F6']}
-        style={styles.purpleSection}
-      >
-        <ThemedText style={styles.mainTitle}>Join Us</ThemedText>
-      </LinearGradient>
-
-      {/* Options Section */}
-      <View style={styles.optionsContainer}>
-        <JoinOption
-          title="Apply for Agency"
-          onPress={() => {}}
-        />
-
-        <JoinOption
-          title="Apply for Host"
-          onPress={() => {}}
-        />
       </View>
-    </View>
+    </>
   );
 }
 
@@ -60,7 +68,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    paddingTop: 50,
+    paddingTop: 60,   // naikkan agar tidak terpotong status bar
     paddingBottom: 20,
   },
   headerContent: {
