@@ -90,7 +90,7 @@ export default function RechargeScreen() {
         </TouchableOpacity>
         <ThemedText style={styles.headerTitle}>Recharge</ThemedText>
         <TouchableOpacity onPress={() => {}}>
-          <Image source={require('@/assets/icons/close.png')} style={styles.headerIcon} />
+          <Image source={require('@/assets/icons/close.svg')} style={styles.headerIcon} />
         </TouchableOpacity>
       </View>
 

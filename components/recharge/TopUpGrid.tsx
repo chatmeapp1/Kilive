@@ -10,8 +10,8 @@ const BSS = require('@/assets/topup/bss.png');
 const Dana = require('@/assets/topup/dana.png');
 const OVO = require('@/assets/topup/ovo.png');
 const GoPay = require('@/assets/topup/gopay.png');
-const LinkAja = require('@/assets/topup/link.png');
-const ShopeePay = require('@/assets/topup/shopee.png');
+const LinkAja = require('@/assets/topup/linkaja.png');
+const ShopeePay = require('@/assets/topup/shopeepay.png');
 
 const topUpMethods = [
   { id: 1, name: 'BCA', logo: BCA, subtitle: 'Buy more Get more', bestChoice: true },
