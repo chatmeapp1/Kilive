@@ -9,8 +9,8 @@ export default function BlocklistScreen() {
   const router = useRouter();
 
   const blockedUsers = [
-    { id: 1, name: 'User123', avatar: 'https://via.placeholder.com/50' },
-    { id: 2, name: 'TestUser', avatar: 'https://via.placeholder.com/50' },
+    { id: 1, name: 'User123', avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-MMnzKGKyh73B_9KOp6wBLarBtvQ_LSHZX-CKRYyawg&s' },
+    { id: 2, name: 'TestUser', avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-MMnzKGKyh73B_9KOp6wBLarBtvQ_LSHZX-CKRYyawg&s' },
   ];
 
   const handleUnblock = (userName: string) => {

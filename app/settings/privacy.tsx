@@ -42,7 +42,7 @@ export default function PrivacySettingsScreen() {
               style={styles.settingItem}
               onPress={openAppSettings}
             >
-              <ThemedText style={styles.settingLabel}>Allow Kiwi live to veiw phone n...</ThemedText>
+              <ThemedText style={styles.settingLabel}>Allow Kilive to veiw phone n...</ThemedText>
               <ThemedText style={styles.settingValue}>Settings</ThemedText>
             </TouchableOpacity>
 
@@ -50,7 +50,7 @@ export default function PrivacySettingsScreen() {
               style={styles.settingItem}
               onPress={openAppSettings}
             >
-              <ThemedText style={styles.settingLabel}>Allow Kiwi live to use camera</ThemedText>
+              <ThemedText style={styles.settingLabel}>Allow Kilive to use camera</ThemedText>
               <ThemedText style={styles.settingValue}>Opened</ThemedText>
             </TouchableOpacity>
 
@@ -58,7 +58,7 @@ export default function PrivacySettingsScreen() {
               style={styles.settingItem}
               onPress={openAppSettings}
             >
-              <ThemedText style={styles.settingLabel}>Allow Kiwi live to use phone st...</ThemedText>
+              <ThemedText style={styles.settingLabel}>Allow Kilive to use phone st...</ThemedText>
               <ThemedText style={styles.settingValue}>Opened</ThemedText>
             </TouchableOpacity>
 
@@ -66,7 +66,7 @@ export default function PrivacySettingsScreen() {
               style={styles.settingItem}
               onPress={openAppSettings}
             >
-              <ThemedText style={styles.settingLabel}>Allow Kiwi live to microphone</ThemedText>
+              <ThemedText style={styles.settingLabel}>Allow Kilive to microphone</ThemedText>
               <ThemedText style={styles.settingValue}>Opened</ThemedText>
             </TouchableOpacity>
           </View>
@@ -80,7 +80,7 @@ export default function PrivacySettingsScreen() {
               style={styles.settingItem}
               onPress={openAppSettings}
             >
-              <ThemedText style={styles.settingLabel}>Allow Kiwi live to Push Notifica...</ThemedText>
+              <ThemedText style={styles.settingLabel}>Allow Kilive to Push Notifica...</ThemedText>
               <ThemedText style={styles.settingValue}>Settings</ThemedText>
             </TouchableOpacity>
           </View>
