@@ -69,14 +69,47 @@ const userController = {
     try {
       const { userId } = req.params;
       
+      // Only hosts have income in diamonds
+      if (req.user.role !== 'host') {
+        return res.status(403).json({
+          success: false,
+          message: 'Only hosts have income data'
+        });
+      }
+      
+      // TODO: Fetch from database
+      // Income adalah dalam DIAMONDS, bukan coins
+      
+      res.json({
+        success: true,
+        data: {
+          totalDiamonds: 50000,
+          todayDiamonds: 1000,
+          weekDiamonds: 7000,
+          monthDiamonds: 25000,
+          availableForWithdraw: 45000
+        }
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: error.message
+      });
+    }
+  },
+
+  // Get user coins (for viewers)
+  getUserCoins: async (req, res) => {
+    try {
+      const userId = req.user.userId;
+      
       // TODO: Fetch from database
       
       res.json({
         success: true,
         data: {
-          totalIncome: 50000,
-          todayIncome: 1000,
-          weekIncome: 7000
+          coins: 5000,
+          rechargeHistory: []
         }
       });
     } catch (error) {

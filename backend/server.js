@@ -24,6 +24,7 @@ const liveRoutes = require('./routes/live');
 const giftRoutes = require('./routes/gift');
 const userRoutes = require('./routes/user');
 const agencyRoutes = require('./routes/agency');
+const adminRoutes = require('./routes/admin');
 
 // Use routes
 app.use('/api/auth', authRoutes);
@@ -31,6 +32,7 @@ app.use('/api/live', liveRoutes);
 app.use('/api/gift', giftRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/agency', agencyRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Socket.io connection
 io.on('connection', (socket) => {
