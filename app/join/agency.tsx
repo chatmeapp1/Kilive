@@ -1,9 +1,18 @@
 
 import React, { useState } from 'react';
-import { StyleSheet, View, StatusBar, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, View, StatusBar, TouchableOpacity, TextInput, ScrollView, Modal } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { LinearGradient } from 'expo-linear-gradient';
+
+const COUNTRIES = [
+  'Indonesia',
+  'Philippines',
+  'Thailand',
+  'India',
+  'Arab Saudi',
+  'Vietnam',
+];
 
 export default function ApplyForAgencyScreen() {
   const router = useRouter();
@@ -14,8 +23,14 @@ export default function ApplyForAgencyScreen() {
   const [paperwork, setPaperwork] = useState('ID card');
   const [idNumber, setIdNumber] = useState('');
   const [phone, setPhone] = useState('');
+  const [showRegionModal, setShowRegionModal] = useState(false);
 
   const userId = '703256893'; // User ID statis untuk demo
+
+  const handleSelectRegion = (country: string) => {
+    setRegion(country);
+    setShowRegionModal(false);
+  };
 
   return (
     <>
@@ -45,9 +60,14 @@ export default function ApplyForAgencyScreen() {
         <ScrollView style={styles.content}>
           <View style={styles.formCard}>
             {/* Region */}
-            <TouchableOpacity style={styles.formRow}>
+            <TouchableOpacity style={styles.formRow} onPress={() => setShowRegionModal(true)}>
               <ThemedText style={styles.label}>Region</ThemedText>
-              <ThemedText style={styles.arrow}>›</ThemedText>
+              <View style={styles.rowRight}>
+                {region ? (
+                  <ThemedText style={styles.value}>{region}</ThemedText>
+                ) : null}
+                <ThemedText style={styles.arrow}>›</ThemedText>
+              </View>
             </TouchableOpacity>
 
             {/* User ID */}
@@ -143,6 +163,48 @@ export default function ApplyForAgencyScreen() {
             <ThemedText style={styles.submitButtonText}>Confirm submission</ThemedText>
           </TouchableOpacity>
         </ScrollView>
+
+        {/* Region Selection Modal */}
+        <Modal
+          visible={showRegionModal}
+          transparent={true}
+          animationType="slide"
+          onRequestClose={() => setShowRegionModal(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <TouchableOpacity 
+              style={styles.modalBackdrop} 
+              activeOpacity={1}
+              onPress={() => setShowRegionModal(false)}
+            />
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <TouchableOpacity onPress={() => setShowRegionModal(false)}>
+                  <ThemedText style={styles.modalCancel}>cancel</ThemedText>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setShowRegionModal(false)}>
+                  <ThemedText style={styles.modalDetermine}>Determine</ThemedText>
+                </TouchableOpacity>
+              </View>
+              <ScrollView style={styles.modalList}>
+                {COUNTRIES.map((country) => (
+                  <TouchableOpacity
+                    key={country}
+                    style={styles.modalItem}
+                    onPress={() => handleSelectRegion(country)}
+                  >
+                    <ThemedText style={[
+                      styles.modalItemText,
+                      region === country && styles.modalItemTextSelected
+                    ]}>
+                      {country}
+                    </ThemedText>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          </View>
+        </Modal>
       </View>
     </>
   );
@@ -198,6 +260,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
+  },
+  rowRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   formRowLast: {
     borderBottomWidth: 0,
@@ -262,6 +329,54 @@ const styles = StyleSheet.create({
   submitButtonText: {
     fontSize: 16,
     color: '#999',
+    fontWeight: '500',
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalBackdrop: {
+    flex: 1,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '50%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  modalCancel: {
+    fontSize: 16,
+    color: '#666',
+  },
+  modalDetermine: {
+    fontSize: 16,
+    color: '#007AFF',
+    fontWeight: '500',
+  },
+  modalList: {
+    maxHeight: 300,
+  },
+  modalItem: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  modalItemText: {
+    fontSize: 16,
+    color: '#999',
+  },
+  modalItemTextSelected: {
+    color: '#000',
     fontWeight: '500',
   },
 });
