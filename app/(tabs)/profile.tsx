@@ -9,6 +9,9 @@ import { useRouter } from 'expo-router';
 
 export default function ProfileScreen() {
   const router = useRouter();
+  // Simulasi role agency - nanti diganti dengan data dari backend/auth
+  const isAgency = true; // Set true untuk testing, nanti dari user profile
+  
   return (
     <ScrollView style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -105,7 +108,8 @@ export default function ProfileScreen() {
             { icon: require('@/assets/function/ic_income.png'), label: 'Income', route: '/income' },
             { icon: require('@/assets/function/ic_game.png'), label: 'Game', route: '/game' },
             { icon: require('@/assets/function/ic_bergabung.png'), label: 'Join', route: '/join' },
-          ].map((item, index) => (
+            { icon: require('@/assets/function/agency.png'), label: 'Agency', route: '/agency', requiresAgency: true },
+          ].filter(item => !item.requiresAgency || isAgency).map((item, index) => (
             <TouchableOpacity 
               key={index} 
               style={styles.functionItem}
