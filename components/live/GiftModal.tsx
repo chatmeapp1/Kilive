@@ -5,13 +5,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Image,
   Dimensions,
 } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { BlurView } from 'expo-blur';
 import Svg, { Path, Circle } from 'react-native-svg';
-import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
 
@@ -62,7 +60,6 @@ export default function GiftModal({
     useState<'normal' | 'lucky' | 'j-lucky' | 'luxury'>('normal');
   const [selectedGift, setSelectedGift] = useState<Gift | null>(null);
   const [selectedCombo, setSelectedCombo] = useState(1);
-  const [comboMenuVisible, setComboMenuVisible] = useState(false);
 
   const filteredGifts = GIFTS.filter((g) => g.category === activeTab);
   const showCombo = activeTab === 'lucky' || activeTab === 'j-lucky';
@@ -89,100 +86,66 @@ export default function GiftModal({
         </BlurView>
 
         <View style={styles.modalContent}>
-          {/* HEADER */}
-          <View style={styles.header}>
-            <View style={styles.progressContainer}>
-              <View style={styles.starIcon}>
-                <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <Path
-                    d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                    fill="#FFD700"
-                    stroke="#FFA500"
-                  />
-                </Svg>
-                <ThemedText style={styles.levelText}>22</ThemedText>
-              </View>
-
-              <View style={styles.progressBar}>
-                <View style={[styles.progressFill, { width: '45%' }]} />
-              </View>
-
-              <Svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <Path
-                  d="M9 18L15 12L9 6"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </Svg>
-            </View>
-          </View>
-
           {/* TABS */}
           <View style={styles.tabContainer}>
-            {['normal', 'lucky', 'j-lucky', 'luxury'].map((tab) => (
-              <TouchableOpacity
-                key={tab}
+            <TouchableOpacity
+              style={[
+                styles.tab,
+                activeTab === 'j-lucky' && styles.activeTabSlucky,
+              ]}
+              onPress={() => setActiveTab('j-lucky')}
+            >
+              <ThemedText
                 style={[
-                  styles.tab,
-                  activeTab === tab && styles.activeTab,
+                  styles.tabText,
+                  activeTab === 'j-lucky' && styles.activeTabText,
                 ]}
-                onPress={() => setActiveTab(tab as any)}
               >
-                <ThemedText
-                  style={[
-                    styles.tabText,
-                    activeTab === tab && styles.activeTabText,
-                  ]}
-                >
-                  {tab.toUpperCase()}
-                </ThemedText>
-              </TouchableOpacity>
-            ))}
+                S-Lucky
+              </ThemedText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.tab,
+                activeTab === 'lucky' && styles.activeTabLucky,
+              ]}
+              onPress={() => setActiveTab('lucky')}
+            >
+              <ThemedText
+                style={[
+                  styles.tabText,
+                  activeTab === 'lucky' && styles.activeTabText,
+                ]}
+              >
+                Lucky
+              </ThemedText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.tab,
+                activeTab === 'luxury' && styles.activeTabLuxury,
+              ]}
+              onPress={() => setActiveTab('luxury')}
+            >
+              <ThemedText
+                style={[
+                  styles.tabText,
+                  activeTab === 'luxury' && styles.activeTabText,
+                ]}
+              >
+                Luxury
+              </ThemedText>
+            </TouchableOpacity>
           </View>
 
-          {/* FLOATING COMBO BUTTON */}
+          {/* INFO TEXT */}
           {showCombo && (
-            <View style={styles.comboFloatingContainer}>
-              {/* Main Button */}
-              <TouchableOpacity
-                style={styles.comboMainButton}
-                onPress={() => setComboMenuVisible(!comboMenuVisible)}
-              >
-                <ThemedText style={styles.comboMainText}>
-                  {selectedCombo}
-                </ThemedText>
-              </TouchableOpacity>
-
-              {/* Dropdown List */}
-              {comboMenuVisible && (
-                <View style={styles.comboMenu}>
-                  {COMBO_OPTIONS.map((c) => (
-                    <TouchableOpacity
-                      key={c}
-                      style={[
-                        styles.comboMenuItem,
-                        selectedCombo === c &&
-                          styles.comboMenuItemActive,
-                      ]}
-                      onPress={() => {
-                        setSelectedCombo(c);
-                        setComboMenuVisible(false);
-                      }}
-                    >
-                      <ThemedText
-                        style={[
-                          styles.comboMenuText,
-                          selectedCombo === c &&
-                            styles.comboMenuTextActive,
-                        ]}
-                      >
-                        {c}
-                      </ThemedText>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
+            <View style={styles.infoContainer}>
+              <ThemedText style={styles.infoText}>
+                The other party gets 2 crystals and 60 gift flow
+              </ThemedText>
             </View>
           )}
 
@@ -200,12 +163,6 @@ export default function GiftModal({
                 >
                   <View style={styles.giftImgWrapper}>
                     <ThemedText style={styles.giftEmoji}>{gift.image}</ThemedText>
-
-                    {gift.price >= 1000 && (
-                      <View style={styles.hotBadge}>
-                        <ThemedText style={styles.hotText}>🔥</ThemedText>
-                      </View>
-                    )}
                   </View>
 
                   <ThemedText style={styles.giftPrice}>{gift.price} U</ThemedText>
@@ -215,29 +172,54 @@ export default function GiftModal({
             </View>
           </ScrollView>
 
+          {/* COMBO SELECTOR - Muncul saat gift dipilih dan showCombo true */}
+          {selectedGift && showCombo && (
+            <View style={styles.comboSelectorContainer}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.comboScrollContent}
+              >
+                {COMBO_OPTIONS.map((combo) => (
+                  <TouchableOpacity
+                    key={combo}
+                    style={[
+                      styles.comboButton,
+                      selectedCombo === combo && styles.comboButtonActive,
+                    ]}
+                    onPress={() => setSelectedCombo(combo)}
+                  >
+                    <ThemedText
+                      style={[
+                        styles.comboButtonText,
+                        selectedCombo === combo && styles.comboButtonTextActive,
+                      ]}
+                    >
+                      {combo}
+                    </ThemedText>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
           {/* FOOTER */}
           <View style={styles.footer}>
             {/* BALANCE */}
             <View style={styles.balanceRow}>
               <Svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <Circle cx="12" cy="12" r="10" fill="#FFD700" />
-                <Path
-                  d="M12 6V18M8 10H14"
-                  stroke="#000"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
               </Svg>
               <ThemedText style={styles.balanceText}>{userBalance}</ThemedText>
 
               <TouchableOpacity>
                 <ThemedText style={styles.rechargeText}>
-                  Recharge >
+                  Recharge &gt;
                 </ThemedText>
               </TouchableOpacity>
             </View>
 
-            {/* SEND */}
+            {/* SEND BUTTON */}
             <TouchableOpacity
               style={[
                 styles.sendButton,
@@ -271,50 +253,10 @@ const styles = StyleSheet.create({
 
   modalContent: {
     backgroundColor: '#1B1B1B',
-    height: height * 0.75,
+    height: height * 0.65,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-  },
-
-  header: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-
-  progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-
-  starIcon: {
-    width: 26,
-    height: 26,
-    position: 'relative',
-  },
-
-  levelText: {
-    position: 'absolute',
-    top: 6,
-    left: 0,
-    width: '100%',
-    textAlign: 'center',
-    fontSize: 9,
-    fontWeight: '700',
-    color: '#000',
-  },
-
-  progressBar: {
-    flex: 1,
-    height: 8,
-    backgroundColor: '#333',
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#4ADE80',
+    paddingTop: 16,
   },
 
   /* Tabs */
@@ -322,23 +264,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 16,
     gap: 12,
-    marginBottom: 10,
+    marginBottom: 12,
   },
 
   tab: {
-    paddingVertical: 7,
-    paddingHorizontal: 18,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
     borderRadius: 20,
     backgroundColor: '#2A2A2A',
   },
 
-  activeTab: {
+  activeTabSlucky: {
+    backgroundColor: '#B673FF',
+  },
+
+  activeTabLucky: {
     backgroundColor: '#4ADE80',
+  },
+
+  activeTabLuxury: {
+    backgroundColor: '#FFD700',
   },
 
   tabText: {
     color: '#999',
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
   },
 
@@ -346,58 +296,15 @@ const styles = StyleSheet.create({
     color: '#000',
   },
 
-  /* FLOATING COMBO */
-  comboFloatingContainer: {
-    position: 'absolute',
-    left: 14,
-    bottom: 210,
-    zIndex: 20,
+  /* Info Text */
+  infoContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 12,
   },
 
-  comboMainButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#4ADE80',
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-  },
-
-  comboMainText: {
-    color: '#000',
-    fontSize: 20,
-    fontWeight: '800',
-  },
-
-  comboMenu: {
-    marginTop: 10,
-    backgroundColor: '#2A2A2A',
-    paddingVertical: 6,
-    paddingHorizontal: 8,
-    borderRadius: 12,
-    elevation: 10,
-  },
-
-  comboMenuItem: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    marginBottom: 4,
-    borderRadius: 8,
-  },
-
-  comboMenuItemActive: {
-    backgroundColor: '#4ADE80',
-  },
-
-  comboMenuText: {
-    color: '#fff',
-    fontSize: 13,
-  },
-
-  comboMenuTextActive: {
-    color: '#000',
-    fontWeight: '700',
+  infoText: {
+    color: '#888',
+    fontSize: 12,
   },
 
   /* Gift Grid */
@@ -409,46 +316,38 @@ const styles = StyleSheet.create({
   giftGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: 10,
+    paddingBottom: 16,
   },
 
   giftItem: {
-    width: (width - 60) / 4,
+    width: (width - 52) / 4,
     alignItems: 'center',
-    padding: 8,
+    padding: 10,
     borderRadius: 12,
     backgroundColor: '#2A2A2A',
+    borderWidth: 2,
+    borderColor: 'transparent',
   },
 
   selectedGiftItem: {
-    backgroundColor: '#3A3A3A',
-    borderWidth: 2,
-    borderColor: '#4ADE80',
+    borderColor: '#7FE5A8',
+    backgroundColor: '#2F3A2F',
   },
 
   giftImgWrapper: {
-    marginBottom: 4,
-    position: 'relative',
+    marginBottom: 6,
   },
 
   giftEmoji: {
-    fontSize: 36,
-  },
-
-  hotBadge: {
-    position: 'absolute',
-    top: -6,
-    right: -6,
-  },
-
-  hotText: {
-    fontSize: 14,
+    fontSize: 40,
   },
 
   giftPrice: {
     color: '#FFD700',
     fontWeight: 'bold',
-    fontSize: 11,
+    fontSize: 12,
+    marginBottom: 2,
   },
 
   giftName: {
@@ -457,16 +356,54 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
+  /* COMBO SELECTOR */
+  comboSelectorContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#333',
+  },
+
+  comboScrollContent: {
+    gap: 10,
+    paddingVertical: 4,
+  },
+
+  comboButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#2A2A2A',
+    minWidth: 50,
+    alignItems: 'center',
+  },
+
+  comboButtonActive: {
+    backgroundColor: '#4ADE80',
+  },
+
+  comboButtonText: {
+    color: '#999',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+
+  comboButtonTextActive: {
+    color: '#000',
+    fontWeight: '700',
+  },
+
   /* FOOTER */
   footer: {
     paddingHorizontal: 16,
     paddingBottom: 20,
+    paddingTop: 12,
   },
 
   balanceRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 14,
+    marginBottom: 12,
     gap: 8,
   },
 
@@ -485,7 +422,7 @@ const styles = StyleSheet.create({
 
   sendButton: {
     backgroundColor: '#4ADE80',
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderRadius: 24,
     alignItems: 'center',
   },
@@ -496,7 +433,7 @@ const styles = StyleSheet.create({
 
   sendButtonText: {
     color: '#000',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '800',
   },
 });
