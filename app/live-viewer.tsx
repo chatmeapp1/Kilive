@@ -20,7 +20,7 @@ import GiftModal from '@/components/live/GiftModal';
 import LuxuryGiftLayer from '@/components/live/LuxuryGiftLayer';
 import JpBanner from '@/components/live/JpBanner';
 
-import useGiftEngine from '@/src/hooks/useGiftEngine';
+import useGiftEngine from '@/hooks/useGiftEngine';
 
 export default function LiveViewerScreen() {
   const { hostId, hostName } = useLocalSearchParams();
