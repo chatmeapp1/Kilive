@@ -4,7 +4,6 @@ import { StyleSheet, View, Image, TouchableOpacity, ScrollView, StatusBar } from
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { LinearGradient } from 'expo-linear-gradient';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useRouter } from 'expo-router';
 
 export default function ProfileScreen() {
@@ -34,7 +33,7 @@ export default function ProfileScreen() {
 
         <View style={styles.userInfo}>
           <View style={styles.nameRow}>
-            <ThemedText style={styles.username}>GOPAY</ThemedText>
+            <ThemedText style={styles.username}>anna</ThemedText>
             <View style={styles.badges}>
             </View>
           </View>
@@ -206,7 +205,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   username: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#000',
   },
