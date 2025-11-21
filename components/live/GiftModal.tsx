@@ -19,22 +19,24 @@ interface Gift {
   name: string;
   price: number;
   image: string;
-  category: 'slucky' | 'lucky' | 'luxury';
+  category: 'normal' | 'lucky' | 'j-lucky' | 'luxury';
 }
 
 const GIFTS: Gift[] = [
-  { id: '1', name: 'Labu', price: 125, image: '🎃', category: 'slucky' },
-  { id: '2', name: 'Milk tea', price: 125, image: '🧋', category: 'slucky' },
-  { id: '3', name: 'Beach', price: 250, image: '🏖️', category: 'slucky' },
-  { id: '4', name: 'Yellow Duck', price: 500, image: '🦆', category: 'slucky' },
-  { id: '5', name: 'Carousel', price: 1000, image: '🎠', category: 'lucky' },
-  { id: '6', name: 'Vacation', price: 2000, image: '✈️', category: 'lucky' },
-  { id: '7', name: 'Unicorn', price: 3000, image: '🦄', category: 'lucky' },
+  { id: '1', name: 'Flower', price: 100, image: '🌸', category: 'normal' },
+  { id: '2', name: 'Milk tea', price: 125, image: '🧋', category: 'normal' },
+  { id: '3', name: 'Beach', price: 250, image: '🏖️', category: 'normal' },
+  { id: '4', name: 'Yellow Duck', price: 500, image: '🦆', category: 'normal' },
+  { id: '5', name: 'Lucky Star', price: 200, image: '⭐', category: 'lucky' },
+  { id: '6', name: 'Carousel', price: 1000, image: '🎠', category: 'lucky' },
+  { id: '7', name: 'Vacation', price: 2000, image: '✈️', category: 'lucky' },
   { id: '8', name: 'Space Bear', price: 5000, image: '🐻', category: 'lucky' },
-  { id: '9', name: 'Diamond', price: 10000, image: '💎', category: 'luxury' },
-  { id: '10', name: 'Crown', price: 50000, image: '👑', category: 'luxury' },
-  { id: '11', name: 'Castle', price: 100000, image: '🏰', category: 'luxury' },
-  { id: '12', name: 'Yacht', price: 1000000, image: '🛥️', category: 'luxury' },
+  { id: '9', name: 'J-Lucky Dragon', price: 300, image: '🐉', category: 'j-lucky' },
+  { id: '10', name: 'J-Lucky Phoenix', price: 500, image: '🦅', category: 'j-lucky' },
+  { id: '11', name: 'Diamond', price: 10000, image: '💎', category: 'luxury' },
+  { id: '12', name: 'Crown', price: 50000, image: '👑', category: 'luxury' },
+  { id: '13', name: 'Castle', price: 100000, image: '🏰', category: 'luxury' },
+  { id: '14', name: 'Luxury Yacht', price: 1000000, image: '🛥️', category: 'luxury' },
 ];
 
 const COMBO_OPTIONS = [1, 3, 9, 19, 99, 199];
@@ -47,12 +49,12 @@ interface GiftModalProps {
 }
 
 export default function GiftModal({ visible, onClose, onSendGift, userBalance }: GiftModalProps) {
-  const [activeTab, setActiveTab] = useState<'slucky' | 'lucky' | 'luxury'>('slucky');
+  const [activeTab, setActiveTab] = useState<'normal' | 'lucky' | 'j-lucky' | 'luxury'>('normal');
   const [selectedGift, setSelectedGift] = useState<Gift | null>(null);
   const [selectedCombo, setSelectedCombo] = useState(1);
 
   const filteredGifts = GIFTS.filter(gift => gift.category === activeTab);
-  const showCombo = activeTab === 'slucky' || activeTab === 'lucky';
+  const showCombo = activeTab === 'lucky' || activeTab === 'j-lucky';
 
   const handleSendGift = () => {
     if (selectedGift) {
@@ -106,11 +108,11 @@ export default function GiftModal({ visible, onClose, onSendGift, userBalance }:
           {/* Tabs */}
           <View style={styles.tabContainer}>
             <TouchableOpacity
-              style={[styles.tab, activeTab === 'slucky' && styles.activeTab]}
-              onPress={() => setActiveTab('slucky')}
+              style={[styles.tab, activeTab === 'normal' && styles.activeTab]}
+              onPress={() => setActiveTab('normal')}
             >
-              <ThemedText style={[styles.tabText, activeTab === 'slucky' && styles.activeTabText]}>
-                S-Lucky
+              <ThemedText style={[styles.tabText, activeTab === 'normal' && styles.activeTabText]}>
+                Normal
               </ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
@@ -119,6 +121,14 @@ export default function GiftModal({ visible, onClose, onSendGift, userBalance }:
             >
               <ThemedText style={[styles.tabText, activeTab === 'lucky' && styles.activeTabText]}>
                 Lucky
+              </ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tab, activeTab === 'j-lucky' && styles.activeTab]}
+              onPress={() => setActiveTab('j-lucky')}
+            >
+              <ThemedText style={[styles.tabText, activeTab === 'j-lucky' && styles.activeTabText]}>
+                J-Lucky
               </ThemedText>
             </TouchableOpacity>
             <TouchableOpacity

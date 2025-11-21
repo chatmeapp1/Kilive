@@ -9,7 +9,7 @@ import LiveVideoPlayer from '@/components/live/LiveVideoPlayer';
 import LiveOverlay from '@/components/live/LiveOverlay';
 
 import TopBar from '@/components/live/TopBar';
-import CoinBalance from '@/components/live/CoinBalance';
+import IncomeHost from '@/components/live/IncomeHost';
 import FloatingGift from '@/components/live/FloatingGift';
 import BottomPanel from '@/components/live/BottomPanel';
 import ChatMessageList from '@/components/live/ChatMessageList';
@@ -17,83 +17,50 @@ import SystemMessage from '@/components/live/SystemMessage';
 import LiveActionsCoHost from '@/components/live/LiveActionsCoHost';
 import LiveVideoBox from '@/components/live/LiveVideoBox';
 import GiftModal from '@/components/live/GiftModal';
+import LuxuryGiftLayer from '@/components/live/LuxuryGiftLayer';
+import JpBanner from '@/components/live/JpBanner';
+
+import useGiftEngine from '@/src/hooks/useGiftEngine';
 
 export default function LiveViewerScreen() {
   const { hostId, hostName } = useLocalSearchParams();
   const [simpleMode, setSimpleMode] = useState(false);
   
   // Co-host mode state
-  const [isCoHost, setIsCoHost] = useState(false); // Set true untuk test co-host mode
+  const [isCoHost, setIsCoHost] = useState(false);
   const [isMicMuted, setIsMicMuted] = useState(false);
+
+  // Gift Engine
+  const { userBalance, hostIncome, sendGift } = useGiftEngine(1000);
 
   // Gift modal state
   const [showGiftModal, setShowGiftModal] = useState(false);
-  const [userBalance, setUserBalance] = useState(1000); // Initial balance
 
-  // Handle gift send
+  // Luxury layer and JP banner state
+  const [luxuryGiftName, setLuxuryGiftName] = useState<string | null>(null);
+  const [jpInfo, setJpInfo] = useState<{ milestone: number; amount: number } | null>(null);
+
   const handleSendGift = (gift: any, combo: number) => {
-    const totalCost = gift.price * combo;
-    const category = gift.category;
+    const result = sendGift({
+      id: gift.id,
+      name: gift.name,
+      price: gift.price,
+      category: gift.category,
+    }, combo);
 
-    // Deduct from user balance
-    setUserBalance(prev => prev - totalCost);
+    console.log('GIFT RESULT:', result);
 
-    // Calculate host income based on gift type
-    let hostIncome = 0;
-    if (category === 'slucky' || category === 'lucky') {
-      // 10% goes to host for lucky gifts
-      hostIncome = totalCost * 0.1;
-    } else if (totalCost >= 1000000) {
-      // 50% goes to host for gifts above 1M
-      hostIncome = totalCost * 0.5;
-    } else {
-      // Default 10% for other luxury gifts
-      hostIncome = totalCost * 0.1;
+    // Show luxury layer if applicable
+    if (result.isLuxuryLayer) {
+      setLuxuryGiftName(gift.name);
+      setTimeout(() => setLuxuryGiftName(null), 3000);
     }
 
-    // Check for jackpot rewards (Lucky & S-Lucky only)
-    if (category === 'slucky' || category === 'lucky') {
-      checkJackpotReward(gift, combo, totalCost);
+    // Show JP banner if jackpot
+    if (result.jackpot) {
+      setJpInfo({ milestone: result.jackpot.milestone, amount: result.jackpot.amount });
+      setTimeout(() => setJpInfo(null), 3000);
     }
-
-    console.log('Gift sent:', gift.name, 'x', combo);
-    console.log('Total cost:', totalCost);
-    console.log('Host income:', hostIncome);
-  };
-
-  const checkJackpotReward = (gift: any, combo: number, totalCost: number) => {
-    // JP Lucky rewards at: 20s, 50s, 100s, 200s, 300s, 500s
-    const jpMilestones = [20, 50, 100, 200, 300, 500];
-    
-    // Lucky-S special rewards at 500s and 1000s when price is 200+
-    if (gift.category === 'slucky' && gift.price >= 200) {
-      const specialMilestones = [500, 1000];
-      // At 500s: reward 1M coins
-      // At 1000s: reward 2M coins (double)
-      specialMilestones.forEach(milestone => {
-        if (combo >= milestone) {
-          const reward = milestone === 500 ? 1000000 : 2000000;
-          setUserBalance(prev => prev + reward);
-          console.log(`🎉 JACKPOT! You won ${reward} coins at ${milestone}s!`);
-        }
-      });
-    }
-
-    // S-Lucky gets double coins based on gift price
-    if (gift.category === 'slucky') {
-      const doubleReward = totalCost;
-      setUserBalance(prev => prev + doubleReward);
-      console.log(`💎 S-Lucky bonus: ${doubleReward} coins!`);
-    }
-
-    // Regular JP milestones
-    jpMilestones.forEach(milestone => {
-      if (combo === milestone) {
-        const baseReward = gift.price * 10; // 10x gift price as reward
-        setUserBalance(prev => prev + baseReward);
-        console.log(`🎊 JP Milestone ${milestone}s reached! Reward: ${baseReward} coins!`);
-      }
-    });
   };
 
   const translateX = useSharedValue(0);
@@ -152,7 +119,7 @@ export default function LiveViewerScreen() {
                   onFollowPress={() => {}} 
                 />
 
-                {!isCoHost && <CoinBalance balance={userBalance} />}
+                {!isCoHost && <IncomeHost balance={hostIncome} />}
 
                 <FloatingGift />
 
@@ -176,6 +143,12 @@ export default function LiveViewerScreen() {
               </LiveOverlay>
             </Animated.View>
           )}
+
+          {/* Luxury Gift Layer */}
+          {luxuryGiftName && <LuxuryGiftLayer name={luxuryGiftName} />}
+
+          {/* JP Banner */}
+          {jpInfo && <JpBanner milestone={jpInfo.milestone} amount={jpInfo.amount} />}
 
           {/* Gift Modal */}
           <GiftModal
