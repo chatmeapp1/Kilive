@@ -142,6 +142,17 @@ export default function ProfileScreen() {
           ))}
         </ScrollView>
       </View>
+
+      {/* Settings Menu */}
+      <TouchableOpacity 
+        style={styles.settingsButton}
+        onPress={() => router.push('/settings')}
+      >
+        <ThemedText style={styles.settingsText}>Settings</ThemedText>
+        <ThemedText style={styles.settingsArrow}>›</ThemedText>
+      </TouchableOpacity>
+
+      <View style={{ height: 40 }} />
     </ScrollView>
   );
 }
@@ -337,5 +348,24 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 12,
     backgroundColor: '#f0f0f0',
+  },
+  settingsButton: {
+    backgroundColor: '#fff',
+    marginHorizontal: 20,
+    marginTop: 16,
+    padding: 16,
+    borderRadius: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  settingsText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000',
+  },
+  settingsArrow: {
+    fontSize: 24,
+    color: '#666',
   },
 });
