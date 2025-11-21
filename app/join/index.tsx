@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { StyleSheet, View, StatusBar, TouchableOpacity } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
@@ -10,14 +11,10 @@ export default function JoinScreen() {
 
   return (
     <>
-      {/* Hilangkan header default Expo Router */}
       <Stack.Screen options={{ headerShown: false }} />
-
-      {/* StatusBar transparan agar gradient full sampai atas */}
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
 
       <View style={styles.container}>
-
         {/* Header with gradient background */}
         <LinearGradient
           colors={['#A8FF78', '#78FFD6']}
@@ -25,7 +22,7 @@ export default function JoinScreen() {
         >
           <View style={styles.headerContent}>
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-              <View />
+              <ThemedText style={styles.backText}>‹</ThemedText>
             </TouchableOpacity>
 
             <ThemedText style={styles.headerTitle}>Join Us</ThemedText>
@@ -48,12 +45,12 @@ export default function JoinScreen() {
         <View style={styles.optionsContainer}>
           <JoinOption
             title="Apply for Agency"
-            onPress={() => {}}
+            onPress={() => router.push('/join/agency')}
           />
 
           <JoinOption
             title="Apply for Host"
-            onPress={() => {}}
+            onPress={() => router.push('/join/host')}
           />
         </View>
       </View>
@@ -64,10 +61,10 @@ export default function JoinScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
   },
   header: {
-    paddingTop: 60,   // naikkan agar tidak terpotong status bar
+    paddingTop: 60,
     paddingBottom: 20,
   },
   headerContent: {
@@ -78,6 +75,11 @@ const styles = StyleSheet.create({
   },
   backButton: {
     width: 40,
+  },
+  backText: {
+    fontSize: 32,
+    color: '#000',
+    fontWeight: '300',
   },
   headerTitle: {
     fontSize: 18,
