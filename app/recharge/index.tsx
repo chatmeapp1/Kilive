@@ -78,7 +78,7 @@ export default function RechargeScreen() {
             style={styles.balanceSection}
           >
             <ThemedView lightColor="#7B2FFF" darkColor="#7B2FFF" style={styles.balanceInnerView}>
-              <ThemedText style={styles.balanceTitle}>My U Coins</ThemedText>
+              <ThemedText style={styles.balanceTitle}>My Coins</ThemedText>
               <View style={styles.coinContainer}>
                 <Image source={require('@/assets/coin.png')} style={styles.coinIcon} />
                 <ThemedText style={styles.coinAmount}>38</ThemedText>

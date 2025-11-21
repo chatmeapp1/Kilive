@@ -77,15 +77,15 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   iconBadgeContainer: {
-    width: 64,
-    height: 64,
+    width: 50,
+    height: 50,
     position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
   },
   iconBadge: {
-    width: 64,
-    height: 64,
+    width: 40,
+    height: 40,
     resizeMode: 'contain',
   },
   levelNumberContainer: {
@@ -94,9 +94,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   levelNumber: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#fff',
+    right: -5 // nilai negatif juga menggeser ke kanan
   },
   levelInfo: {
     flex: 1,
@@ -104,12 +105,12 @@ const styles = StyleSheet.create({
   levelTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#fff',
     marginBottom: 4,
   },
   experienceText: {
     fontSize: 12,
-    color: '#000',
+    color: '#fff',
     marginBottom: 8,
   },
   progressBarContainer: {

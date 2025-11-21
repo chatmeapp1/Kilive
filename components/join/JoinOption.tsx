@@ -96,7 +96,7 @@ export default function RechargeScreen() {
 
       {/* Balance Section */}
       <ThemedView style={styles.balanceSection}>
-        <ThemedText style={styles.balanceLabel}>My U Coins</ThemedText>
+        <ThemedText style={styles.balanceLabel}>My Coins</ThemedText>
         <View style={styles.balanceValueContainer}>
           <ThemedText style={styles.balanceValue}>38</ThemedText>
           <Image source={coinIcon} style={styles.coinIcon} />

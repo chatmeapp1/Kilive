@@ -40,11 +40,9 @@ export default function TopRanking({ rankings }: TopRankingProps) {
     return (
       <View key={item.rank} style={[styles.rankItem, item.rank === 1 && styles.topRank]}>
 
-        <View style={styles.rankBadge}>
-          <ThemedText style={styles.rankNumber}>{item.rank}</ThemedText>
-        </View>
-
+        {/* AVATAR + CROWN + LEVEL BADGE */}
         <View style={styles.avatarContainer}>
+
           {item.hasCrown && (
             <View style={[styles.crown, { width: crownSize, height: crownSize }]}>
               <ThemedText style={styles.crownEmoji}>👑</ThemedText>
@@ -56,7 +54,9 @@ export default function TopRanking({ rankings }: TopRankingProps) {
           {levelIcon && (
             <View style={styles.levelBadge}>
               <Image source={levelIcon} style={styles.levelIconImage} />
-              <ThemedText style={styles.levelBadgeText}>{item.level}</ThemedText>
+              <ThemedText style={styles.levelBadgeText}>
+                {item.level}
+              </ThemedText>
             </View>
           )}
         </View>
@@ -70,6 +70,8 @@ export default function TopRanking({ rankings }: TopRankingProps) {
 
   return (
     <View style={styles.container}>
+
+      {/* ONLY TOP 3 PODIUM */}
       <LinearGradient colors={['#F5F5F5', '#E8E8E8']} style={styles.podium}>
 
         <View style={styles.rank2Container}>
@@ -86,14 +88,6 @@ export default function TopRanking({ rankings }: TopRankingProps) {
 
       </LinearGradient>
 
-      <View style={styles.bottomRanks}>
-        <View style={styles.bottomRankRow}>
-          {rankings[3] && renderRankItem(rankings[3])}
-        </View>
-        <View style={styles.bottomRankRow}>
-          {rankings[4] && renderRankItem(rankings[4])}
-        </View>
-      </View>
     </View>
   );
 }
@@ -120,7 +114,9 @@ const styles = StyleSheet.create({
   rank2Container: { flex: 1, alignItems: 'center', marginTop: 30 },
   rank3Container: { flex: 1, alignItems: 'center', marginTop: 30 },
 
-  topRank: { transform: [{ scale: 1.05 }] },
+  topRank: {
+    transform: [{ scale: 1.05 }],
+  },
 
   rankItem: {
     alignItems: 'center',
@@ -128,25 +124,9 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 
-  rankBadge: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  rankNumber: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-
   avatarContainer: {
     position: 'relative',
     alignItems: 'center',
-    overflow: 'visible',
   },
 
   crown: {
@@ -173,26 +153,28 @@ const styles = StyleSheet.create({
   levelBadge: {
     position: 'absolute',
     left: '50%',
-    bottom: -14,
+    bottom: -28,
     transform: [{ translateX: -16 }],
-    width: 32,
-    height: 32,
+    width: 45,
+    height: 45,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   levelIconImage: {
-    width: 32,
-    height: 32,
+    width: 40,
+    height: 40,
     position: 'absolute',
     resizeMode: 'contain',
+    left: -26,
   },
 
   levelBadgeText: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: 'bold',
     zIndex: 2,
+    transform: [{ translateX: -23 }],
   },
 
   username: {
@@ -201,18 +183,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     maxWidth: 85,
     textAlign: 'center',
-  },
-
-  bottomRanks: {
-    flexDirection: 'row',
-    backgroundColor: '#f5f5f5',
-    paddingVertical: 16,
-    marginTop: 8,
-    borderRadius: 20,
-  },
-
-  bottomRankRow: {
-    flex: 1,
-    paddingHorizontal: 16,
   },
 });

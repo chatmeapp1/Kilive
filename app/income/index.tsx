@@ -25,7 +25,7 @@ export default function IncomeScreen() {
         <View style={styles.pointsSection}>
           <View style={styles.pointsHeader}>
             <DiamondIcon size={40} color="#22C55E" />
-            <ThemedText style={styles.pointsLabel}>Poin :</ThemedText>
+            <ThemedText style={styles.pointsLabel}>Diamond :</ThemedText>
           </View>
         </View>
 
