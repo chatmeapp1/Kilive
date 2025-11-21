@@ -8,8 +8,8 @@ import {
 
 import TopBar from './TopBar';
 import SystemMessage from './SystemMessage';
-import CoinBalance from './CoinBalance';
-import FloatingGift from './FloatingGift';
+import CoinBalance from './IncomeHost';
+import FloatingGift from './JpBanner';
 import ChatMessageList from './ChatMessageList';
 import BottomPanel from './BottomPanel';
 
