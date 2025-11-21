@@ -15,7 +15,11 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path, Circle, Line } from 'react-native-svg';
 
-export default function BottomPanel() {
+interface BottomPanelProps {
+  onGiftPress?: () => void;
+}
+
+export default function BottomPanel({ onGiftPress }: BottomPanelProps) {
   const insets = useSafeAreaInsets();
 
   const [typing, setTyping] = useState(false);
@@ -111,7 +115,10 @@ export default function BottomPanel() {
           </TouchableOpacity>
 
           {/* Icon Gift */}
-          <TouchableOpacity style={[styles.iconBtn, styles.giftBtn]}>
+          <TouchableOpacity 
+            style={[styles.iconBtn, styles.giftBtn]}
+            onPress={onGiftPress}
+          >
             <Svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <Path d="M20 12V22H4V12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <Path d="M22 7H2V12H22V7Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

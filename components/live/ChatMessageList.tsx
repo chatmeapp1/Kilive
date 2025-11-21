@@ -1,13 +1,12 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import DiamondIcon from '@/components/ui/DiamondIcon';
 
 interface ChatMessage {
   id: string;
   username: string;
   level?: number;
-  vip?: number; 
+  vip?: number;
   message: string;
 }
 
@@ -16,7 +15,7 @@ interface ChatMessageListProps {
 }
 
 export default function ChatMessageList({ messages }: ChatMessageListProps) {
-  
+
   const getVipColor = (vip?: number) => {
     switch (vip) {
       case 1: return 'rgba(34,197,94,0.35)';
@@ -28,9 +27,29 @@ export default function ChatMessageList({ messages }: ChatMessageListProps) {
     }
   };
 
+  const getLevelIcon = (level?: number) => {
+    if (!level) return null;
+
+    if (level >= 1 && level <= 9)
+      return require('@/assets/level/ic_blue.png');
+    if (level >= 10 && level <= 19)
+      return require('@/assets/level/ic_green.png');
+    if (level >= 20 && level <= 29)
+      return require('@/assets/level/ic_yellow.png');
+    if (level >= 30 && level <= 49)
+      return require('@/assets/level/ic_orange.png');
+    if (level >= 50 && level <= 75)
+      return require('@/assets/level/ic_red.png');
+    if (level >= 76 && level <= 100)
+      return require('@/assets/level/ic_black.png');
+
+    return require('@/assets/level/ic_blue.png');
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
+
         {messages.map((msg) => (
           <View
             key={msg.id}
@@ -39,18 +58,22 @@ export default function ChatMessageList({ messages }: ChatMessageListProps) {
               { backgroundColor: getVipColor(msg.vip) }
             ]}
           >
+            {/* LEVEL BADGE */}
             {msg.level && (
               <View style={styles.levelBadge}>
-                <DiamondIcon size={12} color="#fff" />
+                <Image
+                  source={getLevelIcon(msg.level)}
+                  style={styles.levelIcon}
+                />
                 <ThemedText style={styles.levelText}>{msg.level}</ThemedText>
               </View>
             )}
 
             <ThemedText style={styles.username}>{msg.username}: </ThemedText>
-
             <ThemedText style={styles.message}>{msg.message}</ThemedText>
           </View>
         ))}
+
       </ScrollView>
     </View>
   );
@@ -76,21 +99,29 @@ const styles = StyleSheet.create({
     minHeight: 32,
   },
 
+  // Badge Level
   levelBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(147,51,234,0.55)',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 20,
     marginRight: 6,
     gap: 4,
+    backgroundColor: 'transparent', // biar icon fokus
+  },
+
+  levelIcon: {
+    width: 50,
+    height: 50,
+    resizeMode: 'contain',
   },
 
   levelText: {
     color: '#fff',
     fontSize: 11,
     fontWeight: 'bold',
+    marginLeft: -29, // geser angka ke kiri menumpuk icon
   },
 
   username: {

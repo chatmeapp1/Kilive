@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import Svg, { Path } from 'react-native-svg';
 
 interface TopBarProps {
   hostName: string;
@@ -19,20 +18,16 @@ export default function TopBar({
   isFollowing,
   onFollowPress,
 }: TopBarProps) {
-  const router = useRouter();
-
   return (
     <View style={styles.wrapper}>
-      
-      {/* BACK BUTTON */}
-      <TouchableOpacity onPress={() => router.back()} style={styles.smallBtn}>
-        <Ionicons name="chevron-back" size={20} color="#fff" />
-      </TouchableOpacity>
-
-      {/* HOST INFO */}
+      {/* HOST INFO BUBBLE */}
       <View style={styles.hostBubble}>
         <Image
-          source={{ uri: avatar || 'https://via.placeholder.com/80' }}
+          source={{
+            uri:
+              avatar ||
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvsOPvAhPNyrFbQmRw-LLSxIfDcO5aqNJ3mOw6WfTW5lY8j--GRD385S0&s',
+          }}
           style={styles.avatar}
         />
 
@@ -41,21 +36,31 @@ export default function TopBar({
           <ThemedText style={styles.id}>ID: {hostId || '0000'}</ThemedText>
         </View>
 
-        {/* FOLLOW BUTTON */}
-        <TouchableOpacity style={styles.followBtn} onPress={onFollowPress}>
-          <Ionicons
-            name={isFollowing ? "checkmark" : "add"}
-            size={16}
-            color="#fff"
-          />
+        {/* FOLLOW BUTTON with SVG */}
+        <TouchableOpacity style={styles.followBtn} onPress={onFollowPress} activeOpacity={0.8}>
+          {isFollowing ? (
+            <Svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <Path
+                d="M5 13l4 4L19 7"
+                stroke="#fff"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </Svg>
+          ) : (
+            <Svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <Path
+                d="M12 5v14M5 12h14"
+                stroke="#fff"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </Svg>
+          )}
         </TouchableOpacity>
       </View>
-
-      {/* CLOSE BUTTON */}
-      <TouchableOpacity onPress={() => router.back()} style={styles.smallBtn}>
-        <Ionicons name="close" size={20} color="#fff" />
-      </TouchableOpacity>
-
     </View>
   );
 }
@@ -66,43 +71,31 @@ const styles = StyleSheet.create({
     top: 44,
     left: 12,
     right: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
     zIndex: 50,
-    justifyContent: 'space-between',
-  },
-
-  smallBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
   },
 
   hostBubble: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.45)',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
     borderRadius: 22,
-    marginHorizontal: 8,
   },
 
   avatar: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    borderColor: '#fff',
     borderWidth: 1.2,
+    borderColor: '#fff',
   },
 
   texts: {
     marginLeft: 8,
-    flex: 1,
+    marginRight: 6,
   },
 
   name: {
@@ -123,6 +116,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#A855F7',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 6,
   },
 });

@@ -16,6 +16,7 @@ import ChatMessageList from '@/components/live/ChatMessageList';
 import SystemMessage from '@/components/live/SystemMessage';
 import LiveActionsCoHost from '@/components/live/LiveActionsCoHost';
 import LiveVideoBox from '@/components/live/LiveVideoBox';
+import GiftModal from '@/components/live/GiftModal';
 
 export default function LiveViewerScreen() {
   const { hostId, hostName } = useLocalSearchParams();
@@ -24,6 +25,76 @@ export default function LiveViewerScreen() {
   // Co-host mode state
   const [isCoHost, setIsCoHost] = useState(false); // Set true untuk test co-host mode
   const [isMicMuted, setIsMicMuted] = useState(false);
+
+  // Gift modal state
+  const [showGiftModal, setShowGiftModal] = useState(false);
+  const [userBalance, setUserBalance] = useState(1000); // Initial balance
+
+  // Handle gift send
+  const handleSendGift = (gift: any, combo: number) => {
+    const totalCost = gift.price * combo;
+    const category = gift.category;
+
+    // Deduct from user balance
+    setUserBalance(prev => prev - totalCost);
+
+    // Calculate host income based on gift type
+    let hostIncome = 0;
+    if (category === 'slucky' || category === 'lucky') {
+      // 10% goes to host for lucky gifts
+      hostIncome = totalCost * 0.1;
+    } else if (totalCost >= 1000000) {
+      // 50% goes to host for gifts above 1M
+      hostIncome = totalCost * 0.5;
+    } else {
+      // Default 10% for other luxury gifts
+      hostIncome = totalCost * 0.1;
+    }
+
+    // Check for jackpot rewards (Lucky & S-Lucky only)
+    if (category === 'slucky' || category === 'lucky') {
+      checkJackpotReward(gift, combo, totalCost);
+    }
+
+    console.log('Gift sent:', gift.name, 'x', combo);
+    console.log('Total cost:', totalCost);
+    console.log('Host income:', hostIncome);
+  };
+
+  const checkJackpotReward = (gift: any, combo: number, totalCost: number) => {
+    // JP Lucky rewards at: 20s, 50s, 100s, 200s, 300s, 500s
+    const jpMilestones = [20, 50, 100, 200, 300, 500];
+    
+    // Lucky-S special rewards at 500s and 1000s when price is 200+
+    if (gift.category === 'slucky' && gift.price >= 200) {
+      const specialMilestones = [500, 1000];
+      // At 500s: reward 1M coins
+      // At 1000s: reward 2M coins (double)
+      specialMilestones.forEach(milestone => {
+        if (combo >= milestone) {
+          const reward = milestone === 500 ? 1000000 : 2000000;
+          setUserBalance(prev => prev + reward);
+          console.log(`🎉 JACKPOT! You won ${reward} coins at ${milestone}s!`);
+        }
+      });
+    }
+
+    // S-Lucky gets double coins based on gift price
+    if (gift.category === 'slucky') {
+      const doubleReward = totalCost;
+      setUserBalance(prev => prev + doubleReward);
+      console.log(`💎 S-Lucky bonus: ${doubleReward} coins!`);
+    }
+
+    // Regular JP milestones
+    jpMilestones.forEach(milestone => {
+      if (combo === milestone) {
+        const baseReward = gift.price * 10; // 10x gift price as reward
+        setUserBalance(prev => prev + baseReward);
+        console.log(`🎊 JP Milestone ${milestone}s reached! Reward: ${baseReward} coins!`);
+      }
+    });
+  };
 
   const translateX = useSharedValue(0);
 
@@ -69,11 +140,19 @@ export default function LiveViewerScreen() {
           {/* UI OVERLAY */}
           {!simpleMode && (
             <Animated.View style={[styles.overlayLayer, animatedOverlay]}>
-              <LiveOverlay>
+              <LiveOverlay 
+                hostName={typeof hostName === 'string' ? hostName : 'Unknown'}
+                hostId={typeof hostId === 'string' ? hostId : 'unknown'}
+              >
 
-                <TopBar hostName={hostName} hostId={hostId} isFollowing={false} onFollowPress={() => {}} />
+                <TopBar 
+                  hostName={typeof hostName === 'string' ? hostName : 'Unknown'} 
+                  hostId={typeof hostId === 'string' ? hostId : 'unknown'} 
+                  isFollowing={false} 
+                  onFollowPress={() => {}} 
+                />
 
-                {!isCoHost && <CoinBalance />}
+                {!isCoHost && <CoinBalance balance={userBalance} />}
 
                 <FloatingGift />
 
@@ -91,12 +170,20 @@ export default function LiveViewerScreen() {
                   />
                 ) : (
                   // Normal viewer panel
-                  <BottomPanel />
+                  <BottomPanel onGiftPress={() => setShowGiftModal(true)} />
                 )}
 
               </LiveOverlay>
             </Animated.View>
           )}
+
+          {/* Gift Modal */}
+          <GiftModal
+            visible={showGiftModal}
+            onClose={() => setShowGiftModal(false)}
+            onSendGift={handleSendGift}
+            userBalance={userBalance}
+          />
         </View>
       </GestureDetector>
     </GestureHandlerRootView>

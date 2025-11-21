@@ -3,11 +3,28 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import Svg, { Path } from 'react-native-svg';
 
-export default function CoinBalance() {
+interface CoinBalanceProps {
+  balance?: number;
+}
+
+export default function CoinBalance({ balance = 1000 }: CoinBalanceProps) {
   return (
     <>
-      <View style={styles.container}>
-        <ThemedText style={styles.text}>💰 Balance: 1000</ThemedText>
+      <View style={styles.balanceBubble}>
+        <Svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+          <Path
+            d="M12 2C6.48 2 2 5.58 2 10C2 14.42 6.48 18 12 18C17.52 18 22 14.42 22 10C22 5.58 17.52 2 12 2Z"
+            stroke="#166534"
+            strokeWidth="2"
+          />
+          <Path
+            d="M12 6V14M9 10H15"
+            stroke="#166534"
+            strokeWidth="2"
+          />
+        </Svg>
+
+        <ThemedText style={styles.balanceText}>{balance}</ThemedText>
       </View>
       
       {/* Button hijau pastel di bawah avatar host */}
@@ -46,20 +63,24 @@ export default function CoinBalance() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  balanceBubble: {
     position: 'absolute',
-    top: 100,
-    right: 10,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    zIndex: 10,
+    top: 118,              // TURUN SUPAYA TIDAK KENA AVATAR
+    left: 18,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 11,
+    paddingVertical: 2,
+    borderRadius: 20,
+    backgroundColor: '#CFFDE1',
+    gap: 5,
+    zIndex: 20,
+    elevation: 4,
   },
-  text: {
-    color: '#FFD700',
-    fontSize: 12,
-    fontWeight: 'bold',
+  balanceText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#166534',
   },
   followButton: {
     position: 'absolute',
