@@ -1,63 +1,266 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  Text,
 } from 'react-native';
+import { BlurView } from 'expo-blur';
+import Slider from '@react-native-community/slider';
 
 import TopBar from './TopBar';
 import SystemMessage from './SystemMessage';
-import CoinBalance from './IncomeHost';
-import FloatingGift from './JpBanner';
+import IncomeHost from './IncomeHost';
+import JpBanner from './JpBanner';
 import ChatMessageList from './ChatMessageList';
 import BottomPanel from './BottomPanel';
 
 export default function LiveOverlay({
   hostName,
   hostId,
-  children,
+  hostAvatar,
+  balance,
+  messages,
+  jpQueue = [],          // FIX: Default value agar tidak undefined
+  onSendMessage,
+  onGiftPress,
+  agoraEngine,
+  isHostAway,
 }: {
   hostName: string;
   hostId: string;
-  children?: React.ReactNode;
+  hostAvatar?: string;
+  balance: number;
+  messages: any[];
+  jpQueue?: any[];
+  onSendMessage: (msg: string) => void;
+  onGiftPress: () => void;
+  agoraEngine: any;
+  isHostAway: boolean;
 }) {
+  // BEAUTY FILTER UI
+  const [beautyOpen, setBeautyOpen] = useState(false);
+  const [beauty, setBeauty] = useState({
+    smooth: 0.5,
+    light: 0.4,
+    red: 0.1,
+  });
+
+  const applyBeauty = (key: 'smooth' | 'light' | 'red', value: number) => {
+    const updated = { ...beauty, [key]: value };
+    setBeauty(updated);
+
+    if (agoraEngine) {
+      agoraEngine.setBeautyEffectOptions(true, {
+        lighteningLevel: updated.light,
+        smoothnessLevel: updated.smooth,
+        rednessLevel: updated.red,
+        lighteningContrastLevel: 1,
+      });
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.overlay}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      {/* Semua UI Overlay */}
-      <TopBar hostName={hostName} hostId={hostId} isFollowing={false} onFollowPress={() => {}} />
-
-      <CoinBalance />
-
-      <SystemMessage message="Platform ini melarang menampilkan ketelanjangan." />
-
-      <FloatingGift />
-
-      <ChatMessageList
-        messages={[
-          { id: '1', username: 'user1', level: 22, message: 'halo host!' },
-          { id: '2', username: 'user2', level: 50, message: 'mantap nih host!' },
-        ]}
+      {/* TOP BAR */}
+      <TopBar
+        hostName={hostName}
+        hostId={hostId}
+        avatar={hostAvatar}
+        isFollowing={false}
+        onFollowPress={() => {}}
       />
 
-      <BottomPanel />
+      {/* HOST INCOME */}
+      <IncomeHost balance={balance} />
 
-      {/* Jika ada child tambahan */}
-      {children}
+      {/* SYSTEM MESSAGE */}
+      <SystemMessage message="Platform ini melarang konten dewasa atau tindakan ilegal." />
+
+      {/* JP BANNER */}
+      {(jpQueue || []).map((jp, index) => (
+        <JpBanner
+          key={jp.id}
+          avatar={jp.avatar}
+          username={jp.username}
+          giftName={jp.giftName}
+          milestone={jp.milestone}
+          amount={jp.amount}
+          index={index}
+          onHide={jp.onHide}
+        />
+      ))}
+
+      {/* CHAT */}
+      <ChatMessageList messages={messages} />
+
+      {/* BEAUTY BUTTON */}
+      <View style={styles.rightButtons}>
+        <View
+          style={styles.beautyBtn}
+          onTouchStart={() => setBeautyOpen(!beautyOpen)}
+        >
+          <View style={styles.diamondIcon}>
+            <View style={styles.whiteDot} />
+          </View>
+        </View>
+      </View>
+
+      {/* BEAUTY PANEL */}
+      {beautyOpen && (
+        <View style={styles.beautyPanel}>
+          <Text style={styles.label}>Smooth</Text>
+          <Slider
+            value={beauty.smooth}
+            onValueChange={(v) => applyBeauty('smooth', v)}
+            minimumValue={0}
+            maximumValue={1}
+            minimumTrackTintColor="#A855F7"
+          />
+
+          <Text style={styles.label}>Light</Text>
+          <Slider
+            value={beauty.light}
+            onValueChange={(v) => applyBeauty('light', v)}
+            minimumValue={0}
+            maximumValue={1}
+            minimumTrackTintColor="#A855F7"
+          />
+
+          <Text style={styles.label}>Redness</Text>
+          <Slider
+            value={beauty.red}
+            onValueChange={(v) => applyBeauty('red', v)}
+            minimumValue={0}
+            maximumValue={1}
+            minimumTrackTintColor="#A855F7"
+          />
+        </View>
+      )}
+
+      {/* INPUT & MENU */}
+      <BottomPanel
+        onSend={onSendMessage}
+        onGiftPress={onGiftPress}
+      />
+
+      {/* HOST AWAY MODE (AR-STYLE BLUR) */}
+      {isHostAway && (
+        <BlurView intensity={50} tint="dark" style={styles.awayBlur}>
+          <View style={styles.awayBox}>
+            <View style={styles.awayCircleOuter}>
+              <View style={styles.awayCircleInner} />
+            </View>
+
+            <View>
+              <Text style={styles.awayTextMain}>Host sedang pergi sebentar</Text>
+              <Text style={styles.awayTextSub}>Tunggu ya, siapkan gift dulu</Text>
+            </View>
+          </View>
+        </BlurView>
+      )}
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    ...StyleSheet.absoluteFillObject,
     pointerEvents: 'box-none',
+  },
+
+  rightButtons: {
+    position: 'absolute',
+    right: 15,
+    bottom: 220,
+  },
+
+  beautyBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  diamondIcon: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#A855F7',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  whiteDot: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+  },
+
+  beautyPanel: {
+    position: 'absolute',
+    right: 70,
+    bottom: 200,
+    width: 220,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    padding: 14,
+    borderRadius: 14,
+  },
+
+  label: {
+    color: '#fff',
+    fontSize: 12,
+    marginTop: 6,
+    marginBottom: -4,
+  },
+
+  awayBlur: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  awayBox: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    paddingHorizontal: 22,
+    paddingVertical: 14,
+    borderRadius: 18,
+    alignItems: 'center',
+  },
+
+  awayCircleOuter: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    borderWidth: 2,
+    borderColor: '#FACC15',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+
+  awayCircleInner: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#F97316',
+  },
+
+  awayTextMain: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 14,
+  },
+  awayTextSub: {
+    color: '#ccc',
+    fontSize: 12,
   },
 });

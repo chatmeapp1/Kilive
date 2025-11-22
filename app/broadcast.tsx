@@ -1,46 +1,69 @@
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, StatusBar, AppState } from 'react-native';
 
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, StatusBar } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
-import { useRouter } from 'expo-router';
-import RtcEngine, { ChannelProfileType, ClientRoleType } from 'react-native-agora';
+import LiveOverlay from '@/components/live/LiveOverlay';
+import BeautyPanel from '@/components/live/BeautyPanel';
 
-import LiveVideoBox from '@/components/live/LiveVideoBox';
-import LiveTopInfo from '@/components/live/LiveTopInfo';
-import LiveActionsHost from '@/components/live/LiveActionsHost';
-import LiveChatList from '@/components/live/LiveChatList';
-import LiveChatInput from '@/components/live/LiveChatInput';
-import GiftAnimationContainer from '@/components/live/GiftAnimationContainer';
+import RtcEngine, {
+  ClientRoleType,
+  ChannelProfileType,
+} from 'react-native-agora';
 
 const AGORA_APP_ID = 'a1cbca25bbb24ed086dac870aa4956e3';
 
 export default function BroadcastScreen() {
-  const router = useRouter();
-  const [viewers, setViewers] = useState(0);
-  const [duration, setDuration] = useState('00:00');
-  const [isMicMuted, setIsMicMuted] = useState(false);
-  const [isFlashOn, setIsFlashOn] = useState(false);
-  const [coHosts, setCoHosts] = useState([]);
   const [agoraEngine, setAgoraEngine] = useState<RtcEngine | null>(null);
   const [roomId, setRoomId] = useState('');
 
-  const messages = [
-    { id: '1', username: 'user1', level: 22, message: 'Hello host!' },
-    { id: '2', username: 'user2', level: 50, message: 'Amazing stream!' },
-    { id: '3', username: 'user3', message: 'Can I be co-host?' },
-  ];
+  const [isHostAway, setIsHostAway] = useState(false);
 
-  const gifts = [
-    { id: '1', username: 'richUser', giftName: 'Rose', giftIcon: '🌹', amount: 5 },
-  ];
+  const [hostInfo, setHostInfo] = useState({
+    name: '',
+    avatar: '',
+    id: '',
+  });
 
+  const [messages, setMessages] = useState([
+    { id: '1', username: 'user2', level: 50, message: 'Host mantap!' },
+    { id: '2', username: 'You', level: 10, message: 'Halooo' },
+    { id: '3', username: 'You', level: 10, message: 'Apa kabar host?' },
+  ]);
+
+  const [jpQueue, setJpQueue] = useState<any[]>([]);
+
+  // ============================
+  // BEAUTY FILTER STATE
+  // ============================
+  const [beautyVisible, setBeautyVisible] = useState(false);
+
+  const [beautyValues, setBeautyValues] = useState({
+    lighteningLevel: 0.4,
+    smoothnessLevel: 0.5,
+    rednessLevel: 0.1,
+    sharpnessLevel: 0.2,
+    faceSlimLevel: 0.3,
+    eyeEnlargeLevel: 0.3,
+  });
+
+  // ============================================================
+  // DETEKSI HOST PERGI KE APLIKASI LAIN (MODE AWAY)
+  // ============================================================
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (st) => {
+      setIsHostAway(st !== "active");
+    });
+    return () => sub.remove();
+  }, []);
+
+  // ============================================================
+  // INIT AGORA + CALL START API
+  // ============================================================
   useEffect(() => {
     setupAgora();
     return () => {
-      if (agoraEngine) {
-        agoraEngine.leaveChannel();
-        agoraEngine.destroy();
-      }
+      agoraEngine?.leaveChannel();
+      agoraEngine?.destroy();
     };
   }, []);
 
@@ -55,137 +78,99 @@ export default function BroadcastScreen() {
       engine.enableAudio();
       engine.setClientRole(ClientRoleType.ClientRoleBroadcaster);
 
-      // Start live stream
-      const response = await fetch('YOUR_BACKEND_URL/api/live/start', {
+      // Call backend start live
+      const res = await fetch('YOUR_BACKEND_URL/api/live/start', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer YOUR_TOKEN'
-        },
-        body: JSON.stringify({
-          title: 'My Live Stream',
-          category: 'general'
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: 'Live Room', category: 'general' }),
       });
 
-      const data = await response.json();
-      if (data.success) {
-        setRoomId(data.data.roomId);
-        await engine.joinChannel(
-          data.data.agora.token,
-          data.data.agora.channel,
-          null,
-          0
-        );
-        setAgoraEngine(engine);
-      }
+      const json = await res.json();
+
+      setHostInfo({
+        name: json.data.host?.username || "Host Channel",
+        avatar: json.data.host?.avatar || "",
+        id: json.data.host?.id || json.data.hostId,
+      });
+
+      setRoomId(json.data.roomId);
+
+      await engine.joinChannel(
+        json.data.agora.token,
+        json.data.agora.channel,
+        null,
+        0
+      );
+
+      // SET BEAUTY INITIAL
+      engine.setBeautyEffectOptions(true, beautyValues);
+
+      setAgoraEngine(engine);
     } catch (error) {
-      console.error('Agora setup error:', error);
+      console.log("AGORA INIT ERROR:", error);
     }
   };
 
-  const handleEndLive = async () => {
-    if (agoraEngine) {
-      await agoraEngine.leaveChannel();
-      
-      // End live on server
-      await fetch('YOUR_BACKEND_URL/api/live/end', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer YOUR_TOKEN'
-        },
-        body: JSON.stringify({ roomId })
-      });
-    }
-    router.back();
+  // ============================================================
+  // BEAUTY FILTER APPLY LIVE
+  // ============================================================
+  const updateBeautyValue = (key: string, val: number) => {
+    setBeautyValues(prev => {
+      const updated = { ...prev, [key]: val };
+
+      if (agoraEngine) {
+        agoraEngine.setBeautyEffectOptions(true, updated);
+      }
+
+      return updated;
+    });
   };
 
-  const handleToggleMic = () => {
-    if (agoraEngine) {
-      agoraEngine.muteLocalAudioStream(!isMicMuted);
-      setIsMicMuted(!isMicMuted);
-    }
-  };
+  // ============================================================
+  // SEND CHAT MESSAGE
+  // ============================================================
+  const handleSendMessage = (msg: string) => {
+    if (!msg.trim()) return;
 
-  const renderVideoLayout = () => {
-    if (coHosts.length === 0) {
-      return (
-        <View style={styles.videoFullScreen}>
-          <LiveVideoBox username="Host" isHost={true} isMuted={isMicMuted} />
-        </View>
-      );
-    }
-
-    if (coHosts.length === 1) {
-      return (
-        <View style={styles.gridRow}>
-          <LiveVideoBox username="Host" isHost={true} isMuted={isMicMuted} />
-          <LiveVideoBox username={coHosts[0].username} isMuted={false} />
-        </View>
-      );
-    }
-
-    if (coHosts.length === 2) {
-      return (
-        <View style={styles.grid2Rows}>
-          <View style={styles.gridRow}>
-            <LiveVideoBox username="Host" isHost={true} />
-            <LiveVideoBox username={coHosts[0].username} />
-          </View>
-          <LiveVideoBox username={coHosts[1].username} />
-        </View>
-      );
-    }
-
-    return (
-      <View style={styles.grid2Rows}>
-        <View style={styles.gridRow}>
-          <LiveVideoBox username="Host" isHost={true} />
-          <LiveVideoBox username={coHosts[0].username} />
-        </View>
-        <View style={styles.gridRow}>
-          <LiveVideoBox username={coHosts[1].username} />
-          <LiveVideoBox username={coHosts[2].username} />
-        </View>
-      </View>
-    );
+    setMessages(prev => [
+      ...prev,
+      {
+        id: Date.now().toString(),
+        username: "You",
+        level: 10,
+        message: msg,
+      },
+    ]);
   };
 
   return (
     <ThemedView style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      <View style={styles.videoBackground}>
-        {renderVideoLayout()}
-      </View>
+      {/* Background Video Placeholder */}
+      <View style={styles.videoPlaceholder} />
 
-      <View style={StyleSheet.absoluteFill}>
-        <LiveTopInfo
-          hostName="My Channel"
-          viewerCount={viewers}
-          duration={duration}
-          onEndLive={handleEndLive}
-        />
+      {/* LIVE OVERLAY */}
+      <LiveOverlay
+        hostName={hostInfo.name}
+        hostId={hostInfo.id}
+        hostAvatar={hostInfo.avatar}
+        balance={0}
+        messages={messages}
+        jpQueue={jpQueue}
+        onSendMessage={handleSendMessage}
+        onGiftPress={() => console.log("Open Gift Modal")}
+        agoraEngine={agoraEngine}
+        isHostAway={isHostAway}
+      />
 
-        <LiveActionsHost
-          onSwitchCamera={() => agoraEngine?.switchCamera()}
-          onToggleBeauty={() => {}}
-          onToggleFlash={() => setIsFlashOn(!isFlashOn)}
-          onToggleMic={handleToggleMic}
-          onInviteCoHost={() => {}}
-          onEndLive={handleEndLive}
-          isMicMuted={isMicMuted}
-          isFlashOn={isFlashOn}
-        />
-
-        <GiftAnimationContainer gifts={gifts} />
-        <LiveChatList messages={messages} />
-        <LiveChatInput
-          onSend={(msg) => console.log(msg)}
-          onGiftPress={() => console.log('Open gifts')}
-        />
-      </View>
+      {/* BEAUTY SLIDER PANEL */}
+      <BeautyPanel
+        visible={beautyVisible}
+        values={beautyValues}
+        onChange={updateBeautyValue}
+        onClose={() => setBeautyVisible(false)}
+      />
     </ThemedView>
   );
 }
@@ -195,21 +180,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
   },
-  videoBackground: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  videoFullScreen: {
-    flex: 1,
-  },
-  gridRow: {
-    flexDirection: 'row',
-    flex: 1,
-  },
-  grid2Rows: {
-    flex: 1,
+  videoPlaceholder: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#111',
   },
 });
