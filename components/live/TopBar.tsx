@@ -1,7 +1,13 @@
 import React from 'react';
-import { View, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import Svg, { Path } from 'react-native-svg';
+
+interface Viewer {
+  id: string;
+  avatar: string;
+  username?: string;
+}
 
 interface TopBarProps {
   hostName: string;
@@ -9,6 +15,8 @@ interface TopBarProps {
   avatar?: string;
   isFollowing: boolean;
   onFollowPress: () => void;
+  viewers?: Viewer[];
+  viewerCount?: number;
 }
 
 export default function TopBar({
@@ -17,6 +25,8 @@ export default function TopBar({
   avatar,
   isFollowing,
   onFollowPress,
+  viewers = [],
+  viewerCount = 0,
 }: TopBarProps) {
   return (
     <View style={styles.wrapper}>
@@ -33,7 +43,7 @@ export default function TopBar({
 
         <View style={styles.texts}>
           <ThemedText style={styles.name}>{hostName || 'Host'}</ThemedText>
-          <ThemedText style={styles.id}>ID: {hostId || '0000'}</ThemedText>
+          <ThemedText style={styles.id}>@{hostId || '0000'}</ThemedText>
         </View>
 
         {/* FOLLOW BUTTON with SVG */}
@@ -61,6 +71,43 @@ export default function TopBar({
           )}
         </TouchableOpacity>
       </View>
+
+      {/* VIEWER LIST */}
+      {viewers.length > 0 && (
+        <View style={styles.viewerListContainer}>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.viewerScrollContent}
+          >
+            {viewers.slice(0, 6).map((viewer, index) => (
+              <View key={viewer.id} style={[styles.viewerAvatarContainer, index > 0 && styles.viewerAvatarOverlap]}>
+                <Image
+                  source={{ uri: viewer.avatar }}
+                  style={styles.viewerAvatar}
+                />
+                <View style={styles.pinkBadge} />
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+
+      {/* VIEWER COUNT BADGE */}
+      {viewerCount > 0 && (
+        <View style={styles.viewerCountBadge}>
+          <Svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <Path
+              d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
+              stroke="#fff"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </Svg>
+          <ThemedText style={styles.viewerCountText}>{viewerCount}</ThemedText>
+        </View>
+      )}
     </View>
   );
 }
@@ -74,6 +121,7 @@ const styles = StyleSheet.create({
     zIndex: 50,
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    alignItems: 'center',
   },
 
   hostBubble: {
@@ -116,5 +164,67 @@ const styles = StyleSheet.create({
     backgroundColor: '#A855F7',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  viewerListContainer: {
+    marginLeft: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+
+  viewerScrollContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: 4,
+  },
+
+  viewerAvatarContainer: {
+    position: 'relative',
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  viewerAvatarOverlap: {
+    marginLeft: -16,
+  },
+
+  viewerAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 2.5,
+    borderColor: '#000',
+  },
+
+  pinkBadge: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: '#EC4899',
+    borderWidth: 2,
+    borderColor: '#000',
+  },
+
+  viewerCountBadge: {
+    marginLeft: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 16,
+    gap: 4,
+  },
+
+  viewerCountText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '700',
   },
 });

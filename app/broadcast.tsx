@@ -35,6 +35,44 @@ export default function BroadcastScreen() {
   const [jpQueue, setJpQueue] = useState<any[]>([]);
 
   // ============================
+  // VIEWER DATA
+  // ============================
+  const [viewers, setViewers] = useState([
+    {
+      id: '1',
+      avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUg-nMmK-oPbIbmjpylqnUMF28EtNqMSQOmW5-54zbPacNKW4g9KQbBas&s=10',
+      username: 'viewer1'
+    },
+    {
+      id: '2',
+      avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+      username: 'viewer2'
+    },
+    {
+      id: '3',
+      avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+      username: 'viewer3'
+    },
+    {
+      id: '4',
+      avatar: 'https://randomuser.me/api/portraits/women/65.jpg',
+      username: 'viewer4'
+    },
+    {
+      id: '5',
+      avatar: 'https://randomuser.me/api/portraits/men/75.jpg',
+      username: 'viewer5'
+    },
+    {
+      id: '6',
+      avatar: 'https://randomuser.me/api/portraits/women/23.jpg',
+      username: 'viewer6'
+    },
+  ]);
+
+  const [viewerCount, setViewerCount] = useState(52);
+
+  // ============================
   // BEAUTY FILTER STATE
   // ============================
   const [beautyVisible, setBeautyVisible] = useState(false);
@@ -164,6 +202,8 @@ export default function BroadcastScreen() {
         onGiftPress={() => console.log("Open Gift Modal")}
         agoraEngine={agoraEngine}
         isHostAway={isHostAway}
+        viewers={viewers}
+        viewerCount={viewerCount}
       />
 
       {/* BEAUTY SLIDER PANEL */}

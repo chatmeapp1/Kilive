@@ -11,7 +11,7 @@ export default function ProfileImageSection() {
       </View>
       <View style={styles.rightSection}>
         <Image
-          source={{ uri: 'https://via.placeholder.com/60' }}
+          source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwWfX1I7HO8Bxd0-2-0Vc0l1Zumgum6eTqVyNlnP5CuTKDQV6FFX7yeEA&s' }}
           style={styles.profileImage}
         />
         <View style={styles.arrow} />

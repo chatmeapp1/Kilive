@@ -16,6 +16,12 @@ import JpBanner from './JpBanner';
 import ChatMessageList from './ChatMessageList';
 import BottomPanel from './BottomPanel';
 
+interface Viewer {
+  id: string;
+  avatar: string;
+  username?: string;
+}
+
 export default function LiveOverlay({
   hostName,
   hostId,
@@ -27,6 +33,8 @@ export default function LiveOverlay({
   onGiftPress,
   agoraEngine,
   isHostAway,
+  viewers = [],
+  viewerCount = 0,
 }: {
   hostName: string;
   hostId: string;
@@ -38,6 +46,8 @@ export default function LiveOverlay({
   onGiftPress: () => void;
   agoraEngine: any;
   isHostAway: boolean;
+  viewers?: Viewer[];
+  viewerCount?: number;
 }) {
   // BEAUTY FILTER UI
   const [beautyOpen, setBeautyOpen] = useState(false);
@@ -73,6 +83,8 @@ export default function LiveOverlay({
         avatar={hostAvatar}
         isFollowing={false}
         onFollowPress={() => {}}
+        viewers={viewers}
+        viewerCount={viewerCount}
       />
 
       {/* HOST INCOME */}
