@@ -10,6 +10,11 @@ router.use(authenticate);
 // User profile routes (with ownership check)
 router.get('/profile/:userId', checkOwnership, userController.getProfile);
 router.put('/profile', userController.updateProfile);
+router.put('/avatar', userController.updateAvatar);
+router.put('/nickname', userController.updateNickname);
+router.put('/sex', userController.updateSex);
+router.put('/age', userController.updateAge);
+router.put('/bio', userController.updateBio);
 router.get('/level/:userId', checkOwnership, userController.getUserLevel);
 
 // Host-specific routes

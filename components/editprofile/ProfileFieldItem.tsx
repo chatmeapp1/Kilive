@@ -17,7 +17,7 @@ export default function ProfileFieldItem({ label, value, onPress }: ProfileField
       </View>
       <View style={styles.rightSection}>
         <ThemedText style={styles.value}>{value}</ThemedText>
-        <View />
+        <ThemedText style={styles.arrow}>›</ThemedText>
       </View>
     </TouchableOpacity>
   );
@@ -48,5 +48,9 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 16,
     color: '#666',
+  },
+  arrow: {
+    fontSize: 20,
+    color: '#999',
   },
 });

@@ -2,33 +2,25 @@
 -- USERS TABLE
 -- =====================================
 CREATE TABLE IF NOT EXISTS users (
-  id VARCHAR(20) PRIMARY KEY,
-  username VARCHAR(100) NOT NULL,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,
-
-  role VARCHAR(20) NOT NULL DEFAULT 'user', -- admin, agency, host, user
-  agency_id VARCHAR(40),
-
-  -- LEVEL SYSTEM
-  level INTEGER DEFAULT 1,
-  exp INTEGER DEFAULT 0,
-  vip_level INTEGER DEFAULT 0,
-
-  -- BALANCE SYSTEM
-  coins INTEGER DEFAULT 0,     -- viewer coins
-  diamonds INTEGER DEFAULT 0,  -- host income
-
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  email VARCHAR(100),
+  password_hash VARCHAR(255),
+  phone VARCHAR(20) UNIQUE,
   avatar_url TEXT,
   bio TEXT,
+  sex VARCHAR(10),
+  age INTEGER,
+  role VARCHAR(20) DEFAULT 'user', -- admin, agency, host, user
+  agency_id INTEGER REFERENCES agencies(id),
 
-  is_active BOOLEAN DEFAULT TRUE,
-  refresh_token TEXT,
+  -- BALANCE SYSTEM
+  diamonds INTEGER DEFAULT 0,
+  coins INTEGER DEFAULT 0,
+  total_income INTEGER DEFAULT 0,
 
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-  FOREIGN KEY (agency_id) REFERENCES agencies(id) ON DELETE SET NULL
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE INDEX idx_users_email ON users(email);
@@ -42,7 +34,7 @@ CREATE INDEX idx_users_username ON users(username);
 -- AGENCIES TABLE
 -- =====================================
 CREATE TABLE IF NOT EXISTS agencies (
-  id VARCHAR(40) PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   agency_name VARCHAR(255) NOT NULL,
   description TEXT,
 
@@ -58,7 +50,7 @@ CREATE TABLE IF NOT EXISTS agencies (
 -- LIVE ROOMS TABLE
 -- =====================================
 CREATE TABLE IF NOT EXISTS live_rooms (
-  id VARCHAR(40) PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   host_id VARCHAR(40) REFERENCES users(id),
 
   title VARCHAR(255),

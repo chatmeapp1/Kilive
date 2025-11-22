@@ -3,18 +3,25 @@ import React from 'react';
 import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 
-export default function ProfileImageSection() {
+interface ProfileImageSectionProps {
+  imageUrl?: string;
+  onPress: () => void;
+}
+
+export default function ProfileImageSection({ imageUrl, onPress }: ProfileImageSectionProps) {
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.leftSection}>
         <ThemedText style={styles.label}>Head portrait</ThemedText>
       </View>
       <View style={styles.rightSection}>
         <Image
-          source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwWfX1I7HO8Bxd0-2-0Vc0l1Zumgum6eTqVyNlnP5CuTKDQV6FFX7yeEA&s' }}
+          source={{ 
+            uri: imageUrl || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwWfX1I7HO8Bxd0-2-0Vc0l1Zumgum6eTqVyNlnP5CuTKDQV6FFX7yeEA&s' 
+          }}
           style={styles.profileImage}
         />
-        <View style={styles.arrow} />
+        <ThemedText style={styles.arrow}>›</ThemedText>
       </View>
     </TouchableOpacity>
   );
