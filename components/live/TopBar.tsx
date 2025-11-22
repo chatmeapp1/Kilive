@@ -17,6 +17,7 @@ interface TopBarProps {
   onFollowPress: () => void;
   viewers?: Viewer[];
   viewerCount?: number;
+  onViewerPress?: (userId: string) => void;
 }
 
 export default function TopBar({
@@ -27,6 +28,7 @@ export default function TopBar({
   onFollowPress,
   viewers = [],
   viewerCount = 0,
+  onViewerPress,
 }: TopBarProps) {
   return (
     <View style={styles.wrapper}>
@@ -81,13 +83,18 @@ export default function TopBar({
             contentContainerStyle={styles.viewerScrollContent}
           >
             {viewers.slice(0, 6).map((viewer, index) => (
-              <View key={viewer.id} style={[styles.viewerAvatarContainer, index > 0 && styles.viewerAvatarOverlap]}>
+              <TouchableOpacity 
+                key={viewer.id} 
+                style={[styles.viewerAvatarContainer, index > 0 && styles.viewerAvatarOverlap]}
+                onPress={() => onViewerPress && onViewerPress(viewer.id)}
+                activeOpacity={0.7}
+              >
                 <Image
                   source={{ uri: viewer.avatar }}
                   style={styles.viewerAvatar}
                 />
                 <View style={styles.pinkBadge} />
-              </View>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
@@ -181,21 +188,21 @@ const styles = StyleSheet.create({
 
   viewerAvatarContainer: {
     position: 'relative',
-    width: 48,
-    height: 48,
+    width: 36,
+    height: 36,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   viewerAvatarOverlap: {
-    marginLeft: -16,
+    marginLeft: -12,
   },
 
   viewerAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 2.5,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 2,
     borderColor: '#000',
   },
 
@@ -203,11 +210,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
     backgroundColor: '#EC4899',
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: '#000',
   },
 

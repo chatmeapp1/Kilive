@@ -15,6 +15,7 @@ import IncomeHost from './IncomeHost';
 import JpBanner from './JpBanner';
 import ChatMessageList from './ChatMessageList';
 import BottomPanel from './BottomPanel';
+import MiniProfileModal from './MiniProfileModal';
 
 interface Viewer {
   id: string;
@@ -22,20 +23,7 @@ interface Viewer {
   username?: string;
 }
 
-export default function LiveOverlay({
-  hostName,
-  hostId,
-  hostAvatar,
-  balance,
-  messages = [],
-  jpQueue = [],
-  onSendMessage,
-  onGiftPress,
-  agoraEngine,
-  isHostAway,
-  viewers = [],
-  viewerCount = 0,
-}: {
+interface LiveOverlayProps {
   hostName: string;
   hostId: string;
   hostAvatar?: string;
@@ -48,7 +36,26 @@ export default function LiveOverlay({
   isHostAway: boolean;
   viewers?: Viewer[];
   viewerCount?: number;
-}) {
+}
+
+export default function LiveOverlay({
+  hostName,
+  hostId,
+  hostAvatar,
+  balance,
+  messages,
+  jpQueue,
+  onSendMessage,
+  onGiftPress,
+  agoraEngine,
+  isHostAway,
+  viewers,
+  viewerCount,
+}: LiveOverlayProps) {
+  const [isFollowing, setIsFollowing] = React.useState(false);
+  const [selectedViewerId, setSelectedViewerId] = useState<string | null>(null);
+  const [showMiniProfile, setShowMiniProfile] = useState(false);
+
   // BEAUTY FILTER UI
   const [beautyOpen, setBeautyOpen] = useState(false);
   const [beauty, setBeauty] = useState({
@@ -71,6 +78,15 @@ export default function LiveOverlay({
     }
   };
 
+  const handleFollow = () => {
+    setIsFollowing(!isFollowing);
+  };
+
+  const handleViewerPress = (viewerId: string) => {
+    setSelectedViewerId(viewerId);
+    setShowMiniProfile(true);
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.overlay}
@@ -81,10 +97,11 @@ export default function LiveOverlay({
         hostName={hostName}
         hostId={hostId}
         avatar={hostAvatar}
-        isFollowing={false}
-        onFollowPress={() => {}}
+        isFollowing={isFollowing}
+        onFollowPress={handleFollow}
         viewers={viewers}
         viewerCount={viewerCount}
+        onViewerPress={handleViewerPress}
       />
 
       {/* HOST INCOME */}
@@ -110,7 +127,7 @@ export default function LiveOverlay({
       {/* CHAT */}
       <ChatMessageList messages={messages} />
 
-      {/* BEAUTY BUTTON */}
+      {/* BEAUTYBUTTON */}
       <View style={styles.rightButtons}>
         <View
           style={styles.beautyBtn}
@@ -174,6 +191,18 @@ export default function LiveOverlay({
             </View>
           </View>
         </BlurView>
+      )}
+
+      {/* Mini Profile Modal */}
+      {selectedViewerId && (
+        <MiniProfileModal
+          visible={showMiniProfile}
+          userId={selectedViewerId}
+          onClose={() => {
+            setShowMiniProfile(false);
+            setSelectedViewerId(null);
+          }}
+        />
       )}
     </KeyboardAvoidingView>
   );
