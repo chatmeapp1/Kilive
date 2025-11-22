@@ -83,6 +83,18 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="follow"
+        options={{
+          href: null, // Hidden from tab bar, accessible via navigation
+        }}
+      />
+      <Tabs.Screen
+        name="new"
+        options={{
+          href: null, // Hidden from tab bar, accessible via navigation
+        }}
+      />
+      <Tabs.Screen
         name="explore"
         options={{
           href: null, // This hides the explore tab

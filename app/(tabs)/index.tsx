@@ -16,19 +16,19 @@ const HOSTS_DATA = [
 ];
 
 export default function HomeScreen() {
-  const [activeTab, setActiveTab] = useState(1);
-  const scrollViewRef = useRef<ScrollView>(null);
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState('Follow');
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const handleTabPress = (index: number) => {
-    setActiveTab(index);
+    setActiveTab(TABS[index]); // Update activeTab state with the string name
     scrollViewRef.current?.scrollTo({ x: index * width, animated: true });
   };
 
   const handleScroll = (event: any) => {
     const offsetX = event.nativeEvent.contentOffset.x;
     const index = Math.round(offsetX / width);
-    setActiveTab(index);
+    setActiveTab(TABS[index]); // Update activeTab state with the string name
   };
 
   const handleHostCardPress = (host: any) => {
@@ -54,26 +54,55 @@ export default function HomeScreen() {
 
       {/* Tabs */}
       <View style={styles.tabsContainer}>
-        {TABS.map((tab, index) => (
-          <TouchableOpacity
-            key={tab}
-            onPress={() => handleTabPress(index)}
-            style={styles.tab}
+        <TouchableOpacity
+          onPress={() => {
+            setActiveTab('Follow');
+            router.push('/(tabs)/follow');
+          }}
+          style={styles.tabButton}
+        >
+          <ThemedText
+            style={[
+              styles.tabText,
+              activeTab === 'Follow' && styles.activeTab,
+            ]}
           >
-            <ThemedText
-              style={[
-                styles.tabText,
-                activeTab === index && styles.activeTabText,
-              ]}
-            >
-              {tab}
-            </ThemedText>
-            {activeTab === index && <View style={styles.activeTabIndicator} />}
-          </TouchableOpacity>
-        ))}
+            Follow
+          </ThemedText>
+          {activeTab === 'Follow' && <View style={styles.tabIndicator} />}
+        </TouchableOpacity>
 
-        <TouchableOpacity style={styles.giftButton}>
-          <View />
+        <TouchableOpacity
+          onPress={() => setActiveTab('Hot')}
+          style={styles.tabButton}
+        >
+          <ThemedText
+            style={[
+              styles.tabText,
+              activeTab === 'Hot' && styles.activeTab,
+            ]}
+          >
+            Hot
+          </ThemedText>
+          {activeTab === 'Hot' && <View style={styles.tabIndicator} />}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            setActiveTab('New');
+            router.push('/(tabs)/new');
+          }}
+          style={styles.tabButton}
+        >
+          <ThemedText
+            style={[
+              styles.tabText,
+              activeTab === 'New' && styles.activeTab,
+            ]}
+          >
+            New
+          </ThemedText>
+          {activeTab === 'New' && <View style={styles.tabIndicator} />}
         </TouchableOpacity>
       </View>
 
@@ -88,66 +117,85 @@ export default function HomeScreen() {
       >
         {TABS.map((tab, tabIndex) => (
           <ScrollView key={tab} style={styles.tabContent}>
-            <View style={styles.hostsGrid}>
-              {HOSTS_DATA.map((host) => (
-                <TouchableOpacity
-                  key={host.id}
-                  style={styles.hostCard}
-                  onPress={() => handleHostCardPress(host)}
-                >
-                  <Image source={{ uri: host.image }} style={styles.hostImage} />
-                  <View style={styles.hostOverlay}>
-                    <View style={styles.hostInfo}>
-                      <ThemedText style={styles.hostName}>{host.name}</ThemedText>
-                      <View style={styles.viewersBadge}>
-                        <View />
-                        <ThemedText style={styles.viewersText}>{host.viewers}</ThemedText>
+            {tab === 'Follow' && (
+              <View style={styles.followTabContent}>
+                {/* Placeholder for Follow content */}
+                <ThemedText>Follow Page Content</ThemedText>
+              </View>
+            )}
+            {tab === 'Hot' && (
+              <View style={styles.hostsGrid}>
+                {HOSTS_DATA.map((host) => (
+                  <TouchableOpacity
+                    key={host.id}
+                    style={styles.hostCard}
+                    onPress={() => handleHostCardPress(host)}
+                  >
+                    <Image source={{ uri: host.image }} style={styles.hostImage} />
+                    <View style={styles.hostOverlay}>
+                      <View style={styles.hostInfo}>
+                        <ThemedText style={styles.hostName}>{host.name}</ThemedText>
+                        <View style={styles.viewersBadge}>
+                          <View />
+                          <ThemedText style={styles.viewersText}>{host.viewers}</ThemedText>
+                        </View>
                       </View>
                     </View>
-                  </View>
-                  {host.isLive && (
-                    <View style={styles.liveBadge}>
-                      <ThemedText style={styles.liveText}>LIVE</ThemedText>
-                    </View>
-                  )}
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            {/* Banner */}
-            <View style={styles.banner}>
-              <Image
-                source={{ uri: 'https://static.vecteezy.com/system/resources/thumbnails/003/582/701/small/coming-soon-background-illustration-template-design-free-vector.jpg' }}
-                style={styles.bannerImage}
-              />
-            </View>
-
-            {/* More Hosts */}
-            <View style={styles.hostsGrid}>
-              {HOSTS_DATA.map((host) => (
-                <TouchableOpacity
-                  key={`${host.id}-2`}
-                  style={styles.hostCard}
-                  onPress={() => handleHostCardPress(host)}
-                >
-                  <Image source={{ uri: host.image }} style={styles.hostImage} />
-                  <View style={styles.hostOverlay}>
-                    <View style={styles.hostInfo}>
-                      <ThemedText style={styles.hostName}>{host.name}</ThemedText>
-                      <View style={styles.viewersBadge}>
-                        <View />
-                        <ThemedText style={styles.viewersText}>{host.viewers}</ThemedText>
+                    {host.isLive && (
+                      <View style={styles.liveBadge}>
+                        <ThemedText style={styles.liveText}>LIVE</ThemedText>
                       </View>
-                    </View>
-                  </View>
-                  {host.isLive && (
-                    <View style={styles.liveBadge}>
-                      <ThemedText style={styles.liveText}>LIVE</ThemedText>
-                    </View>
-                  )}
-                </TouchableOpacity>
-              ))}
-            </View>
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+            {tab === 'New' && (
+              <View style={styles.newTabContent}>
+                {/* Placeholder for New content */}
+                <ThemedText>New Page Content</ThemedText>
+              </View>
+            )}
+
+            {/* Banner and More Hosts (Rendered conditionally or combined if needed) */}
+            {tab === 'Hot' && (
+              <>
+                {/* Banner */}
+                <View style={styles.banner}>
+                  <Image
+                    source={{ uri: 'https://static.vecteezy.com/system/resources/thumbnails/003/582/701/small/coming-soon-background-illustration-template-design-free-vector.jpg' }}
+                    style={styles.bannerImage}
+                  />
+                </View>
+
+                {/* More Hosts */}
+                <View style={styles.hostsGrid}>
+                  {HOSTS_DATA.map((host) => (
+                    <TouchableOpacity
+                      key={`${host.id}-2`}
+                      style={styles.hostCard}
+                      onPress={() => handleHostCardPress(host)}
+                    >
+                      <Image source={{ uri: host.image }} style={styles.hostImage} />
+                      <View style={styles.hostOverlay}>
+                        <View style={styles.hostInfo}>
+                          <ThemedText style={styles.hostName}>{host.name}</ThemedText>
+                          <View style={styles.viewersBadge}>
+                            <View />
+                            <ThemedText style={styles.viewersText}>{host.viewers}</ThemedText>
+                          </View>
+                        </View>
+                      </View>
+                      {host.isLive && (
+                        <View style={styles.liveBadge}>
+                          <ThemedText style={styles.liveText}>LIVE</ThemedText>
+                        </View>
+                      )}
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </>
+            )}
           </ScrollView>
         ))}
       </ScrollView>
@@ -190,19 +238,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     gap: 24,
   },
-  tab: {
+  tabButton: { // Changed from 'tab' to 'tabButton' for clarity
     paddingVertical: 8,
   },
   tabText: {
     fontSize: 16,
     color: '#999',
   },
-  activeTabText: {
+  activeTab: { // Changed from 'activeTabText' to 'activeTab' for consistency
     fontSize: 18,
     fontWeight: 'bold',
     color: '#FF6B6B',
   },
-  activeTabIndicator: {
+  tabIndicator: { // Changed from 'activeTabIndicator' to 'tabIndicator' for consistency
     height: 3,
     backgroundColor: '#FF6B6B',
     borderRadius: 2,
@@ -287,5 +335,15 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 100,
     backgroundColor: '#ddd',
+  },
+  followTabContent: { // New style for follow tab content
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  newTabContent: { // New style for new tab content
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
