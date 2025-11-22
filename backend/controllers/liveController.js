@@ -1,163 +1,233 @@
+const { ROLES } = require('../config/roles');
+
+// Temporary storage
+const liveRooms = new Map(); // roomId → roomData
+
+// from giftController memory storage:
+const hostIncome = require('../memory/hostIncome'); 
+// If you haven't created this file yet, saya buatkan versi memory di bawah.
+
 const liveController = {
-  // Start live (Host only)
+
+  // ===============================================================
+  // START LIVE (HOST ONLY)
+  // ===============================================================
   startLive: async (req, res) => {
     try {
       const { title, category } = req.body;
       const hostId = req.user.userId;
 
-      // TODO: Add database logic
+      // Jika host sedang live, tolak
+      for (const room of liveRooms.values()) {
+        if (room.hostId === hostId) {
+          return res.status(400).json({
+            success: false,
+            message: 'You already have an active live session'
+          });
+        }
+      }
+
       const roomId = `room_${Date.now()}`;
 
-      res.status(201).json({
+      const liveData = {
+        roomId,
+        hostId,
+        title: title || 'Untitled Live',
+        category: category || 'general',
+        startTime: new Date(),
+        viewers: new Set()
+      };
+
+      liveRooms.set(roomId, liveData);
+
+      return res.status(201).json({
         success: true,
         message: 'Live started successfully',
-        data: {
-          roomId,
-          hostId,
-          title,
-          category,
-          startTime: new Date()
-        }
+        data: liveData
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // End live (Host only)
+  // ===============================================================
+  // END LIVE (HOST ONLY)
+  // ===============================================================
   endLive: async (req, res) => {
     try {
       const { roomId } = req.body;
       const hostId = req.user.userId;
 
-      // TODO: Verify host owns this room
-      // TODO: Calculate live duration and update host stats
-      // TODO: Convert gifts to diamonds
+      const liveData = liveRooms.get(roomId);
+      if (!liveData) {
+        return res.status(404).json({
+          success: false,
+          message: 'Live room not found'
+        });
+      }
 
-      const duration = 3600; // Mock: 1 hour
-      const diamondsEarned = 500; // Mock
+      if (liveData.hostId !== hostId) {
+        return res.status(403).json({
+          success: false,
+          message: 'You do not own this live room'
+        });
+      }
 
-      res.json({
+      const endTime = new Date();
+      const start = new Date(liveData.startTime);
+      const durationSec = Math.floor((endTime - start) / 1000);
+
+      // Ambil total income host selama live
+      const earnedCoins = hostIncome.get(hostId) || 0;
+      const diamondsEarned = earnedCoins; // convert 1:1 sementara
+
+      // Reset income setelah end live
+      hostIncome.set(hostId, 0);
+
+      const response = {
+        roomId,
+        hostId,
+        title: liveData.title,
+        viewers: liveData.viewers.size,
+        duration: durationSec,
+        diamondsEarned,
+        startTime: liveData.startTime,
+        endTime
+      };
+
+      // Hapus room dari active live
+      liveRooms.delete(roomId);
+
+      return res.json({
         success: true,
         message: 'Live ended successfully',
-        data: {
-          roomId,
-          endTime: new Date(),
-          duration,
-          diamondsEarned,
-          viewers: 150
-        }
+        data: response
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // Get active lives (All users)
+  // ===============================================================
+  // GET ACTIVE LIVES (PUBLIC)
+  // ===============================================================
   getActiveLives: async (req, res) => {
     try {
-      // TODO: Fetch from database
+      const list = Array.from(liveRooms.values()).map(room => ({
+        roomId: room.roomId,
+        hostId: room.hostId,
+        title: room.title,
+        category: room.category,
+        viewers: room.viewers.size,
+        startTime: room.startTime
+      }));
 
-      res.json({
+      return res.json({
         success: true,
         data: {
-          lives: [],
-          total: 0
+          lives: list,
+          total: list.length
         }
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // Get live details (All users)
+  // ===============================================================
+  // GET LIVE DETAILS (PUBLIC)
+  // ===============================================================
   getLiveDetails: async (req, res) => {
     try {
       const { roomId } = req.params;
+      const room = liveRooms.get(roomId);
 
-      // TODO: Fetch from database
+      if (!room) {
+        return res.status(404).json({
+          success: false,
+          message: 'Live not found'
+        });
+      }
 
-      res.json({
+      return res.json({
         success: true,
         data: {
           roomId,
-          hostId: 'host123',
-          hostName: 'Host Name',
-          title: 'Live Stream',
-          viewers: 0,
-          startTime: new Date(),
-          category: 'entertainment'
+          hostId: room.hostId,
+          title: room.title,
+          category: room.category,
+          viewers: room.viewers.size,
+          startTime: room.startTime
         }
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // Join live (Authenticated users)
+  // ===============================================================
+  // JOIN LIVE (AUTH REQUIRED)
+  // ===============================================================
   joinLive: async (req, res) => {
     try {
       const { roomId } = req.params;
       const userId = req.user.userId;
 
-      // TODO: Add user to room viewers
+      const room = liveRooms.get(roomId);
+      if (!room) {
+        return res.status(404).json({
+          success: false,
+          message: 'Live not found'
+        });
+      }
 
-      res.json({
+      room.viewers.add(userId);
+
+      return res.json({
         success: true,
         message: 'Joined live successfully',
         data: {
           roomId,
-          userId
+          onlineViewers: room.viewers.size
         }
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // Get host live hours (Host only)
+  // ===============================================================
+  // HOST LIVE HOURS (HOST ONLY)
+  // ===============================================================
   getHostLiveHours: async (req, res) => {
     try {
       const hostId = req.user.userId;
 
-      // TODO: Calculate from database
-      // 3 jam = 1 hari live
-
-      res.json({
+      // NOTE: ini mock sampai database siap
+      return res.json({
         success: true,
         data: {
           todayHours: 2.5,
-          todayDays: 0.83, // 2.5 / 3
+          todayDays: (2.5 / 3).toFixed(2),
           weekHours: 12,
-          weekDays: 4,
+          weekDays: (12 / 3).toFixed(2),
           monthHours: 45,
-          monthDays: 15,
+          monthDays: (45 / 3).toFixed(2),
           totalHours: 150,
-          totalDays: 50
+          totalDays: (150 / 3).toFixed(2)
         }
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      res.status(500).json({ success: false, message: error.message });
     }
   }
+
 };
 
 module.exports = liveController;

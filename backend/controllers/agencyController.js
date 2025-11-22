@@ -1,123 +1,226 @@
+const { ROLES } = require('../config/roles');
+
+// Temporary data (replace later with DB)
+const agencies = new Map();      // agencyId → agency data
+const hosts = new Map();         // hostId → host data
+
 const agencyController = {
-  // Create agency (Admin only or registration)
+
+  // =====================================================
+  // CREATE AGENCY (ADMIN ONLY)
+  // =====================================================
   createAgency: async (req, res) => {
     try {
+      if (req.user.role !== ROLES.ADMIN) {
+        return res.status(403).json({
+          success: false,
+          message: 'Only admin can create agencies'
+        });
+      }
+
       const { agencyName, description } = req.body;
 
-      // TODO: Add database logic
+      if (!agencyName) {
+        return res.status(400).json({
+          success: false,
+          message: 'Agency name required'
+        });
+      }
 
-      res.status(201).json({
+      const agencyId = Date.now().toString();
+
+      const newAgency = {
+        agencyId,
+        agencyName,
+        description: description || '',
+        ownerId: req.user.userId,
+        hosts: [], // list hostId
+        createdAt: new Date(),
+      };
+
+      agencies.set(agencyId, newAgency);
+
+      return res.status(201).json({
         success: true,
         message: 'Agency created successfully',
-        data: {
-          agencyId: Date.now(),
-          agencyName,
-          ownerId: req.user.userId
-        }
+        data: newAgency
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // Get hosts under agency
+  // =====================================================
+  // GET HOSTS IN AGENCY
+  // =====================================================
   getHosts: async (req, res) => {
     try {
-      const agencyId = req.user.role === 'agency' ? req.user.agencyId : req.params.agencyId;
+      const agencyId = req.user.role === ROLES.AGENCY
+        ? req.user.agencyId
+        : req.params.agencyId;
 
-      // TODO: Fetch from database where host.agencyId = agencyId
+      if (!agencyId || !agencies.has(agencyId)) {
+        return res.status(404).json({
+          success: false,
+          message: 'Agency not found'
+        });
+      }
 
-      res.json({
+      const agency = agencies.get(agencyId);
+
+      const hostList = agency.hosts.map(hostId => hosts.get(hostId) || null);
+
+      return res.json({
         success: true,
         data: {
-          hosts: [],
-          total: 0
+          hosts: hostList.filter(Boolean),
+          total: hostList.length
         }
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // Get agency income and commission
+  // =====================================================
+  // GET AGENCY INCOME
+  // =====================================================
   getAgencyIncome: async (req, res) => {
     try {
-      const agencyId = req.user.role === 'agency' ? req.user.agencyId : req.params.agencyId;
+      const agencyId = req.user.role === ROLES.AGENCY
+        ? req.user.agencyId
+        : req.params.agencyId;
 
-      // TODO: Fetch from database
-      // Commission typically 10-30% of host income
+      if (!agencyId || !agencies.has(agencyId)) {
+        return res.status(404).json({
+          success: false,
+          message: 'Agency not found'
+        });
+      }
 
-      res.json({
-        success: true,
-        data: {
-          totalHostIncome: 0,
-          commissionRate: 20, // 20%
-          commissionEarned: 0,
-          thisMonth: 0,
-          lastMonth: 0
+      const commissionRate = 20; // 20%
+
+      let totalHostIncome = 0;
+
+      const agency = agencies.get(agencyId);
+
+      agency.hosts.forEach(hostId => {
+        const host = hosts.get(hostId);
+        if (host && host.income) {
+          totalHostIncome += host.income;
         }
       });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
+
+      const commissionEarned = Math.floor((totalHostIncome * commissionRate) / 100);
+
+      return res.json({
+        success: true,
+        data: {
+          totalHostIncome,
+          commissionRate,
+          commissionEarned,
+          thisMonth: commissionEarned,
+          lastMonth: 0 // placeholder
+        }
       });
+
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // Add host to agency
+  // =====================================================
+  // ADD HOST TO AGENCY
+  // =====================================================
   addHost: async (req, res) => {
     try {
+      if (req.user.role !== ROLES.AGENCY) {
+        return res.status(403).json({
+          success: false,
+          message: 'Only agency can add hosts'
+        });
+      }
+
       const { hostId } = req.body;
       const agencyId = req.user.agencyId;
 
-      // TODO: Update host with agencyId in database
+      if (!hostId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Host ID required'
+        });
+      }
 
-      res.json({
+      if (!hosts.has(hostId)) {
+        hosts.set(hostId, {
+          hostId,
+          income: 0,
+          agencyId: null,
+          createdAt: new Date()
+        });
+      }
+
+      const host = hosts.get(hostId);
+      host.agencyId = agencyId;
+
+      const agency = agencies.get(agencyId);
+      if (!agency.hosts.includes(hostId)) {
+        agency.hosts.push(hostId);
+      }
+
+      return res.json({
         success: true,
-        message: 'Host added to agency successfully'
+        message: 'Host added to agency',
+        data: host
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // Get host performance
+  // =====================================================
+  // GET HOST PERFORMANCE
+  // =====================================================
   getHostPerformance: async (req, res) => {
     try {
       const { hostId } = req.params;
-      const agencyId = req.user.agencyId;
 
-      // TODO: Verify host belongs to agency and fetch performance data
+      if (!hosts.has(hostId)) {
+        return res.status(404).json({
+          success: false,
+          message: 'Host not found'
+        });
+      }
 
-      res.json({
+      const host = hosts.get(hostId);
+
+      if (req.user.role === ROLES.AGENCY && host.agencyId !== req.user.agencyId) {
+        return res.status(403).json({
+          success: false,
+          message: 'This host does not belong to your agency'
+        });
+      }
+
+      return res.json({
         success: true,
         data: {
           hostId,
-          totalLiveHours: 0,
-          totalIncome: 0,
-          averageViewers: 0,
-          totalGifts: 0,
+          totalLiveHours: host.totalLiveHours || 0,
+          totalIncome: host.income || 0,
+          averageViewers: host.averageViewers || 0,
+          totalGifts: host.totalGifts || 0,
           thisWeek: {
             liveHours: 0,
             income: 0
           }
         }
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      return res.status(500).json({ success: false, message: error.message });
     }
   }
 };

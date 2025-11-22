@@ -1,12 +1,12 @@
-
 const { verifyAccessToken } = require('../utils/tokenUtils');
+const { ROLES, PERMISSIONS } = require('../config/roles');
 
-// Middleware untuk verifikasi token
+// Middleware: Verifikasi JWT
 const authenticate = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+
+    if (!authHeader?.startsWith('Bearer ')) {
       return res.status(401).json({
         success: false,
         message: 'No token provided'
@@ -15,9 +15,8 @@ const authenticate = (req, res, next) => {
 
     const token = authHeader.split(' ')[1];
     const decoded = verifyAccessToken(token);
-    
-    // Attach user info to request
-    req.user = decoded;
+
+    req.user = decoded; // { userId, role, agencyId?, hostId? ... }
     next();
   } catch (error) {
     return res.status(401).json({
@@ -28,7 +27,9 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// Middleware untuk check role
+
+
+// Middleware: hanya role tertentu yang boleh masuk
 const authorize = (...allowedRoles) => {
   return (req, res, next) => {
     if (!req.user) {
@@ -49,50 +50,80 @@ const authorize = (...allowedRoles) => {
   };
 };
 
-// Middleware khusus untuk admin
-const isAdmin = authorize('admin');
 
-// Middleware khusus untuk agency
-const isAgency = authorize('agency', 'admin');
 
-// Middleware khusus untuk host
-const isHost = authorize('host', 'admin');
+// Middleware: permission-based (tambahan)
+const allowPermission = (permission) => {
+  return (req, res, next) => {
+    const role = req.user?.role;
 
-// Middleware khusus untuk user/viewer
-const isUser = authorize('user', 'host', 'agency', 'admin');
+    // Superadmin bypass semua
+    if (role === ROLES.SUPERADMIN) return next();
 
-// Middleware untuk check ownership (host hanya bisa akses data sendiri)
+    if (!PERMISSIONS[role]?.includes(permission)) {
+      return res.status(403).json({
+        success: false,
+        message: `Forbidden: Missing permission "${permission}"`
+      });
+    }
+
+    next();
+  };
+};
+
+
+
+// Middleware: cek kepemilikan user/host/agency
 const checkOwnership = (req, res, next) => {
   const requestedUserId = req.params.userId || req.body.userId;
-  
-  // Admin bisa akses semua
-  if (req.user.role === 'admin') {
+  const currentUser = req.user;
+
+  // Admin boleh akses semua
+  if (currentUser.role === ROLES.ADMIN || currentUser.role === ROLES.SUPERADMIN) {
     return next();
   }
-  
-  // Agency bisa akses host di bawahnya
-  if (req.user.role === 'agency') {
-    // TODO: Check if host belongs to this agency
+
+  // Agency boleh akses host di bawah agensinya
+  if (currentUser.role === ROLES.AGENCY) {
+    // nanti tambahkan pengecekan DB: host belongs-to agency
     return next();
   }
-  
-  // User hanya bisa akses data sendiri
-  if (req.user.userId !== requestedUserId) {
-    return res.status(403).json({
-      success: false,
-      message: 'Forbidden: Cannot access other user data'
-    });
+
+  // Host boleh akses data live miliknya saja
+  if (currentUser.role === ROLES.HOST) {
+    if (currentUser.userId !== requestedUserId) {
+      return res.status(403).json({
+        success: false,
+        message: 'Host cannot access another host data'
+      });
+    }
+    return next();
   }
-  
+
+  // User biasa hanya bisa akses data dirinya
+  if (currentUser.role === ROLES.USER) {
+    if (currentUser.userId !== requestedUserId) {
+      return res.status(403).json({
+        success: false,
+        message: 'Cannot access other user data'
+      });
+    }
+    return next();
+  }
+
   next();
 };
 
+
+
+// Export
 module.exports = {
   authenticate,
   authorize,
-  isAdmin,
-  isAgency,
-  isHost,
-  isUser,
+  allowPermission,
+  isAdmin: authorize('admin', 'superadmin'),
+  isAgency: authorize('agency', 'admin', 'superadmin'),
+  isHost: authorize('host', 'admin', 'superadmin'),
+  isUser: authorize('user', 'host', 'agency', 'admin', 'superadmin'),
   checkOwnership
 };

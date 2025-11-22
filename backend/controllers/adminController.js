@@ -1,117 +1,185 @@
-
-const { ROLES } = require('../config/roles');
-
-// Temporary storage (replace with database)
-const users = require('./authController'); // Import users from auth
+const User = require('../models/User');           // Model user
+const Gift = require('../models/Gift');           // Model gift (buat nanti)
+const IncomeLog = require('../models/IncomeLog'); // Model income (buat nanti)
 
 const adminController = {
-  // Get all users
+
+  // ============================
+  // GET ALL USERS
+  // ============================
   getAllUsers: async (req, res) => {
     try {
-      // TODO: Get from database
+      const { page = 1, limit = 20 } = req.query;
+
+      const users = await User.find()
+        .skip((page - 1) * limit)
+        .limit(Number(limit))
+        .select('-password');
+
+      const total = await User.countDocuments();
+
       res.json({
         success: true,
-        data: {
-          users: [],
-          total: 0
-        }
+        page: Number(page),
+        totalPages: Math.ceil(total / limit),
+        total,
+        users
       });
+
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error.message
+        message: error.message,
       });
     }
   },
 
-  // Suspend/Activate user
+  
+  // ============================
+  // SUSPEND OR ACTIVATE USER
+  // ============================
   toggleUserStatus: async (req, res) => {
     try {
       const { userId } = req.params;
       const { isActive } = req.body;
-      
-      // TODO: Update in database
-      
+
+      const updated = await User.findByIdAndUpdate(
+        userId,
+        { isActive },
+        { new: true }
+      );
+
+      if (!updated) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found',
+        });
+      }
+
       res.json({
         success: true,
-        message: `User ${isActive ? 'activated' : 'suspended'} successfully`
+        message: `User successfully ${isActive ? 'activated' : 'suspended'}`,
+        data: updated
       });
+
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error.message
+        message: error.message,
       });
     }
   },
 
-  // Add gift
+  
+  // ============================
+  // ADD NEW GIFT
+  // ============================
   addGift: async (req, res) => {
     try {
       const { name, price, category, image } = req.body;
-      
-      // TODO: Add to database
-      
+
+      if (!name || !price || !category) {
+        return res.status(400).json({
+          success: false,
+          message: 'Fields name, price, and category are required',
+        });
+      }
+
+      const newGift = await Gift.create({
+        name,
+        price,
+        category,
+        image
+      });
+
       res.status(201).json({
         success: true,
         message: 'Gift added successfully',
-        data: {
-          id: Date.now(),
-          name,
-          price,
-          category,
-          image
-        }
+        data: newGift
       });
+
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error.message
+        message: error.message,
       });
     }
   },
 
-  // View all income
+  
+  // ============================
+  // GET PLATFORM INCOME
+  // ============================
   getAllIncome: async (req, res) => {
     try {
-      // TODO: Aggregate from database
-      
+      const logs = await IncomeLog.find();
+
+      let totalIncome = 0;
+      let hostIncome = 0;
+      let agencyIncome = 0;
+      let platformIncome = 0;
+
+      logs.forEach(log => {
+        totalIncome += log.amount;
+        hostIncome += log.hostAmount;
+        agencyIncome += log.agencyAmount;
+        platformIncome += log.platformAmount;
+      });
+
       res.json({
         success: true,
         data: {
-          totalIncome: 0,
-          hostIncome: 0,
-          agencyIncome: 0,
-          platformIncome: 0
+          totalIncome,
+          hostIncome,
+          agencyIncome,
+          platformIncome
         }
       });
+
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error.message
+        message: error.message,
       });
     }
   },
 
-  // Get analytics
+  
+  // ============================
+  // DASHBOARD ANALYTICS
+  // ============================
   getAnalytics: async (req, res) => {
     try {
+      const totalUsers = await User.countDocuments();
+      const totalHosts = await User.countDocuments({ role: 'host' });
+      const totalAgencies = await User.countDocuments({ role: 'agency' });
+
+      // Kalau kamu punya model LiveSession:
+      const activeLives = 0;
+
+      const totalRevenue = await IncomeLog.aggregate([
+        { $group: { _id: null, revenue: { $sum: '$platformAmount' } } }
+      ]);
+
       res.json({
         success: true,
         data: {
-          totalUsers: 0,
-          totalHosts: 0,
-          totalAgencies: 0,
-          activeLives: 0,
-          totalRevenue: 0
+          totalUsers,
+          totalHosts,
+          totalAgencies,
+          activeLives,
+          totalRevenue: totalRevenue[0]?.revenue || 0
         }
       });
+
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error.message
+        message: error.message,
       });
     }
   }
+
 };
 
 module.exports = adminController;
