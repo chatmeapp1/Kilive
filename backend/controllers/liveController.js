@@ -1,11 +1,10 @@
 const { ROLES } = require('../config/roles');
+const { generateAgoraToken } = require('../utils/agoraUtils');
+const db = require('../config/database');
 
 // Temporary storage
 const liveRooms = new Map(); // roomId → roomData
-
-// from giftController memory storage:
-const hostIncome = require('../memory/hostIncome'); 
-// If you haven't created this file yet, saya buatkan versi memory di bawah.
+const hostIncome = new Map(); // hostId → income
 
 const liveController = {
 
@@ -27,7 +26,17 @@ const liveController = {
         }
       }
 
-      const roomId = `room_${Date.now()}`;
+      // Generate ID with format: DDMMYY + random 4 digits
+      const now = new Date();
+      const day = String(now.getDate()).padStart(2, '0');
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const year = String(now.getFullYear()).slice(-2);
+      const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+      const roomId = day + month + year + random;
+
+      // Generate Agora token
+      const agoraChannel = `live_${roomId}`;
+      const agoraConfig = generateAgoraToken(agoraChannel, hostId, 'publisher');
 
       const liveData = {
         roomId,
@@ -35,15 +44,33 @@ const liveController = {
         title: title || 'Untitled Live',
         category: category || 'general',
         startTime: new Date(),
-        viewers: new Set()
+        viewers: new Set(),
+        agora: agoraConfig
       };
 
       liveRooms.set(roomId, liveData);
 
+      // Save to database
+      try {
+        await db.query(
+          'INSERT INTO live_rooms (id, host_id, title, category, agora_channel, agora_token) VALUES ($1, $2, $3, $4, $5, $6)',
+          [roomId, hostId, liveData.title, liveData.category, agoraChannel, agoraConfig.token]
+        );
+      } catch (dbError) {
+        console.error('Failed to save live room to database:', dbError);
+      }
+
       return res.status(201).json({
         success: true,
         message: 'Live started successfully',
-        data: liveData
+        data: {
+          roomId: liveData.roomId,
+          hostId: liveData.hostId,
+          title: liveData.title,
+          category: liveData.category,
+          startTime: liveData.startTime,
+          agora: agoraConfig
+        }
       });
 
     } catch (error) {

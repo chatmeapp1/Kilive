@@ -39,7 +39,14 @@ const authController = {
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const userId = Date.now().toString();
+      // Generate ID with format: DDMMYY + random 3 digits
+      const now = new Date();
+      const day = String(now.getDate()).padStart(2, '0');
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const year = String(now.getFullYear()).slice(-2);
+      const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+      const userId = day + month + year + random;
+      
       const newUser = {
         id: userId,
         username,
