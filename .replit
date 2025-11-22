@@ -5,23 +5,15 @@ modules = ["nodejs-22"]
 channel = "stable-24_05"
 
 [[ports]]
+localPort = 3000
+externalPort = 3000
+
+[[ports]]
 localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 5001
-externalPort = 3002
-
-[[ports]]
-localPort = 8081
-externalPort = 80
-
-[[ports]]
 localPort = 8082
-externalPort = 3000
-
-[[ports]]
-localPort = 3000
 externalPort = 3000
 
 [workflows]
@@ -74,23 +66,11 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Start Expo Web"
+args = "Backend Server"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Backend Server"
-
-[[workflows.workflow]]
-name = "Start Expo Web"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npx expo start --web --port 5000"
-waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
+args = "Expo Mobile Tunnel"
 
 [[workflows.workflow]]
 name = "Backend Server"
@@ -104,5 +84,21 @@ waitForPort = 3000
 [workflows.workflow.metadata]
 outputType = "console"
 
+[[workflows.workflow]]
+name = "Expo Mobile Tunnel"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "EXPO_USE_FAST_RESOLVER=1 npx expo start --tunnel --port 8082"
+
 [agent]
 expertMode = true
+
+[userenv]
+
+[userenv.development]
+EXPO_PUBLIC_URL = "https://e627e9aa-02b6-4a87-b3ca-a178a7d00cca-00-ypsrwcbh0d4s.pike.replit.dev"
