@@ -10,6 +10,8 @@ import RtcEngine, {
   ChannelProfileType,
 } from 'react-native-agora';
 
+import { getApiUrl, API_CONFIG } from '@/constants/ApiConfig';
+
 const AGORA_APP_ID = 'a1cbca25bbb24ed086dac870aa4956e3';
 
 export default function BroadcastScreen() {
@@ -79,7 +81,7 @@ export default function BroadcastScreen() {
       engine.setClientRole(ClientRoleType.ClientRoleBroadcaster);
 
       // Call backend start live
-      const res = await fetch('YOUR_BACKEND_URL/api/live/start', {
+      const res = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.START_LIVE), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: 'Live Room', category: 'general' }),

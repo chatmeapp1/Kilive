@@ -21,8 +21,8 @@ export default function LiveOverlay({
   hostId,
   hostAvatar,
   balance,
-  messages,
-  jpQueue = [],          // FIX: Default value agar tidak undefined
+  messages = [],
+  jpQueue = [],
   onSendMessage,
   onGiftPress,
   agoraEngine,
@@ -32,7 +32,7 @@ export default function LiveOverlay({
   hostId: string;
   hostAvatar?: string;
   balance: number;
-  messages: any[];
+  messages?: any[];
   jpQueue?: any[];
   onSendMessage: (msg: string) => void;
   onGiftPress: () => void;

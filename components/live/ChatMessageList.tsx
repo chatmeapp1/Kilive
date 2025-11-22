@@ -14,7 +14,7 @@ interface ChatMessageListProps {
   messages: ChatMessage[];
 }
 
-export default function ChatMessageList({ messages }: ChatMessageListProps) {
+export default function ChatMessageList({ messages = [] }: ChatMessageListProps) {
 
   const getVipColor = (vip?: number) => {
     switch (vip) {

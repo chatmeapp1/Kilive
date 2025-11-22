@@ -1,8 +1,8 @@
 const bcrypt = require('bcryptjs');
-const { 
-  generateAccessToken, 
-  generateRefreshToken, 
-  verifyRefreshToken 
+const {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken
 } = require('../utils/tokenUtils');
 const { ROLES } = require('../config/roles');
 
@@ -11,7 +11,7 @@ const users = new Map();
 const refreshTokens = new Map();
 
 /**
- * Generate unique User ID (DDMMYY + random 4 digits)
+ * Generate unique User ID (YYMMDD + 4 digits sequential number)
  */
 function generateUserId() {
   const d = new Date();
@@ -20,7 +20,7 @@ function generateUserId() {
   const year = String(d.getFullYear()).slice(-2);
   const rand = Math.floor(Math.random() * 9000 + 1000); // 4 digits
 
-  return `${day}${month}${year}${rand}`;
+  return `${year}${month}${day}${rand}`;
 }
 
 const authController = {
