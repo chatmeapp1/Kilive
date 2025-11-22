@@ -112,8 +112,8 @@ const styles = StyleSheet.create({
   },
 
   levelIcon: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     resizeMode: 'contain',
   },
 
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 11,
     fontWeight: 'bold',
-    marginLeft: -29, // geser angka ke kiri menumpuk icon
+    marginLeft: -27, // geser angka ke kiri menumpuk icon
   },
 
   username: {

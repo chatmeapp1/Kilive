@@ -43,6 +43,15 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="live-viewer" options={{ headerShown: false }} />
         <Stack.Screen name="broadcast" options={{ headerShown: false }} />
+        <Stack.Screen name="editprofile" options={{ headerShown: false }} />
+        <Stack.Screen name="settings" options={{ headerShown: false }} />
+        <Stack.Screen name="level" options={{ headerShown: false }} />
+        <Stack.Screen name="fans" options={{ headerShown: false }} />
+        <Stack.Screen name="income" options={{ headerShown: false }} />
+        <Stack.Screen name="game" options={{ headerShown: false }} />
+        <Stack.Screen name="join" options={{ headerShown: false }} />
+        <Stack.Screen name="recharge" options={{ headerShown: false }} />
+        <Stack.Screen name="agency" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
