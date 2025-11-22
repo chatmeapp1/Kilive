@@ -1,7 +1,7 @@
 
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: 'https://6fe3be7b-dd26-4238-bd61-bc5731f96c52-00-279dv1qzrdclf.pike.replit.dev',
+  BASE_URL: 'https://e627e9aa-02b6-4a87-b3ca-a178a7d00cca-00-ypsrwcbh0d4s.pike.replit.dev',
   ENDPOINTS: {
     // Auth endpoints
     LOGIN: '/api/auth/login',
