@@ -22,7 +22,7 @@ export default function ProfileScreen() {
       >
         <TouchableOpacity 
           style={styles.editButton}
-          onPress={() => router.push('/editprofile/')}
+          onPress={() => router.push('/editprofile')}
         >
           <ThemedText style={styles.editButtonText}>Edit</ThemedText>
         </TouchableOpacity>
@@ -91,7 +91,7 @@ export default function ProfileScreen() {
         </View>
         <TouchableOpacity 
           style={styles.rechargeButton}
-          onPress={() => router.push('/recharge/')}
+          onPress={() => router.push('/recharge')}
         >
           <ThemedText style={styles.rechargeText}>recharge</ThemedText>
         </TouchableOpacity>
@@ -105,12 +105,12 @@ export default function ProfileScreen() {
 
         <View style={styles.functionsGrid}>
           {[
-            { icon: require('@/assets/function/ic_level.png'), label: 'Level', route: '/level/' },
-            { icon: require('@/assets/function/ic_fans.png'), label: 'Fans', route: '/fans/' },
-            { icon: require('@/assets/function/ic_income.png'), label: 'Income', route: '/income/' },
-            { icon: require('@/assets/function/ic_game.png'), label: 'Game', route: '/game/' },
-            { icon: require('@/assets/function/ic_bergabung.png'), label: 'Join', route: '/join/' },
-            { icon: require('@/assets/function/agency.png'), label: 'Agency', route: '/agency/', requiresAgency: true },
+            { icon: require('@/assets/function/ic_level.png'), label: 'Level', route: '/level' },
+            { icon: require('@/assets/function/ic_fans.png'), label: 'Fans', route: '/fans' },
+            { icon: require('@/assets/function/ic_income.png'), label: 'Income', route: '/income' },
+            { icon: require('@/assets/function/ic_game.png'), label: 'Game', route: '/game' },
+            { icon: require('@/assets/function/ic_bergabung.png'), label: 'Join', route: '/join' },
+            { icon: require('@/assets/function/agency.png'), label: 'Agency', route: '/agency', requiresAgency: true },
           ].filter(item => !item.requiresAgency || isAgency).map((item, index) => (
             <TouchableOpacity 
               key={index} 
@@ -152,7 +152,7 @@ export default function ProfileScreen() {
       {/* Settings Menu */}
       <TouchableOpacity 
         style={styles.settingsButton}
-        onPress={() => router.push('/settings/')}
+        onPress={() => router.push('/settings')}
       >
         <ThemedText style={styles.settingsText}>Settings</ThemedText>
         <ThemedText style={styles.settingsArrow}>›</ThemedText>

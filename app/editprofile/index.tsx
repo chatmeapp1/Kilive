@@ -9,11 +9,10 @@ import ProfileFieldItem from '@/components/editprofile/ProfileFieldItem';
 import NicknameEditModal from '@/components/editprofile/NicknameEditModal';
 import SexPicker from '@/components/editprofile/SexPicker';
 import AgePicker from '@/components/editprofile/AgePicker';
-import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_CONFIG } from '@/constants/ApiConfig';
 
-export default function EditProfileScreen() {
+function EditProfileScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
@@ -47,49 +46,7 @@ export default function EditProfileScreen() {
   };
 
   const pickImage = async () => {
-    Alert.alert(
-      'Upload Photo',
-      'Choose an option',
-      [
-        {
-          text: 'Camera',
-          onPress: async () => {
-            const permission = await ImagePicker.requestCameraPermissionsAsync();
-            if (permission.granted) {
-              const result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                aspect: [1, 1],
-                quality: 0.8,
-              });
-              
-              if (!result.canceled) {
-                uploadAvatar(result.assets[0].uri);
-              }
-            }
-          }
-        },
-        {
-          text: 'Gallery',
-          onPress: async () => {
-            const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (permission.granted) {
-              const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                aspect: [1, 1],
-                quality: 0.8,
-              });
-              
-              if (!result.canceled) {
-                uploadAvatar(result.assets[0].uri);
-              }
-            }
-          }
-        },
-        { text: 'Cancel', style: 'cancel' }
-      ]
-    );
+    Alert.alert('Coming Soon', 'Image upload feature will be available soon');
   };
 
   const uploadAvatar = async (imageUri: string) => {
@@ -335,3 +292,5 @@ const styles = StyleSheet.create({
     color: '#666',
   },
 });
+
+export default EditProfileScreen;
