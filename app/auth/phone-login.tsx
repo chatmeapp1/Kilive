@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { apiCall, API_CONFIG } from '@/constants/ApiConfig';
 
 export default function PhoneLogin() {
@@ -39,16 +38,9 @@ export default function PhoneLogin() {
       });
 
       if (response.success) {
-        // Save tokens
-        await AsyncStorage.setItem('accessToken', response.data.accessToken);
-        await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
-        await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
-
-        if (savePassword) {
-          await AsyncStorage.setItem('savedPhone', phoneNumber);
-          await AsyncStorage.setItem('savedPassword', password);
-        }
-
+        // TODO: Implement secure token storage when AsyncStorage is properly configured
+        console.log('Login successful:', response.data);
+        
         Alert.alert('Success', 'Login berhasil!');
         router.replace('/(tabs)');
       } else {
