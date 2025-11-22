@@ -1,35 +1,44 @@
 const { verifyAccessToken } = require('../utils/tokenUtils');
-const { ROLES, PERMISSIONS } = require('../config/roles');
+const { ROLES } = require('../config/roles');
 
-// Middleware: Verifikasi JWT
+/**
+ * AUTHENTICATION
+ * Validasi JWT Access Token
+ */
 const authenticate = (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    const header = req.headers.authorization;
 
-    if (!authHeader?.startsWith('Bearer ')) {
+    if (!header || !header.startsWith('Bearer ')) {
       return res.status(401).json({
         success: false,
-        message: 'No token provided'
+        message: 'Access token missing'
       });
     }
 
-    const token = authHeader.split(' ')[1];
+    const token = header.split(' ')[1];
+
+    // Verify access token
     const decoded = verifyAccessToken(token);
 
-    req.user = decoded; // { userId, role, agencyId?, hostId? ... }
+    // Attach user payload
+    req.user = decoded;
+
     next();
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: 'Invalid or expired token',
-      error: error.message
+      message:
+        error.message === 'Access token expired'
+          ? 'Access token expired'
+          : 'Invalid access token'
     });
   }
 };
 
-
-
-// Middleware: hanya role tertentu yang boleh masuk
+/**
+ * ROLE AUTHORIZATION
+ */
 const authorize = (...allowedRoles) => {
   return (req, res, next) => {
     if (!req.user) {
@@ -42,7 +51,7 @@ const authorize = (...allowedRoles) => {
     if (!allowedRoles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        message: 'Forbidden: Insufficient permissions'
+        message: 'Forbidden: insufficient permissions'
       });
     }
 
@@ -50,80 +59,55 @@ const authorize = (...allowedRoles) => {
   };
 };
 
+/* Role-based helpers */
+const isAdmin = authorize(ROLES.ADMIN);
+const isAgency = authorize(ROLES.AGENCY, ROLES.ADMIN);
+const isHost = authorize(ROLES.HOST, ROLES.ADMIN);
+const isUser = authorize(ROLES.USER, ROLES.HOST, ROLES.AGENCY, ROLES.ADMIN);
 
-
-// Middleware: permission-based (tambahan)
-const allowPermission = (permission) => {
-  return (req, res, next) => {
-    const role = req.user?.role;
-
-    // Superadmin bypass semua
-    if (role === ROLES.SUPERADMIN) return next();
-
-    if (!PERMISSIONS[role]?.includes(permission)) {
-      return res.status(403).json({
-        success: false,
-        message: `Forbidden: Missing permission "${permission}"`
-      });
-    }
-
-    next();
-  };
-};
-
-
-
-// Middleware: cek kepemilikan user/host/agency
+/**
+ * OWNERSHIP CHECKER
+ * User hanya bisa akses data miliknya kecuali admin/agency
+ */
 const checkOwnership = (req, res, next) => {
-  const requestedUserId = req.params.userId || req.body.userId;
-  const currentUser = req.user;
+  const targetUserId =
+    req.params.userId || req.body.userId || req.query.userId;
 
-  // Admin boleh akses semua
-  if (currentUser.role === ROLES.ADMIN || currentUser.role === ROLES.SUPERADMIN) {
+  if (!targetUserId) {
+    return res.status(400).json({
+      success: false,
+      message: 'User ID required'
+    });
+  }
+
+  // Admin bebas akses apa saja
+  if (req.user.role === ROLES.ADMIN) {
     return next();
   }
 
-  // Agency boleh akses host di bawah agensinya
-  if (currentUser.role === ROLES.AGENCY) {
-    // nanti tambahkan pengecekan DB: host belongs-to agency
+  // Agency: boleh akses USER atau HOST yang berada di bawahnya
+  // TODO: jika sudah ada database, cek agency-host relation
+  if (req.user.role === ROLES.AGENCY) {
     return next();
   }
 
-  // Host boleh akses data live miliknya saja
-  if (currentUser.role === ROLES.HOST) {
-    if (currentUser.userId !== requestedUserId) {
-      return res.status(403).json({
-        success: false,
-        message: 'Host cannot access another host data'
-      });
-    }
-    return next();
-  }
-
-  // User biasa hanya bisa akses data dirinya
-  if (currentUser.role === ROLES.USER) {
-    if (currentUser.userId !== requestedUserId) {
-      return res.status(403).json({
-        success: false,
-        message: 'Cannot access other user data'
-      });
-    }
-    return next();
+  // User biasa hanya bisa akses data sendiri
+  if (req.user.userId !== targetUserId) {
+    return res.status(403).json({
+      success: false,
+      message: 'Forbidden: cannot access other user data'
+    });
   }
 
   next();
 };
 
-
-
-// Export
 module.exports = {
   authenticate,
   authorize,
-  allowPermission,
-  isAdmin: authorize('admin', 'superadmin'),
-  isAgency: authorize('agency', 'admin', 'superadmin'),
-  isHost: authorize('host', 'admin', 'superadmin'),
-  isUser: authorize('user', 'host', 'agency', 'admin', 'superadmin'),
+  isAdmin,
+  isAgency,
+  isHost,
+  isUser,
   checkOwnership
 };

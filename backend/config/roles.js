@@ -1,19 +1,26 @@
+/** SYSTEM ROLES (RBAC) **/
 const ROLES = {
-  SUPERADMIN: 'superadmin',   // pilihan tambahan
+  SUPER_ADMIN: 'super_admin',   // Optional: For full platform control
   ADMIN: 'admin',
-  MODERATOR: 'moderator',     // opsional
   AGENCY: 'agency',
   HOST: 'host',
-  USER: 'user'
+  USER: 'user'                  // viewer
 };
 
+/** PERMISSIONS BASED ON ROLE **/
 const PERMISSIONS = {
-  // Superadmin (developer)
-  [ROLES.SUPERADMIN]: [
-    'everything'
+  [ROLES.SUPER_ADMIN]: [
+    'system_control',
+    'manage_admins',
+    'manage_users',
+    'manage_agencies',
+    'manage_hosts',
+    'manage_gifts',
+    'view_all_income',
+    'view_reports',
+    'platform_settings'
   ],
 
-  // Admin
   [ROLES.ADMIN]: [
     'manage_users',
     'manage_agencies',
@@ -21,56 +28,52 @@ const PERMISSIONS = {
     'manage_gifts',
     'view_all_income',
     'suspend_users',
-    'view_reports',
-    'force_end_live',
-    'refund_management',
-    'global_announcement'
-  ],
-
-  // Moderator
-  [ROLES.MODERATOR]: [
-    'mute_user',
-    'ban_user',
-    'kick_from_live',
     'view_reports'
   ],
 
-  // Agency
   [ROLES.AGENCY]: [
     'add_host',
-    'remove_host',
-    'edit_host_info',
     'view_host_list',
     'view_host_income',
     'view_agency_income',
     'view_commission',
-    'approve_withdraw_host',
     'view_host_performance'
   ],
 
-  // Host
   [ROLES.HOST]: [
     'start_live',
     'end_live',
-    'update_stream_title',
     'view_own_income',
     'view_live_hours',
     'receive_gifts',
-    'receive_jp_bonus',
     'withdraw_diamonds'
   ],
 
-  // User / Viewer
   [ROLES.USER]: [
     'watch_live',
     'send_gift',
-    'purchase_lucky_gift',
     'top_up',
     'follow_host',
-    'send_message',
-    'join_multi_guest',
-    'request_cohost'
+    'send_message'
   ]
 };
 
-module.exports = { ROLES, PERMISSIONS };
+/** LIST ALL VALID ROLES */
+const VALID_ROLES = Object.values(ROLES);
+
+/**
+ * Check if a user has specific permission.
+ * Example: hasPermission(user.role, 'manage_users')
+ */
+const hasPermission = (role, permission) => {
+  const rolePerm = PERMISSIONS[role];
+  if (!rolePerm) return false;
+  return rolePerm.includes(permission);
+};
+
+module.exports = {
+  ROLES,
+  VALID_ROLES,
+  PERMISSIONS,
+  hasPermission
+};

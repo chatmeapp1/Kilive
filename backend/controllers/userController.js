@@ -1,145 +1,229 @@
+const db = require('../config/database');
 
 const userController = {
+
+  // ==========================================================
+  // GET USER PROFILE
+  // ==========================================================
   getProfile: async (req, res) => {
     try {
       const { userId } = req.params;
-      
-      // TODO: Fetch from database
-      
-      res.json({
+
+      const result = await db.query(
+        `SELECT id, username, email, avatar_url, bio, role, diamonds, coins, created_at 
+         FROM users 
+         WHERE id = $1`,
+        [userId]
+      );
+
+      if (result.rowCount === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found"
+        });
+      }
+
+      return res.json({
         success: true,
-        data: {
-          userId,
-          username: 'User',
-          email: 'user@example.com',
-          avatar: 'https://example.com/avatar.jpg',
-          level: 5,
-          diamonds: 1000
-        }
+        data: result.rows[0]
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 
+  // ==========================================================
+  // UPDATE PROFILE
+  // ==========================================================
   updateProfile: async (req, res) => {
     try {
+      const userId = req.user.userId;
       const { username, bio, avatar } = req.body;
-      
-      // TODO: Update in database
-      
-      res.json({
+
+      await db.query(
+        `UPDATE users 
+         SET username = COALESCE($1, username),
+             bio = COALESCE($2, bio),
+             avatar_url = COALESCE($3, avatar_url),
+             updated_at = NOW()
+         WHERE id = $4`,
+        [username, bio, avatar, userId]
+      );
+
+      return res.json({
         success: true,
-        message: 'Profile updated successfully'
+        message: "Profile updated successfully"
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 
+  // ==========================================================
+  // GET USER LEVEL (Example EXP)
+  // ==========================================================
   getUserLevel: async (req, res) => {
     try {
       const { userId } = req.params;
-      
-      // TODO: Fetch from database
-      
-      res.json({
+
+      // Example EXP logic — kamu dapat modifikasi sesuai kebutuhan
+      const result = await db.query(
+        `SELECT total_income FROM users WHERE id=$1`,
+        [userId]
+      );
+
+      if (result.rowCount === 0) {
+        return res.status(404).json({ success: false, message: "User not found" });
+      }
+
+      const income = Number(result.rows[0].total_income) || 0;
+      const level = Math.floor(income / 1000) + 1;
+      const currentExp = income % 1000;
+      const nextLevelExp = 1000;
+
+      return res.json({
         success: true,
         data: {
-          level: 5,
-          currentExp: 2500,
-          nextLevelExp: 5000
+          level,
+          currentExp,
+          nextLevelExp
         }
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 
+  // ==========================================================
+  // GET HOST INCOME (DIAMONDS)
+  // ==========================================================
   getUserIncome: async (req, res) => {
     try {
-      const { userId } = req.params;
-      
-      // Only hosts have income in diamonds
-      if (req.user.role !== 'host') {
+      const hostId = req.params.userId;
+
+      if (req.user.role !== "host" && req.user.role !== "admin") {
         return res.status(403).json({
           success: false,
-          message: 'Only hosts have income data'
+          message: "Only hosts can view income"
         });
       }
-      
-      // TODO: Fetch from database
-      // Income adalah dalam DIAMONDS, bukan coins
-      
-      res.json({
+
+      const result = await db.query(
+        `SELECT 
+            COALESCE(SUM(total_price), 0) AS totalDiamonds
+         FROM gift_transactions
+         WHERE receiver_id = $1`,
+        [hostId]
+      );
+
+      const totalDiamonds = Number(result.rows[0].totaldiamonds);
+
+      // Income breakdown (optional)
+      const today = await db.query(
+        `SELECT COALESCE(SUM(total_price), 0) AS today
+         FROM gift_transactions
+         WHERE receiver_id=$1 
+         AND created_at::date = NOW()::date`,
+        [hostId]
+      );
+
+      const week = await db.query(
+        `SELECT COALESCE(SUM(total_price), 0) AS week
+         FROM gift_transactions
+         WHERE receiver_id=$1 
+         AND created_at >= NOW() - INTERVAL '7 days'`,
+        [hostId]
+      );
+
+      const month = await db.query(
+        `SELECT COALESCE(SUM(total_price), 0) AS month
+         FROM gift_transactions
+         WHERE receiver_id=$1 
+         AND created_at >= NOW() - INTERVAL '30 days'`,
+        [hostId]
+      );
+
+      return res.json({
         success: true,
         data: {
-          totalDiamonds: 50000,
-          todayDiamonds: 1000,
-          weekDiamonds: 7000,
-          monthDiamonds: 25000,
-          availableForWithdraw: 45000
+          totalDiamonds,
+          todayDiamonds: Number(today.rows[0].today),
+          weekDiamonds: Number(week.rows[0].week),
+          monthDiamonds: Number(month.rows[0].month),
+          availableForWithdraw: totalDiamonds
         }
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // Get user coins (for viewers)
+  // ==========================================================
+  // GET USER COINS (FOR VIEWERS)
+  // ==========================================================
   getUserCoins: async (req, res) => {
     try {
       const userId = req.user.userId;
-      
-      // TODO: Fetch from database
-      
-      res.json({
+
+      const result = await db.query(
+        `SELECT coins FROM users WHERE id=$1`,
+        [userId]
+      );
+
+      if (result.rowCount === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found"
+        });
+      }
+
+      // Recharge history (optional)
+      const rechargeHistory = [];
+
+      return res.json({
         success: true,
         data: {
-          coins: 5000,
-          rechargeHistory: []
+          coins: Number(result.rows[0].coins),
+          rechargeHistory
         }
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 
+  // ==========================================================
+  // GET USER FANS
+  // ==========================================================
   getUserFans: async (req, res) => {
     try {
       const { userId } = req.params;
-      
-      // TODO: Fetch from database
-      
-      res.json({
+
+      const fans = await db.query(
+        `SELECT follower_id as fanId, created_at 
+         FROM fans 
+         WHERE user_id = $1`,
+        [userId]
+      );
+
+      return res.json({
         success: true,
         data: {
-          totalFans: 150,
-          fans: []
+          totalFans: fans.rowCount,
+          fans: fans.rows
         }
       });
+
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      res.status(500).json({ success: false, message: error.message });
     }
   }
+
 };
 
 module.exports = userController;

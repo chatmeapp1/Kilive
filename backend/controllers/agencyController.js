@@ -1,8 +1,5 @@
+const db = require('../db');
 const { ROLES } = require('../config/roles');
-
-// Temporary data (replace later with DB)
-const agencies = new Map();      // agencyId → agency data
-const hosts = new Map();         // hostId → host data
 
 const agencyController = {
 
@@ -27,29 +24,32 @@ const agencyController = {
         });
       }
 
-      // Generate ID with format: DDMMYY + random 3 digits
+      // Generate agency ID (DDMMYY + 3 random digits)
       const now = new Date();
-      const day = String(now.getDate()).padStart(2, '0');
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const year = String(now.getFullYear()).slice(-2);
-      const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-      const agencyId = 'AG' + day + month + year + random;
+      const id = `AG${
+        String(now.getDate()).padStart(2, '0') +
+        String(now.getMonth() + 1).padStart(2, '0') +
+        String(now.getFullYear()).slice(-2) +
+        Math.floor(Math.random() * 1000).toString().padStart(3, '0')
+      }`;
 
-      const newAgency = {
-        agencyId,
+      const query = `
+        INSERT INTO agencies (id, agency_name, description, owner_id)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *
+      `;
+
+      const result = await db.query(query, [
+        id,
         agencyName,
-        description: description || '',
-        ownerId: req.user.userId,
-        hosts: [], // list hostId
-        createdAt: new Date(),
-      };
-
-      agencies.set(agencyId, newAgency);
+        description || '',
+        req.user.userId
+      ]);
 
       return res.status(201).json({
         success: true,
         message: 'Agency created successfully',
-        data: newAgency
+        data: result.rows[0]
       });
 
     } catch (error) {
@@ -58,31 +58,39 @@ const agencyController = {
   },
 
   // =====================================================
-  // GET HOSTS IN AGENCY
+  // GET HOSTS UNDER AGENCY
   // =====================================================
   getHosts: async (req, res) => {
     try {
-      const agencyId = req.user.role === ROLES.AGENCY
-        ? req.user.agencyId
-        : req.params.agencyId;
+      const agencyId =
+        req.user.role === ROLES.AGENCY
+          ? req.user.agencyId
+          : req.params.agencyId;
 
-      if (!agencyId || !agencies.has(agencyId)) {
+      const checkAgency = await db.query(
+        `SELECT * FROM agencies WHERE id=$1`,
+        [agencyId]
+      );
+
+      if (checkAgency.rowCount === 0) {
         return res.status(404).json({
           success: false,
           message: 'Agency not found'
         });
       }
 
-      const agency = agencies.get(agencyId);
+      // Ambil semua host yg agency_id = agencyId
+      const hosts = await db.query(
+        `SELECT id, username, email, diamonds, total_income, created_at 
+         FROM users 
+         WHERE role='host' AND agency_id=$1`,
+        [agencyId]
+      );
 
-      const hostList = agency.hosts.map(hostId => hosts.get(hostId) || null);
-
-      return res.json({
+      res.json({
         success: true,
-        data: {
-          hosts: hostList.filter(Boolean),
-          total: hostList.length
-        }
+        total: hosts.rowCount,
+        hosts: hosts.rows
       });
 
     } catch (error) {
@@ -95,40 +103,50 @@ const agencyController = {
   // =====================================================
   getAgencyIncome: async (req, res) => {
     try {
-      const agencyId = req.user.role === ROLES.AGENCY
-        ? req.user.agencyId
-        : req.params.agencyId;
+      const agencyId =
+        req.user.role === ROLES.AGENCY
+          ? req.user.agencyId
+          : req.params.agencyId;
 
-      if (!agencyId || !agencies.has(agencyId)) {
+      // Ambil informasi agency
+      const agencyRes = await db.query(
+        `SELECT * FROM agencies WHERE id=$1`,
+        [agencyId]
+      );
+
+      if (agencyRes.rowCount === 0) {
         return res.status(404).json({
           success: false,
           message: 'Agency not found'
         });
       }
 
-      const commissionRate = 20; // 20%
+      const agency = agencyRes.rows[0];
+      const commissionRate = agency.commission_rate || 20;
 
-      let totalHostIncome = 0;
+      // Hitung total income semua host di agency
+      const incomeQuery = `
+        SELECT 
+          COALESCE(SUM(gt.total_price), 0) AS total_host_income
+        FROM gift_transactions gt
+        JOIN users u ON u.id = gt.receiver_id
+        WHERE u.role='host' AND u.agency_id=$1
+      `;
 
-      const agency = agencies.get(agencyId);
+      const incomeRes = await db.query(incomeQuery, [agencyId]);
+      const totalHostIncome = Number(incomeRes.rows[0].total_host_income || 0);
 
-      agency.hosts.forEach(hostId => {
-        const host = hosts.get(hostId);
-        if (host && host.income) {
-          totalHostIncome += host.income;
-        }
-      });
+      const commissionEarned = Math.floor(totalHostIncome * commissionRate / 100);
 
-      const commissionEarned = Math.floor((totalHostIncome * commissionRate) / 100);
-
-      return res.json({
+      res.json({
         success: true,
         data: {
+          agencyId,
           totalHostIncome,
           commissionRate,
           commissionEarned,
-          thisMonth: commissionEarned,
-          lastMonth: 0 // placeholder
+          thisMonth: commissionEarned,  // placeholder
+          lastMonth: 0                  // placeholder
         }
       });
 
@@ -145,12 +163,11 @@ const agencyController = {
       if (req.user.role !== ROLES.AGENCY) {
         return res.status(403).json({
           success: false,
-          message: 'Only agency can add hosts'
+          message: 'Only agencies can add hosts'
         });
       }
 
       const { hostId } = req.body;
-      const agencyId = req.user.agencyId;
 
       if (!hostId) {
         return res.status(400).json({
@@ -159,27 +176,39 @@ const agencyController = {
         });
       }
 
-      if (!hosts.has(hostId)) {
-        hosts.set(hostId, {
-          hostId,
-          income: 0,
-          agencyId: null,
-          createdAt: new Date()
+      // Pastikan host ada
+      const hostCheck = await db.query(
+        `SELECT id, role FROM users WHERE id=$1`,
+        [hostId]
+      );
+
+      if (hostCheck.rowCount === 0) {
+        return res.status(404).json({
+          success: false,
+          message: 'Host not found'
         });
       }
 
-      const host = hosts.get(hostId);
-      host.agencyId = agencyId;
-
-      const agency = agencies.get(agencyId);
-      if (!agency.hosts.includes(hostId)) {
-        agency.hosts.push(hostId);
+      if (hostCheck.rows[0].role !== 'host') {
+        return res.status(400).json({
+          success: false,
+          message: 'This user is not a host'
+        });
       }
+
+      // Assign host ke agency
+      await db.query(
+        `UPDATE users SET agency_id=$1 WHERE id=$2`,
+        [req.user.agencyId, hostId]
+      );
 
       return res.json({
         success: true,
-        message: 'Host added to agency',
-        data: host
+        message: 'Host added to agency successfully',
+        data: {
+          hostId,
+          agencyId: req.user.agencyId
+        }
       });
 
     } catch (error) {
@@ -188,36 +217,42 @@ const agencyController = {
   },
 
   // =====================================================
-  // GET HOST PERFORMANCE
+  // HOST PERFORMANCE
   // =====================================================
   getHostPerformance: async (req, res) => {
     try {
       const { hostId } = req.params;
 
-      if (!hosts.has(hostId)) {
+      const hostRes = await db.query(
+        `SELECT id, username, agency_id, total_income, live_hours_today 
+         FROM users WHERE id=$1 AND role='host'`,
+        [hostId]
+      );
+
+      if (hostRes.rowCount === 0) {
         return res.status(404).json({
           success: false,
           message: 'Host not found'
         });
       }
 
-      const host = hosts.get(hostId);
+      const host = hostRes.rows[0];
 
-      if (req.user.role === ROLES.AGENCY && host.agencyId !== req.user.agencyId) {
+      if (req.user.role === ROLES.AGENCY && host.agency_id !== req.user.agencyId) {
         return res.status(403).json({
           success: false,
           message: 'This host does not belong to your agency'
         });
       }
 
-      return res.json({
+      res.json({
         success: true,
         data: {
           hostId,
-          totalLiveHours: host.totalLiveHours || 0,
-          totalIncome: host.income || 0,
-          averageViewers: host.averageViewers || 0,
-          totalGifts: host.totalGifts || 0,
+          totalLiveHours: Number(host.live_hours_today || 0),
+          totalIncome: Number(host.total_income || 0),
+          averageViewers: 0,  // untuk nanti
+          totalGifts: 0,      // untuk nanti
           thisWeek: {
             liveHours: 0,
             income: 0
@@ -229,6 +264,7 @@ const agencyController = {
       return res.status(500).json({ success: false, message: error.message });
     }
   }
+
 };
 
 module.exports = agencyController;

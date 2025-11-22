@@ -1,75 +1,59 @@
-const { ROLES } = require('../config/roles');
-const { generateAgoraToken } = require('../utils/agoraUtils');
 const db = require('../config/database');
-
-// Temporary storage
-const liveRooms = new Map(); // roomId → roomData
-const hostIncome = new Map(); // hostId → income
+const { generateAgoraToken } = require('../utils/agoraUtils');
 
 const liveController = {
 
-  // ===============================================================
+  // =======================================================
   // START LIVE (HOST ONLY)
-  // ===============================================================
+  // =======================================================
   startLive: async (req, res) => {
     try {
       const { title, category } = req.body;
       const hostId = req.user.userId;
 
-      // Jika host sedang live, tolak
-      for (const room of liveRooms.values()) {
-        if (room.hostId === hostId) {
-          return res.status(400).json({
-            success: false,
-            message: 'You already have an active live session'
-          });
-        }
+      // Cek apakah host sudah live
+      const active = await db.query(
+        `SELECT id FROM live_rooms 
+         WHERE host_id = $1 AND is_active = TRUE`,
+        [hostId]
+      );
+
+      if (active.rowCount > 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'You already have an active live session'
+        });
       }
 
-      // Generate ID with format: DDMMYY + random 4 digits
+      // Generate ROOM ID format DDMMYY + 4 digits
       const now = new Date();
-      const day = String(now.getDate()).padStart(2, '0');
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const year = String(now.getFullYear()).slice(-2);
-      const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-      const roomId = day + month + year + random;
+      const d = String(now.getDate()).padStart(2, '0');
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const y = String(now.getFullYear()).slice(-2);
+      const rand = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+      const roomId = d + m + y + rand;
 
-      // Generate Agora token
+      // Agora channel + token
       const agoraChannel = `live_${roomId}`;
-      const agoraConfig = generateAgoraToken(agoraChannel, hostId, 'publisher');
+      const agora = generateAgoraToken(agoraChannel, hostId, 'publisher');
 
-      const liveData = {
-        roomId,
-        hostId,
-        title: title || 'Untitled Live',
-        category: category || 'general',
-        startTime: new Date(),
-        viewers: new Set(),
-        agora: agoraConfig
-      };
-
-      liveRooms.set(roomId, liveData);
-
-      // Save to database
-      try {
-        await db.query(
-          'INSERT INTO live_rooms (id, host_id, title, category, agora_channel, agora_token) VALUES ($1, $2, $3, $4, $5, $6)',
-          [roomId, hostId, liveData.title, liveData.category, agoraChannel, agoraConfig.token]
-        );
-      } catch (dbError) {
-        console.error('Failed to save live room to database:', dbError);
-      }
+      await db.query(
+        `INSERT INTO live_rooms 
+          (id, host_id, title, category, agora_channel, agora_token, start_time, is_active)
+         VALUES ($1,$2,$3,$4,$5,$6,NOW(),TRUE)`,
+        [roomId, hostId, title || 'Untitled Live', category || 'general', agoraChannel, agora.token]
+      );
 
       return res.status(201).json({
         success: true,
-        message: 'Live started successfully',
+        message: "Live started successfully",
         data: {
-          roomId: liveData.roomId,
-          hostId: liveData.hostId,
-          title: liveData.title,
-          category: liveData.category,
-          startTime: liveData.startTime,
-          agora: agoraConfig
+          roomId,
+          hostId,
+          title: title || 'Untitled Live',
+          category: category || 'general',
+          startTime: new Date(),
+          agora
         }
       });
 
@@ -78,84 +62,66 @@ const liveController = {
     }
   },
 
-  // ===============================================================
+  // =======================================================
   // END LIVE (HOST ONLY)
-  // ===============================================================
+  // =======================================================
   endLive: async (req, res) => {
     try {
       const { roomId } = req.body;
       const hostId = req.user.userId;
 
-      const liveData = liveRooms.get(roomId);
-      if (!liveData) {
-        return res.status(404).json({
-          success: false,
-          message: 'Live room not found'
-        });
+      // Find live room
+      const roomRes = await db.query(
+        `SELECT * FROM live_rooms WHERE id=$1 AND is_active=TRUE`,
+        [roomId]
+      );
+
+      if (roomRes.rowCount === 0) {
+        return res.status(404).json({ success: false, message: "Active live not found" });
       }
 
-      if (liveData.hostId !== hostId) {
+      const room = roomRes.rows[0];
+
+      if (room.host_id !== hostId) {
         return res.status(403).json({
           success: false,
-          message: 'You do not own this live room'
+          message: "You do not own this live room"
         });
       }
 
       const endTime = new Date();
-      const start = new Date(liveData.startTime);
-      const durationSec = Math.floor((endTime - start) / 1000);
+      const startTime = new Date(room.start_time);
+      const durationSec = Math.floor((endTime - startTime) / 1000);
 
-      // Ambil total income host selama live
-      const earnedCoins = hostIncome.get(hostId) || 0;
-      const diamondsEarned = earnedCoins; // convert 1:1 sementara
+      // Ambil total income host dari transaksi gift
+      const incomeRes = await db.query(
+        `SELECT COALESCE(SUM(total_price), 0) AS income
+         FROM gift_transactions
+         WHERE receiver_id=$1 AND room_id=$2`,
+        [hostId, roomId]
+      );
 
-      // Reset income setelah end live
-      hostIncome.set(hostId, 0);
+      const diamondsEarned = Number(incomeRes.rows[0].income) || 0;
 
-      const response = {
-        roomId,
-        hostId,
-        title: liveData.title,
-        viewers: liveData.viewers.size,
-        duration: durationSec,
-        diamondsEarned,
-        startTime: liveData.startTime,
-        endTime
-      };
-
-      // Hapus room dari active live
-      liveRooms.delete(roomId);
+      // Update live room
+      await db.query(
+        `UPDATE live_rooms 
+         SET end_time=NOW(), is_active=FALSE 
+         WHERE id=$1`,
+        [roomId]
+      );
 
       return res.json({
         success: true,
-        message: 'Live ended successfully',
-        data: response
-      });
-
-    } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
-    }
-  },
-
-  // ===============================================================
-  // GET ACTIVE LIVES (PUBLIC)
-  // ===============================================================
-  getActiveLives: async (req, res) => {
-    try {
-      const list = Array.from(liveRooms.values()).map(room => ({
-        roomId: room.roomId,
-        hostId: room.hostId,
-        title: room.title,
-        category: room.category,
-        viewers: room.viewers.size,
-        startTime: room.startTime
-      }));
-
-      return res.json({
-        success: true,
+        message: "Live ended successfully",
         data: {
-          lives: list,
-          total: list.length
+          roomId,
+          hostId,
+          title: room.title,
+          duration: durationSec,
+          startTime,
+          endTime,
+          diamondsEarned
         }
       });
 
@@ -164,31 +130,53 @@ const liveController = {
     }
   },
 
-  // ===============================================================
+  // =======================================================
+  // GET ACTIVE LIVES (PUBLIC)
+  // =======================================================
+  getActiveLives: async (req, res) => {
+    try {
+      const result = await db.query(
+        `SELECT id, host_id, title, category, start_time 
+         FROM live_rooms
+         WHERE is_active = TRUE
+         ORDER BY start_time DESC`
+      );
+
+      return res.json({
+        success: true,
+        data: {
+          lives: result.rows,
+          total: result.rowCount
+        }
+      });
+
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  },
+
+  // =======================================================
   // GET LIVE DETAILS (PUBLIC)
-  // ===============================================================
+  // =======================================================
   getLiveDetails: async (req, res) => {
     try {
       const { roomId } = req.params;
-      const room = liveRooms.get(roomId);
 
-      if (!room) {
+      const result = await db.query(
+        `SELECT * FROM live_rooms WHERE id=$1`,
+        [roomId]
+      );
+
+      if (result.rowCount === 0) {
         return res.status(404).json({
           success: false,
-          message: 'Live not found'
+          message: "Live not found"
         });
       }
 
       return res.json({
         success: true,
-        data: {
-          roomId,
-          hostId: room.hostId,
-          title: room.title,
-          category: room.category,
-          viewers: room.viewers.size,
-          startTime: room.startTime
-        }
+        data: result.rows[0]
       });
 
     } catch (error) {
@@ -196,30 +184,37 @@ const liveController = {
     }
   },
 
-  // ===============================================================
-  // JOIN LIVE (AUTH REQUIRED)
-  // ===============================================================
+  // =======================================================
+  // JOIN LIVE ROOM
+  // =======================================================
   joinLive: async (req, res) => {
     try {
       const { roomId } = req.params;
-      const userId = req.user.userId;
 
-      const room = liveRooms.get(roomId);
-      if (!room) {
+      const result = await db.query(
+        `SELECT id, total_viewers FROM live_rooms WHERE id=$1 AND is_active=TRUE`,
+        [roomId]
+      );
+
+      if (result.rowCount === 0) {
         return res.status(404).json({
           success: false,
-          message: 'Live not found'
+          message: "Live room not found"
         });
       }
 
-      room.viewers.add(userId);
+      // increment viewers
+      await db.query(
+        `UPDATE live_rooms SET total_viewers = total_viewers + 1 WHERE id=$1`,
+        [roomId]
+      );
 
       return res.json({
         success: true,
-        message: 'Joined live successfully',
+        message: "Joined live successfully",
         data: {
           roomId,
-          onlineViewers: room.viewers.size
+          totalViewers: result.rows[0].total_viewers + 1
         }
       });
 
@@ -228,25 +223,37 @@ const liveController = {
     }
   },
 
-  // ===============================================================
+  // =======================================================
   // HOST LIVE HOURS (HOST ONLY)
-  // ===============================================================
+  // =======================================================
   getHostLiveHours: async (req, res) => {
     try {
       const hostId = req.user.userId;
 
-      // NOTE: ini mock sampai database siap
+      // Hitung total live time dari DB
+      const liveRes = await db.query(
+        `SELECT start_time, end_time 
+         FROM live_rooms 
+         WHERE host_id=$1 AND end_time IS NOT NULL`,
+        [hostId]
+      );
+
+      let totalSeconds = 0;
+
+      liveRes.rows.forEach(l => {
+        const start = new Date(l.start_time);
+        const end = new Date(l.end_time);
+        totalSeconds += Math.floor((end - start) / 1000);
+      });
+
+      const totalHours = totalSeconds / 3600;
+      const totalDays = totalHours / 3;
+
       return res.json({
         success: true,
         data: {
-          todayHours: 2.5,
-          todayDays: (2.5 / 3).toFixed(2),
-          weekHours: 12,
-          weekDays: (12 / 3).toFixed(2),
-          monthHours: 45,
-          monthDays: (45 / 3).toFixed(2),
-          totalHours: 150,
-          totalDays: (150 / 3).toFixed(2)
+          totalHours: Number(totalHours.toFixed(2)),
+          totalDays: Number(totalDays.toFixed(2))
         }
       });
 
@@ -254,7 +261,6 @@ const liveController = {
       res.status(500).json({ success: false, message: error.message });
     }
   }
-
 };
 
 module.exports = liveController;

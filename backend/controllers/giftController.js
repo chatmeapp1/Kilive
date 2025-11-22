@@ -1,12 +1,5 @@
-const { ROLES } = require('../config/roles');
+const db = require('../db');
 
-// Temporary memory storage
-const gifts = new Map();
-const giftHistory = [];
-const hostIncome = new Map();   // hostId → income number
-const userCoins = new Map();    // userId → coins number
-
-// JP Milestones
 const JP_MILESTONES = [20, 50, 100, 200, 300, 500];
 
 const giftController = {
@@ -16,31 +9,32 @@ const giftController = {
   // =====================================================
   getAllGifts: async (req, res) => {
     try {
-      // Example categories (replace with DB later)
+      const result = await db.query(`SELECT * FROM gifts ORDER BY price ASC`);
+
+      const normal = [];
+      const lucky = [];
+      const jLucky = [];
+      const luxury = [];
+
+      result.rows.forEach(g => {
+        if (g.category === 'normal') normal.push(g);
+        else if (g.category === 'lucky') lucky.push(g);
+        else if (g.category === 'j-lucky') jLucky.push(g);
+        else if (g.category === 'luxury') luxury.push(g);
+      });
+
       res.json({
         success: true,
         data: {
-          normal: [
-            { id: '1', name: 'Flower', price: 100, image: 'flower.png' },
-            { id: '2', name: 'Duck', price: 500, image: 'duck.png' }
-          ],
-          lucky: [
-            { id: '3', name: 'Lucky Star', price: 200, image: 'star.png' },
-            { id: '4', name: 'Carousel', price: 1000, image: 'carousel.png' }
-          ],
-          "j-lucky": [
-            { id: '5', name: 'J-Dragon', price: 300, image: 'dragon.png' },
-            { id: '6', name: 'J-Phoenix', price: 500, image: 'phoenix.png' }
-          ],
-          luxury: [
-            { id: '7', name: 'Yacht', price: 1000000, image: 'yacht.png' },
-            { id: '8', name: 'Castle', price: 500000, image: 'castle.png' }
-          ]
+          normal,
+          lucky,
+          "j-lucky": jLucky,
+          luxury
         }
       });
 
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 
@@ -48,67 +42,91 @@ const giftController = {
   // SEND GIFT
   // =====================================================
   sendGift: async (req, res) => {
-    try {
-      const { giftId, combo, receiverId } = req.body;
-      const userId = req.user.userId;
+    const client = await db.pool.connect();
 
-      if (!gifts.has(giftId)) {
-        return res.status(400).json({
-          success: false,
-          message: 'Gift not found'
-        });
+    try {
+      const { giftId, combo, receiverId, roomId } = req.body;
+      const senderId = req.user.userId;
+
+      await client.query('BEGIN');
+
+      // 1. Get gift
+      const giftRes = await client.query(
+        `SELECT * FROM gifts WHERE id=$1`,
+        [giftId]
+      );
+
+      if (giftRes.rowCount === 0) {
+        await client.query('ROLLBACK');
+        return res.status(400).json({ success: false, message: 'Gift not found' });
       }
 
-      const gift = gifts.get(giftId);
+      const gift = giftRes.rows[0];
       const totalCost = gift.price * combo;
 
-      // Ensure user balance exists
-      const userBalance = userCoins.get(userId) || 0;
-      if (totalCost > userBalance) {
+      // 2. Check user coins
+      const userRes = await client.query(
+        `SELECT coins FROM users WHERE id=$1`,
+        [senderId]
+      );
+
+      const userCoins = Number(userRes.rows[0].coins || 0);
+
+      if (userCoins < totalCost) {
+        await client.query('ROLLBACK');
         return res.status(400).json({
           success: false,
           message: 'Insufficient coins'
         });
       }
 
-      // Deduct coins from sender
-      userCoins.set(userId, userBalance - totalCost);
+      // 3. Deduct coins from sender
+      await client.query(
+        `UPDATE users SET coins = coins - $1 WHERE id=$2`,
+        [totalCost, senderId]
+      );
 
       let hostGet = 0;
       let jackpotReward = 0;
       let luxuryLayer = false;
 
-      // ===========================
-      // NORMAL GIFT 100% → HOST
-      // ===========================
+      // =======================
+      // NORMAL GIFT → host 100%
+      // =======================
       if (gift.category === 'normal') {
         hostGet = totalCost;
+      }
 
-      // ===========================
-      // LUCKY / J-LUCKY → HOST 10%
-      // ===========================
-      } else if (gift.category === 'lucky' || gift.category === 'j-lucky') {
+      // ===================================
+      // LUCKY / J-LUCKY GIFTS → host 10%
+      // ===================================
+      else if (gift.category === 'lucky' || gift.category === 'j-lucky') {
         hostGet = Math.floor(totalCost * 0.1);
 
-        // JP Logic
+        // JP REWARD
         if (JP_MILESTONES.includes(combo)) {
-          jackpotReward = gift.price * 10; // JP reward
-          userCoins.set(userId, (userCoins.get(userId) || 0) + jackpotReward);
+          jackpotReward = gift.price * 10;
         }
 
-        // S-Lucky = Double total reward
+        // j-lucky = bonus double
         if (gift.category === 'j-lucky') {
-          jackpotReward += totalCost; // Double reward for spender
-          userCoins.set(userId, (userCoins.get(userId) || 0) + totalCost);
+          jackpotReward += totalCost; // tambahan 1x total gift
         }
 
-      // ===========================
+        if (jackpotReward > 0) {
+          await client.query(
+            `UPDATE users SET coins = coins + $1 WHERE id=$2`,
+            [jackpotReward, senderId]
+          );
+        }
+      }
+
+      // ==========================
       // LUXURY GIFTS
-      // ===========================
-      } else if (gift.category === 'luxury') {
+      // ==========================
+      else if (gift.category === 'luxury') {
         luxuryLayer = true;
 
-        // If ≥ 1M → host gets 50%
         if (gift.price >= 1000000) {
           hostGet = Math.floor(totalCost * 0.5);
         } else {
@@ -116,57 +134,79 @@ const giftController = {
         }
       }
 
-      // Add host income
-      hostIncome.set(receiverId, (hostIncome.get(receiverId) || 0) + hostGet);
+      // 4. Add host income (diamonds)
+      await client.query(
+        `UPDATE users SET diamonds = diamonds + $1 WHERE id=$2`,
+        [hostGet, receiverId]
+      );
 
-      // Save history
-      giftHistory.push({
-        id: Date.now().toString(),
-        userId,
-        receiverId,
-        giftId,
-        combo,
-        totalCost,
-        hostIncome: hostGet,
-        jackpotReward,
-        luxuryLayer,
-        createdAt: new Date()
-      });
+      // Also update host total income field
+      await client.query(
+        `UPDATE users SET total_income = total_income + $1 WHERE id=$2`,
+        [hostGet, receiverId]
+      );
+
+      // 5. Save gift transaction
+      const txRes = await client.query(
+        `INSERT INTO gift_transactions 
+          (sender_id, receiver_id, gift_id, room_id, combo, total_price)
+         VALUES ($1, $2, $3, $4, $5, $6)
+         RETURNING id, created_at`,
+        [senderId, receiverId, giftId, roomId, combo, totalCost]
+      );
+
+      await client.query('COMMIT');
 
       return res.json({
         success: true,
         message: 'Gift sent successfully',
         data: {
+          transactionId: txRes.rows[0].id,
           giftId,
           combo,
           totalCost,
           hostIncome: hostGet,
           jackpotReward,
-          luxuryLayer
+          luxuryLayer,
+          createdAt: txRes.rows[0].created_at
         }
       });
 
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+      await client.query('ROLLBACK');
+      return res.status(500).json({
+        success: false,
+        message: error.message
+      });
+    } finally {
+      client.release();
     }
   },
 
   // =====================================================
-  // GET GIFT HISTORY BY USER
+  // GIFT HISTORY
   // =====================================================
   getGiftHistory: async (req, res) => {
     try {
       const { userId } = req.query;
 
-      const filtered = giftHistory.filter(h => h.userId === userId);
+      const historyRes = await db.query(
+        `SELECT * FROM gift_transactions 
+         WHERE sender_id=$1 
+         ORDER BY created_at DESC`,
+        [userId]
+      );
 
       return res.json({
         success: true,
-        data: filtered
+        data: historyRes.rows
       });
 
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+      return res.status(500).json({
+        success: false,
+        message: error.message
+      });
     }
   }
 };

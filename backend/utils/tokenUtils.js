@@ -1,18 +1,27 @@
-
 const jwt = require('jsonwebtoken');
+const { ROLES } = require('../config/roles');
 
-const ACCESS_TOKEN_SECRET = process.env.JWT_SECRET || 'your-access-token-secret';
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'your-refresh-token-secret';
-const ACCESS_TOKEN_EXPIRY = '15m'; // 15 minutes
-const REFRESH_TOKEN_EXPIRY = '7d'; // 7 days
+/* ENV secrets */
+const ACCESS_TOKEN_SECRET =
+  process.env.JWT_SECRET || 'change-this-access-token-secret';
 
+const REFRESH_TOKEN_SECRET =
+  process.env.REFRESH_TOKEN_SECRET || 'change-this-refresh-token-secret';
+
+/* Token expiry */
+const ACCESS_TOKEN_EXPIRY = '15m';  // Recommended for mobile apps
+const REFRESH_TOKEN_EXPIRY = '30d'; // Safe for long-term login on mobile
+
+/**
+ * Create secure access token
+ */
 const generateAccessToken = (user) => {
   const payload = {
     userId: user.id,
     email: user.email,
     username: user.username,
     role: user.role,
-    agencyId: user.agencyId
+    agencyId: user.agencyId || null,
   };
 
   return jwt.sign(payload, ACCESS_TOKEN_SECRET, {
@@ -20,6 +29,10 @@ const generateAccessToken = (user) => {
   });
 };
 
+/**
+ * Create refresh token (for re-generating new access token)
+ * DO NOT put sensitive data here.
+ */
 const generateRefreshToken = (user) => {
   const payload = {
     userId: user.id,
@@ -31,19 +44,31 @@ const generateRefreshToken = (user) => {
   });
 };
 
+/**
+ * Verify ACCESS token
+ */
 const verifyAccessToken = (token) => {
   try {
     return jwt.verify(token, ACCESS_TOKEN_SECRET);
   } catch (error) {
-    throw new Error('Invalid or expired access token');
+    if (error.name === 'TokenExpiredError') {
+      throw new Error('Access token expired');
+    }
+    throw new Error('Invalid access token');
   }
 };
 
+/**
+ * Verify REFRESH token
+ */
 const verifyRefreshToken = (token) => {
   try {
     return jwt.verify(token, REFRESH_TOKEN_SECRET);
   } catch (error) {
-    throw new Error('Invalid or expired refresh token');
+    if (error.name === 'TokenExpiredError') {
+      throw new Error('Refresh token expired');
+    }
+    throw new Error('Invalid refresh token');
   }
 };
 

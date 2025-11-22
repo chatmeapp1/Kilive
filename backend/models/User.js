@@ -1,20 +1,35 @@
-
 class User {
-  constructor(data) {
-    this.id = data.id;
-    this.username = data.username;
-    this.email = data.email;
-    this.password = data.password;
-    this.role = data.role; // 'admin', 'agency', 'host', 'user'
-    this.agencyId = data.agencyId || null; // For hosts under agency
-    this.diamonds = data.diamonds || 0; // For hosts
-    this.coins = data.coins || 0; // For users
-    this.liveHoursToday = data.liveHoursToday || 0; // For hosts
-    this.totalIncome = data.totalIncome || 0; // For hosts and agencies
-    this.refreshToken = data.refreshToken || null;
-    this.isActive = data.isActive !== undefined ? data.isActive : true;
-    this.createdAt = data.createdAt || new Date();
-    this.updatedAt = data.updatedAt || new Date();
+  constructor(row) {
+    // Direct mapping from DB (snake_case → camelCase)
+    this.id = row.id;
+    this.username = row.username;
+    this.email = row.email;
+
+    // Hashed password (NEVER exposed)
+    this.password = row.password;
+
+    this.role = row.role;                     // admin | agency | host | user
+    this.agencyId = row.agency_id || null;    // For hosts under agency
+
+    this.diamonds = row.diamonds || 0;        // Host income (converted gift)
+    this.coins = row.coins || 0;              // Viewer balance
+
+    this.liveHoursToday = row.live_hours_today
+      ? Number(row.live_hours_today)
+      : 0;
+
+    this.totalIncome = row.total_income || 0; // Used by host & agency
+
+    this.refreshToken = row.refresh_token || null;
+    this.isActive = row.is_active !== undefined ? row.is_active : true;
+
+    // Profile
+    this.avatarUrl = row.avatar_url || null;
+    this.bio = row.bio || null;
+
+    // Timestamps
+    this.createdAt = row.created_at ? new Date(row.created_at) : new Date();
+    this.updatedAt = row.updated_at ? new Date(row.updated_at) : new Date();
   }
 }
 
