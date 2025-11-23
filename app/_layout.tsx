@@ -9,6 +9,7 @@ import { Platform } from 'react-native';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import WebOnly from './web-only';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -38,8 +39,9 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
+    <AuthProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack>
         <Stack.Screen name="auth/login-choice" options={{ headerShown: false }} />
         <Stack.Screen name="auth/phone-register" options={{ headerShown: false }} />
         <Stack.Screen name="auth/phone-login" options={{ headerShown: false }} />
@@ -70,7 +72,8 @@ export default function RootLayout() {
         <Stack.Screen name="agency/relation-management" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
