@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { SvgIcon } from '@/components/ui/SvgIcon';
@@ -11,6 +12,7 @@ interface LiveActionsHostProps {
   onEndLive?: () => void;
   isMicMuted?: boolean;
   isFlashOn?: boolean;
+  isBeautyOn?: boolean;
 }
 
 export default function LiveActionsHost({
@@ -20,23 +22,23 @@ export default function LiveActionsHost({
   onToggleMic,
   onInviteCoHost,
   onEndLive,
-  isMicMuted,
-  isFlashOn,
+  isMicMuted = false,
+  isFlashOn = false,
+  isBeautyOn = false,
 }: LiveActionsHostProps) {
   return (
     <View style={styles.container}>
-
-      {/* Switch Camera */}
       <TouchableOpacity style={styles.button} onPress={onSwitchCamera}>
         <SvgIcon name="camera-switch" size={22} color="#fff" />
       </TouchableOpacity>
 
-      {/* Beauty */}
-      <TouchableOpacity style={styles.button} onPress={onToggleBeauty}>
+      <TouchableOpacity 
+        style={[styles.button, isBeautyOn && styles.buttonActive]} 
+        onPress={onToggleBeauty}
+      >
         <SvgIcon name="beauty" size={22} color="#fff" />
       </TouchableOpacity>
 
-      {/* Flash */}
       <TouchableOpacity
         style={[styles.button, isFlashOn && styles.buttonActive]}
         onPress={onToggleFlash}
@@ -48,7 +50,6 @@ export default function LiveActionsHost({
         />
       </TouchableOpacity>
 
-      {/* Mic */}
       <TouchableOpacity
         style={[styles.button, isMicMuted && styles.buttonMuted]}
         onPress={onToggleMic}
@@ -60,16 +61,13 @@ export default function LiveActionsHost({
         />
       </TouchableOpacity>
 
-      {/* Invite Co-host */}
       <TouchableOpacity style={styles.button} onPress={onInviteCoHost}>
         <SvgIcon name="person-add" size={22} color="#fff" />
       </TouchableOpacity>
 
-      {/* End Live */}
       <TouchableOpacity style={styles.endButton} onPress={onEndLive}>
         <SvgIcon name="close" size={26} color="#fff" />
       </TouchableOpacity>
-
     </View>
   );
 }
@@ -83,7 +81,6 @@ const styles = StyleSheet.create({
     gap: 14,
     zIndex: 50,
   },
-
   button: {
     width: 46,
     height: 46,
@@ -92,15 +89,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   buttonActive: {
-    backgroundColor: 'rgba(255,215,0,0.6)', // gold-yellow
+    backgroundColor: 'rgba(255,215,0,0.6)',
   },
-
   buttonMuted: {
-    backgroundColor: 'rgba(255,60,60,0.6)', // red
+    backgroundColor: 'rgba(255,60,60,0.6)',
   },
-
   endButton: {
     width: 50,
     height: 50,

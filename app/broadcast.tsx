@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, Alert, Platform } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -12,41 +12,23 @@ import FloatingGiftMultiContainer from '@/components/live/FloatingGiftMultiConta
 import JpBanner from '@/components/live/JpBanner';
 
 import useGiftEngine from '@/hooks/useGiftEngine';
+import { useLiveState } from '@/hooks/useLiveState';
 
 export default function BroadcastScreen() {
   const router = useRouter();
-  const [isBroadcasting, setIsBroadcasting] = useState(false);
-  const [flashEnabled, setFlashEnabled] = useState(false);
-  const [cameraType, setCameraType] = useState<'front' | 'back'>('front');
-  const [beautyEnabled, setBeautyEnabled] = useState(false);
-
   const agoraEngineRef = useRef<any>(null);
 
   const [hostName] = useState('MyChannel');
   const [hostId] = useState('12345');
 
-  // Gift Engine Integration
+  // Use custom hooks
+  const liveState = useLiveState();
   const { userBalance, hostIncome, sendGift } = useGiftEngine(1000);
+  
   const [showGiftModal, setShowGiftModal] = useState(false);
   const [luxuryGiftName, setLuxuryGiftName] = useState<string | null>(null);
   const [jpInfo, setJpInfo] = useState<{ milestone: number; amount: number } | null>(null);
   const [activeGift, setActiveGift] = useState<any>(null);
-
-  // Messages state
-  const [messages, setMessages] = useState([
-    { id: "1", username: "viewer1", level: 15, message: "Hello host!" },
-    { id: "2", username: "viewer2", level: 30, message: "Nice stream!" }
-  ]);
-
-  // Viewers state
-  const [viewers] = useState([
-    { id: "v1", avatar: "https://i.pravatar.cc/150?img=1", username: "user1" },
-    { id: "v2", avatar: "https://i.pravatar.cc/150?img=2", username: "user2" },
-    { id: "v3", avatar: "https://i.pravatar.cc/150?img=3", username: "user3" },
-  ]);
-
-  const [viewerCount] = useState(125);
-  const [isHostAway, setIsHostAway] = useState(false);
 
   useEffect(() => {
     // Initialize Agora here if needed
@@ -61,8 +43,7 @@ export default function BroadcastScreen() {
 
   const handleStartBroadcast = async () => {
     try {
-      // Initialize Agora and start broadcast
-      setIsBroadcasting(true);
+      liveState.setIsBroadcasting(true);
       Alert.alert('Broadcast Started', 'You are now live!');
     } catch (error) {
       Alert.alert('Error', 'Failed to start broadcast');
@@ -80,7 +61,7 @@ export default function BroadcastScreen() {
           text: 'End',
           style: 'destructive',
           onPress: () => {
-            setIsBroadcasting(false);
+            liveState.setIsBroadcasting(false);
             if (agoraEngineRef.current) {
               agoraEngineRef.current.leaveChannel();
             }
@@ -93,15 +74,7 @@ export default function BroadcastScreen() {
 
   const handleSendMessage = (msg: string) => {
     if (!msg.trim()) return;
-
-    const newMessage = {
-      id: Date.now().toString(),
-      username: hostName,
-      level: 99,
-      message: msg.trim()
-    };
-
-    setMessages(prev => [...prev, newMessage]);
+    liveState.addMessage(hostName, msg, 99);
   };
 
   const handleSendGift = (gift: any, combo: number) => {
@@ -146,23 +119,25 @@ export default function BroadcastScreen() {
           hostId={hostId}
           hostAvatar="https://i.pravatar.cc/150?img=50"
           balance={hostIncome}
-          messages={messages}
+          messages={liveState.messages}
           onSendMessage={handleSendMessage}
           onGiftPress={() => setShowGiftModal(true)}
           onSendGift={handleSendGift}
           agoraEngine={agoraEngineRef.current}
-          isHostAway={isHostAway}
-          viewers={viewers}
-          viewerCount={viewerCount}
+          isHostAway={liveState.isHostAway}
+          viewers={liveState.viewers}
+          viewerCount={liveState.viewerCount}
         />
 
         <LiveActionsHost
-          isBroadcasting={isBroadcasting}
-          flashEnabled={flashEnabled}
-          cameraType={cameraType}
-          onToggleFlash={() => setFlashEnabled(!flashEnabled)}
-          onSwitchCamera={() => setCameraType(prev => prev === 'front' ? 'back' : 'front')}
-          onToggleBroadcast={isBroadcasting ? handleEndBroadcast : handleStartBroadcast}
+          isMicMuted={liveState.isMicMuted}
+          isFlashOn={liveState.flashEnabled}
+          isBeautyOn={liveState.beautyEnabled}
+          onToggleFlash={liveState.toggleFlash}
+          onSwitchCamera={liveState.toggleCamera}
+          onToggleBeauty={liveState.toggleBeauty}
+          onToggleMic={liveState.toggleMic}
+          onEndLive={handleEndBroadcast}
         />
 
         {/* Luxury Gift Layer */}
