@@ -4,6 +4,7 @@ import { StyleSheet, View, ScrollView, TouchableOpacity, StatusBar, Alert, Activ
 import { Stack, useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as ImagePicker from 'expo-image-picker';
 import ProfileImageSection from '@/components/editprofile/ProfileImageSection';
 import ProfileFieldItem from '@/components/editprofile/ProfileFieldItem';
 import NicknameEditModal from '@/components/editprofile/NicknameEditModal';
