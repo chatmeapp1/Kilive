@@ -11,7 +11,10 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import WebOnly from './web-only';
 import { AuthProvider } from '@/contexts/AuthContext';
 
-export default function RootLayout() {
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
+
+function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -77,3 +80,5 @@ export default function RootLayout() {
     </AuthProvider>
   );
 }
+
+export default RootLayout;

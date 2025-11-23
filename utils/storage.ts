@@ -19,12 +19,12 @@ class PlatformStorage {
       if (Platform.OS === 'ios' || Platform.OS === 'android') {
         return await SecureStore.getItemAsync(key);
       }
-      
+
       // Use localStorage on web
       if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
         return localStorage.getItem(key);
       }
-      
+
       // Fallback to memory storage
       return this.memoryStorage.get(key) || null;
     } catch (error) {
@@ -40,13 +40,13 @@ class PlatformStorage {
         await SecureStore.setItemAsync(key, value);
         return;
       }
-      
+
       // Use localStorage on web
       if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
         localStorage.setItem(key, value);
         return;
       }
-      
+
       // Fallback to memory storage
       this.memoryStorage.set(key, value);
     } catch (error) {
@@ -62,13 +62,13 @@ class PlatformStorage {
         await SecureStore.deleteItemAsync(key);
         return;
       }
-      
+
       // Use localStorage on web
       if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
         localStorage.removeItem(key);
         return;
       }
-      
+
       // Fallback to memory storage
       this.memoryStorage.delete(key);
     } catch (error) {
@@ -82,7 +82,7 @@ class PlatformStorage {
       // Note: SecureStore doesn't have clear(), so we'd need to track keys
       // For now, just clear memory storage
       this.memoryStorage.clear();
-      
+
       if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
         localStorage.clear();
       }
