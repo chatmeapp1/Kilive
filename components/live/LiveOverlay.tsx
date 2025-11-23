@@ -5,15 +5,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   Text,
-  Keyboard,
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import Slider from '@react-native-community/slider';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from 'react-native-reanimated';
 
 import TopBar from './TopBar';
 import SystemMessage from './SystemMessage';
@@ -61,32 +55,7 @@ export default function LiveOverlay({
   const [isFollowing, setIsFollowing] = React.useState(false);
   const [selectedViewerId, setSelectedViewerId] = useState<string | null>(null);
   const [showMiniProfile, setShowMiniProfile] = useState(false);
-
-  // KEYBOARD OFFSET
-  const keyboardOffset = useSharedValue(0);
-
-  useEffect(() => {
-    const showSub = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
-      (e) => {
-        keyboardOffset.value = withTiming(e.endCoordinates.height, {
-          duration: 220,
-        });
-      }
-    );
-
-    const hideSub = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
-      () => {
-        keyboardOffset.value = withTiming(0, { duration: 220 });
-      }
-    );
-
-    return () => {
-      showSub.remove();
-      hideSub.remove();
-    };
-  }, []);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   // BEAUTY FILTER UI
   const [beautyOpen, setBeautyOpen] = useState(false);
@@ -157,15 +126,7 @@ export default function LiveOverlay({
       ))}
 
       {/* CHAT */}
-      <Animated.View
-        style={[
-          useAnimatedStyle(() => ({
-            transform: [{ translateY: -keyboardOffset.value }],
-          })),
-        ]}
-      >
-        <ChatMessageList messages={messages} />
-      </Animated.View>
+      <ChatMessageList messages={messages} keyboardOffset={keyboardHeight} />
 
       {/* BEAUTYBUTTON */}
       <View style={styles.rightButtons}>
@@ -215,6 +176,7 @@ export default function LiveOverlay({
       <BottomPanel
         onSend={onSendMessage}
         onGiftPress={onGiftPress}
+        onKeyboardChange={setKeyboardHeight}
       />
 
       {/* HOST AWAY MODE (AR-STYLE BLUR) */}

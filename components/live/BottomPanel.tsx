@@ -19,9 +19,10 @@ import { useRouter } from 'expo-router';
 interface BottomPanelProps {
   onGiftPress?: () => void;
   onSend?: (text: string) => void;
+  onKeyboardChange?: (height: number) => void;
 }
 
-export default function BottomPanel({ onGiftPress, onSend }: BottomPanelProps) {
+export default function BottomPanel({ onGiftPress, onSend, onKeyboardChange }: BottomPanelProps) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
@@ -37,9 +38,11 @@ export default function BottomPanel({ onGiftPress, onSend }: BottomPanelProps) {
       Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
       (e) => {
         setTyping(true);
-        inputOffset.value = withTiming(e.endCoordinates.height + 10, {
+        const height = e.endCoordinates.height + 10;
+        inputOffset.value = withTiming(height, {
           duration: 220,
         });
+        onKeyboardChange?.(height);
       }
     );
 
@@ -48,6 +51,7 @@ export default function BottomPanel({ onGiftPress, onSend }: BottomPanelProps) {
       () => {
         inputOffset.value = withTiming(0, { duration: 220 });
         setTyping(false);
+        onKeyboardChange?.(0);
       }
     );
 
@@ -55,7 +59,7 @@ export default function BottomPanel({ onGiftPress, onSend }: BottomPanelProps) {
       showSub.remove();
       hideSub.remove();
     };
-  }, []);
+  }, [onKeyboardChange]);
 
   const animatedInputStyle = useAnimatedStyle(() => ({
     bottom: inputOffset.value + (insets.bottom || 12),

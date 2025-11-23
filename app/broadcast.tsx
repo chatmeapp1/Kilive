@@ -4,6 +4,7 @@ import { StyleSheet, View, StatusBar, AppState } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import LiveOverlay from '@/components/live/LiveOverlay';
 import BeautyPanel from '@/components/live/BeautyPanel';
+import GiftModal from '@/components/live/GiftModal';
 
 import RtcEngine, {
   ClientRoleType,
@@ -33,6 +34,7 @@ export default function BroadcastScreen() {
   ]);
 
   const [jpQueue, setJpQueue] = useState<any[]>([]);
+  const [showGiftModal, setShowGiftModal] = useState(false);
 
   // ============================
   // VIEWER DATA
@@ -199,11 +201,22 @@ export default function BroadcastScreen() {
         messages={messages}
         jpQueue={jpQueue}
         onSendMessage={handleSendMessage}
-        onGiftPress={() => console.log("Open Gift Modal")}
+        onGiftPress={() => setShowGiftModal(true)}
         agoraEngine={agoraEngine}
         isHostAway={isHostAway}
         viewers={viewers}
         viewerCount={viewerCount}
+      />
+
+      {/* GIFT MODAL */}
+      <GiftModal
+        visible={showGiftModal}
+        onClose={() => setShowGiftModal(false)}
+        onSendGift={(gift, combo) => {
+          console.log('Gift sent:', gift.name, 'x', combo);
+          setShowGiftModal(false);
+        }}
+        userBalance={1000}
       />
 
       {/* BEAUTY SLIDER PANEL */}

@@ -12,9 +12,10 @@ interface ChatMessage {
 
 interface ChatMessageListProps {
   messages: ChatMessage[];
+  keyboardOffset?: number;
 }
 
-export default function ChatMessageList({ messages = [] }: ChatMessageListProps) {
+export default function ChatMessageList({ messages = [], keyboardOffset = 0 }: ChatMessageListProps) {
 
   const getVipColor = (vip?: number) => {
     switch (vip) {
@@ -47,7 +48,7 @@ export default function ChatMessageList({ messages = [] }: ChatMessageListProps)
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { bottom: 140 + keyboardOffset }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
 
         {messages.map((msg) => (
