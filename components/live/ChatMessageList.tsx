@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
     right: 10,
     maxHeight: 240,
     zIndex: 10,
+    pointerEvents: 'box-none',
   },
 
   messageRow: {
