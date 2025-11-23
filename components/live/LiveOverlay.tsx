@@ -108,6 +108,18 @@ export default function LiveOverlay({
       {/* HOST INCOME */}
       <IncomeHost balance={balance} />
 
+      {/* BEAUTYBUTTON */}
+      <View style={styles.rightButtons}>
+        <View
+          style={styles.beautyBtn}
+          onTouchStart={() => setBeautyOpen(!beautyOpen)}
+        >
+          <View style={styles.diamondIcon}>
+            <View style={styles.whiteDot} />
+          </View>
+        </View>
+      </View>
+
       {/* SYSTEM MESSAGE */}
       <SystemMessage message="Platform ini melarang konten dewasa atau tindakan ilegal." />
 
@@ -127,18 +139,6 @@ export default function LiveOverlay({
 
       {/* CHAT */}
       <ChatMessageList messages={messages} keyboardOffset={keyboardHeight} />
-
-      {/* BEAUTYBUTTON */}
-      <View style={styles.rightButtons}>
-        <View
-          style={styles.beautyBtn}
-          onTouchStart={() => setBeautyOpen(!beautyOpen)}
-        >
-          <View style={styles.diamondIcon}>
-            <View style={styles.whiteDot} />
-          </View>
-        </View>
-      </View>
 
       {/* BEAUTY PANEL */}
       {beautyOpen && (
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   rightButtons: {
     position: 'absolute',
     right: 15,
-    bottom: 220,
+    bottom: 420,
   },
 
   beautyBtn: {
