@@ -46,15 +46,28 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="live-viewer" options={{ headerShown: false }} />
         <Stack.Screen name="broadcast" options={{ headerShown: false }} />
-        <Stack.Screen name="editprofile" options={{ headerShown: false }} />
-        <Stack.Screen name="settings" options={{ headerShown: false }} />
-        <Stack.Screen name="level" options={{ headerShown: false }} />
-        <Stack.Screen name="fans" options={{ headerShown: false }} />
-        <Stack.Screen name="income" options={{ headerShown: false }} />
-        <Stack.Screen name="game" options={{ headerShown: false }} />
-        <Stack.Screen name="join" options={{ headerShown: false }} />
-        <Stack.Screen name="recharge" options={{ headerShown: false }} />
-        <Stack.Screen name="agency" options={{ headerShown: false }} />
+        <Stack.Screen name="editprofile/index" options={{ headerShown: false }} />
+        <Stack.Screen name="settings/index" options={{ headerShown: false }} />
+        <Stack.Screen name="settings/about" options={{ headerShown: false }} />
+        <Stack.Screen name="settings/blocklist" options={{ headerShown: false }} />
+        <Stack.Screen name="settings/delete-account" options={{ headerShown: false }} />
+        <Stack.Screen name="settings/language" options={{ headerShown: false }} />
+        <Stack.Screen name="settings/personality" options={{ headerShown: false }} />
+        <Stack.Screen name="settings/privacy" options={{ headerShown: false }} />
+        <Stack.Screen name="level/index" options={{ headerShown: false }} />
+        <Stack.Screen name="fans/index" options={{ headerShown: false }} />
+        <Stack.Screen name="income/index" options={{ headerShown: false }} />
+        <Stack.Screen name="game/index" options={{ headerShown: false }} />
+        <Stack.Screen name="join/index" options={{ headerShown: false }} />
+        <Stack.Screen name="join/host" options={{ headerShown: false }} />
+        <Stack.Screen name="join/agency" options={{ headerShown: false }} />
+        <Stack.Screen name="recharge/index" options={{ headerShown: false }} />
+        <Stack.Screen name="agency/index" options={{ headerShown: false }} />
+        <Stack.Screen name="agency/add-host" options={{ headerShown: false }} />
+        <Stack.Screen name="agency/host-income" options={{ headerShown: false }} />
+        <Stack.Screen name="agency/live-times" options={{ headerShown: false }} />
+        <Stack.Screen name="agency/received-gift" options={{ headerShown: false }} />
+        <Stack.Screen name="agency/relation-management" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />

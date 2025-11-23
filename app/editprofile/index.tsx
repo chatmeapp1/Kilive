@@ -10,141 +10,52 @@ import ProfileFieldItem from '@/components/editprofile/ProfileFieldItem';
 import NicknameEditModal from '@/components/editprofile/NicknameEditModal';
 import SexPicker from '@/components/editprofile/SexPicker';
 import AgePicker from '@/components/editprofile/AgePicker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_CONFIG } from '@/constants/ApiConfig';
 
 function EditProfileScreen() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState<any>({
+    username: 'anna',
+    sex: 'Female',
+    age: 22,
+    bio: 'karakteristik aku justru tanda tangan !',
+    avatar_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUg-nMmK-oPbIbmjpylqnUMF28EtNqMSQOmW5-54zbPacNKW4g9KQbBas&s=10'
+  });
   
   const [showNicknameModal, setShowNicknameModal] = useState(false);
   const [showSexPicker, setShowSexPicker] = useState(false);
   const [showAgePicker, setShowAgePicker] = useState(false);
-
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
-  const loadProfile = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      const userId = await AsyncStorage.getItem('userId');
-      
-      const response = await fetch(`${API_CONFIG.BASE_URL}/api/user/profile/${userId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        setProfile(data.data);
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Failed to load profile');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const pickImage = async () => {
     Alert.alert('Coming Soon', 'Image upload feature will be available soon');
   };
 
   const uploadAvatar = async (imageUri: string) => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      
-      // In production, upload to cloud storage and get URL
-      // For now, we'll use the local URI
-      const response = await fetch(`${API_CONFIG.BASE_URL}/api/user/avatar`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ avatar_url: imageUri })
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        setProfile({ ...profile, avatar_url: imageUri });
-        Alert.alert('Success', 'Avatar updated successfully');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Failed to update avatar');
-    }
+    // Temporary: Just update local state
+    setProfile({ ...profile, avatar_url: imageUri });
+    Alert.alert('Success', 'Avatar updated successfully');
   };
 
   const updateNickname = async (nickname: string) => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      
-      const response = await fetch(`${API_CONFIG.BASE_URL}/api/user/nickname`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username: nickname })
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        setProfile({ ...profile, username: nickname });
-        setShowNicknameModal(false);
-        Alert.alert('Success', 'Nickname updated successfully');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Failed to update nickname');
-    }
+    // Temporary: Just update local state
+    setProfile({ ...profile, username: nickname });
+    setShowNicknameModal(false);
+    Alert.alert('Success', 'Nickname updated successfully');
   };
 
   const updateSex = async (sex: 'Male' | 'Female') => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      
-      const response = await fetch(`${API_CONFIG.BASE_URL}/api/user/sex`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ sex })
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        setProfile({ ...profile, sex });
-        setShowSexPicker(false);
-        Alert.alert('Success', 'Sex updated successfully');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Failed to update sex');
-    }
+    // Temporary: Just update local state
+    setProfile({ ...profile, sex });
+    setShowSexPicker(false);
+    Alert.alert('Success', 'Sex updated successfully');
   };
 
   const updateAge = async (age: number) => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      
-      const response = await fetch(`${API_CONFIG.BASE_URL}/api/user/age`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ age })
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        setProfile({ ...profile, age });
-        setShowAgePicker(false);
-        Alert.alert('Success', 'Age updated successfully');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Failed to update age');
-    }
+    // Temporary: Just update local state
+    setProfile({ ...profile, age });
+    setShowAgePicker(false);
+    Alert.alert('Success', 'Age updated successfully');
   };
 
   if (loading) {
@@ -294,4 +205,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditProfileScreen;
+export default function EditProfileScreenWrapper() {
+  return <EditProfileScreen />;
+}
