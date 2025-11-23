@@ -13,6 +13,7 @@ import TopBar from './TopBar';
 import SystemMessage from './SystemMessage';
 import IncomeHost from './IncomeHost';
 import JpBanner from './JpBanner';
+import FloatingGiftMultiContainer from './FloatingGiftMultiContainer';
 import ChatMessageList from './ChatMessageList';
 import BottomPanel from './BottomPanel';
 import MiniProfileModal from './MiniProfileModal';
@@ -52,12 +53,12 @@ export default function LiveOverlay({
   viewers,
   viewerCount,
 }: LiveOverlayProps) {
-  const [isFollowing, setIsFollowing] = React.useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
   const [selectedViewerId, setSelectedViewerId] = useState<string | null>(null);
   const [showMiniProfile, setShowMiniProfile] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
-  // BEAUTY FILTER UI
+  // BEAUTY FILTER
   const [beautyOpen, setBeautyOpen] = useState(false);
   const [beauty, setBeauty] = useState({
     smooth: 0.5,
@@ -108,7 +109,7 @@ export default function LiveOverlay({
       {/* HOST INCOME */}
       <IncomeHost balance={balance} />
 
-      {/* BEAUTYBUTTON */}
+      {/* BEAUTY BUTTON */}
       <View style={styles.rightButtons}>
         <View
           style={styles.beautyBtn}
@@ -123,7 +124,7 @@ export default function LiveOverlay({
       {/* SYSTEM MESSAGE */}
       <SystemMessage message="Platform ini melarang konten dewasa atau tindakan ilegal." />
 
-      {/* JP BANNER */}
+      {/* JP BANNER LIST */}
       {(jpQueue || []).map((jp, index) => (
         <JpBanner
           key={jp.id}
@@ -137,7 +138,7 @@ export default function LiveOverlay({
         />
       ))}
 
-      {/* CHAT */}
+      {/* CHAT LIST */}
       <ChatMessageList messages={messages} keyboardOffset={keyboardHeight} />
 
       {/* BEAUTY PANEL */}
@@ -172,14 +173,14 @@ export default function LiveOverlay({
         </View>
       )}
 
-      {/* INPUT & MENU */}
+      {/* INPUT & GIFT */}
       <BottomPanel
         onSend={onSendMessage}
         onGiftPress={onGiftPress}
         onKeyboardChange={setKeyboardHeight}
       />
 
-      {/* HOST AWAY MODE (AR-STYLE BLUR) */}
+      {/* HOST AWAY BLUR */}
       {isHostAway && (
         <BlurView intensity={50} tint="dark" style={styles.awayBlur}>
           <View style={styles.awayBox}>
@@ -195,7 +196,7 @@ export default function LiveOverlay({
         </BlurView>
       )}
 
-      {/* Mini Profile Modal */}
+      {/* MINI PROFILE POPUP */}
       {selectedViewerId && (
         <MiniProfileModal
           visible={showMiniProfile}
@@ -206,6 +207,9 @@ export default function LiveOverlay({
           }}
         />
       )}
+
+      {/* =============== OVERLAY GIFT JP MULTI FLYING (WAJIB PALING ATAS) =============== */}
+      <FloatingGiftMultiContainer />
     </KeyboardAvoidingView>
   );
 }

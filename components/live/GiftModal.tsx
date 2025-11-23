@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   View,
@@ -10,7 +9,7 @@ import {
 } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { BlurView } from 'expo-blur';
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Circle } from 'react-native-svg';
 
 const { width, height } = Dimensions.get('window');
 
@@ -59,115 +58,59 @@ export default function GiftModal({
 }: GiftModalProps) {
   const [activeTab, setActiveTab] =
     useState<'normal' | 'lucky' | 'j-lucky' | 'luxury'>('normal');
+
   const [selectedGift, setSelectedGift] = useState<Gift | null>(null);
   const [selectedCombo, setSelectedCombo] = useState(1);
+  const [comboDropdownOpen, setComboDropdownOpen] = useState(false);
 
   const filteredGifts = GIFTS.filter((g) => g.category === activeTab);
   const showCombo = activeTab === 'lucky' || activeTab === 'j-lucky';
 
   const handleSendGift = () => {
-    if (selectedGift) {
-      const totalCost = selectedGift.price * selectedCombo;
-      if (totalCost <= userBalance) {
-        onSendGift(selectedGift, selectedCombo);
-        setSelectedGift(null);
-        setSelectedCombo(1);
-        onClose();
-      } else {
-        alert('Balance tidak cukup!');
-      }
+    if (!selectedGift) return;
+    const totalCost = selectedGift.price * selectedCombo;
+
+    if (totalCost > userBalance) {
+      alert('Balance tidak cukup!');
+      return;
     }
+
+    onSendGift(selectedGift, selectedCombo);
+    setSelectedGift(null);
+    setSelectedCombo(1);
+    onClose();
   };
 
   return (
     <Modal visible={visible} transparent animationType="slide">
-      <View style={styles.modalOverlay}>
-        <BlurView intensity={15} style={styles.blurBg}>
+      <View style={styles.overlay}>
+        <BlurView intensity={20} style={styles.blurBg}>
           <TouchableOpacity style={{ flex: 1 }} onPress={onClose} />
         </BlurView>
 
-        <View style={styles.modalContent}>
-          {/* TABS */}
-          <View style={styles.tabContainer}>
-            <TouchableOpacity
-              style={[
-                styles.tab,
-                activeTab === 'normal' && styles.activeTabNormal,
-              ]}
-              onPress={() => setActiveTab('normal')}
-            >
-              <ThemedText
-                style={[
-                  styles.tabText,
-                  activeTab === 'normal' && styles.activeTabText,
-                ]}
+        <View style={styles.modalBox}>
+          {/* Tabs */}
+          <View style={styles.tabs}>
+            {['normal', 'lucky', 'j-lucky', 'luxury'].map((t) => (
+              <TouchableOpacity
+                key={t}
+                style={[styles.tab, activeTab === t && styles.activeTab]}
+                onPress={() => setActiveTab(t as any)}
               >
-                Umum
-              </ThemedText>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.tab,
-                activeTab === 'lucky' && styles.activeTabLucky,
-              ]}
-              onPress={() => setActiveTab('lucky')}
-            >
-              <ThemedText
-                style={[
-                  styles.tabText,
-                  activeTab === 'lucky' && styles.activeTabText,
-                ]}
-              >
-                Lucky
-              </ThemedText>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.tab,
-                activeTab === 'j-lucky' && styles.activeTabSlucky,
-              ]}
-              onPress={() => setActiveTab('j-lucky')}
-            >
-              <ThemedText
-                style={[
-                  styles.tabText,
-                  activeTab === 'j-lucky' && styles.activeTabText,
-                ]}
-              >
-                S-Lucky
-              </ThemedText>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.tab,
-                activeTab === 'luxury' && styles.activeTabLuxury,
-              ]}
-              onPress={() => setActiveTab('luxury')}
-            >
-              <ThemedText
-                style={[
-                  styles.tabText,
-                  activeTab === 'luxury' && styles.activeTabText,
-                ]}
-              >
-                Luxury
-              </ThemedText>
-            </TouchableOpacity>
+                <ThemedText style={styles.tabText}>
+                  {t === 'normal'
+                    ? 'Umum'
+                    : t === 'lucky'
+                    ? 'Lucky'
+                    : t === 'j-lucky'
+                    ? 'J-Lucky'
+                    : 'Luxury'}
+                </ThemedText>
+              </TouchableOpacity>
+            ))}
           </View>
 
-          {/* INFO TEXT */}
-          {showCombo && (
-            <View style={styles.infoContainer}>
-              <ThemedText style={styles.infoText}>
-                The other party gets 2 crystals and 60 gift flow
-              </ThemedText>
-            </View>
-          )}
-
-          {/* GIFT GRID */}
+          {/* Gift Grid */}
           <ScrollView style={styles.giftScroll} showsVerticalScrollIndicator={false}>
             <View style={styles.giftGrid}>
               {filteredGifts.map((gift) => (
@@ -175,86 +118,79 @@ export default function GiftModal({
                   key={gift.id}
                   style={[
                     styles.giftItem,
-                    selectedGift?.id === gift.id && styles.selectedGiftItem,
+                    selectedGift?.id === gift.id && styles.selectedGift,
                   ]}
                   onPress={() => setSelectedGift(gift)}
                 >
-                  <View style={styles.giftImgWrapper}>
-                    <ThemedText style={styles.giftEmoji}>{gift.image}</ThemedText>
-                  </View>
-
-                  <ThemedText style={styles.giftPrice}>{gift.price}</ThemedText>
+                  <ThemedText style={styles.giftEmoji}>{gift.image}</ThemedText>
+                  <ThemedText style={styles.price}>{gift.price}</ThemedText>
                   <ThemedText style={styles.giftName}>{gift.name}</ThemedText>
                 </TouchableOpacity>
               ))}
             </View>
           </ScrollView>
 
-          {/* FOOTER - Layout Baru */}
+          {/* FOOTER */}
           <View style={styles.footer}>
-            {/* BALANCE */}
+            {/* Balance Row */}
             <View style={styles.balanceRow}>
-              <Svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <Svg width={15} height={15} viewBox="0 0 24 24">
                 <Circle cx="12" cy="12" r="10" fill="#FFD700" />
               </Svg>
-              <ThemedText style={styles.balanceText}>{userBalance}</ThemedText>
+
+              <ThemedText style={styles.balance}>{userBalance}</ThemedText>
 
               <TouchableOpacity>
-                <ThemedText style={styles.rechargeText}>
-                  Isi ulang &gt;
-                </ThemedText>
+                <ThemedText style={styles.recharge}>Isi ulang ></ThemedText>
               </TouchableOpacity>
             </View>
 
-            {/* COMBO SELECTOR (KIRI) + SEND BUTTON (KANAN) */}
-            {selectedGift && showCombo ? (
-              <View style={styles.bottomActionRow}>
-                {/* Combo Selector - Vertikal di Kiri */}
-                <View style={styles.comboListContainer}>
-                  {COMBO_OPTIONS.map((combo) => (
-                    <TouchableOpacity
-                      key={combo}
-                      style={[
-                        styles.comboItemButton,
-                        selectedCombo === combo && styles.comboItemButtonActive,
-                      ]}
-                      onPress={() => setSelectedCombo(combo)}
-                    >
-                      <ThemedText
-                        style={[
-                          styles.comboItemText,
-                          selectedCombo === combo && styles.comboItemTextActive,
-                        ]}
-                      >
-                        {combo}
-                      </ThemedText>
-                    </TouchableOpacity>
-                  ))}
-                </View>
+            {/* Action Row */}
+            <View style={styles.actionRow}>
+              {/* Combo */}
+              {showCombo && selectedGift ? (
+                <View style={styles.comboBox}>
+                  <TouchableOpacity
+                    style={styles.comboBtn}
+                    onPress={() => setComboDropdownOpen(!comboDropdownOpen)}
+                  >
+                    <ThemedText style={styles.comboText}>{selectedCombo}</ThemedText>
+                  </TouchableOpacity>
 
-                {/* Send Button - di Kanan */}
-                <TouchableOpacity
-                  style={styles.sendButtonSide}
-                  onPress={handleSendGift}
-                >
-                  <ThemedText style={styles.sendButtonText}>Kirim</ThemedText>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              /* Tombol Send Normal (Jika Tidak Ada Combo) */
+                  {comboDropdownOpen && (
+                    <View style={styles.comboDropdown}>
+                      {COMBO_OPTIONS.map((v) => (
+                        <TouchableOpacity
+                          key={v}
+                          style={styles.comboItem}
+                          onPress={() => {
+                            setSelectedCombo(v);
+                            setComboDropdownOpen(false);
+                          }}
+                        >
+                          <ThemedText style={styles.comboItemText}>{v}</ThemedText>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              ) : (
+                <View style={{ width: 60 }} />
+              )}
+
+              {/* Send */}
               <TouchableOpacity
                 style={[
-                  styles.sendButton,
-                  !selectedGift && styles.sendButtonDisabled,
+                  styles.sendBtn,
+                  !selectedGift && styles.sendDisabled,
                 ]}
-                onPress={handleSendGift}
                 disabled={!selectedGift}
+                onPress={handleSendGift}
               >
-                <ThemedText style={styles.sendButtonText}>
-                  Kirim
-                </ThemedText>
+                <ThemedText style={styles.sendText}>Kirim</ThemedText>
               </TouchableOpacity>
-            )}
+            </View>
+
           </View>
         </View>
       </View>
@@ -262,10 +198,9 @@ export default function GiftModal({
   );
 }
 
-/* ===================== STYLES ====================== */
-
+/* STYLES */
 const styles = StyleSheet.create({
-  modalOverlay: {
+  overlay: {
     flex: 1,
     justifyContent: 'flex-end',
   },
@@ -274,64 +209,36 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
 
-  modalContent: {
+  modalBox: {
     backgroundColor: '#1B1B1B',
-    height: height * 0.65,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingTop: 16,
+    height: height * 0.55, // TURUNKAN SEDIKIT
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
+    paddingTop: 14,
   },
 
   /* Tabs */
-  tabContainer: {
+  tabs: {
     flexDirection: 'row',
     paddingHorizontal: 16,
     gap: 12,
-    marginBottom: 12,
+    marginBottom: 14,
   },
 
   tab: {
-    paddingVertical: 8,
-    paddingHorizontal: 20,
+    backgroundColor: '#2C2C2C',
+    paddingHorizontal: 18,
+    paddingVertical: 6,
     borderRadius: 20,
-    backgroundColor: '#2A2A2A',
   },
 
-  activeTabNormal: {
+  activeTab: {
     backgroundColor: '#7FE5A8',
   },
 
-  activeTabSlucky: {
-    backgroundColor: '#B673FF',
-  },
-
-  activeTabLucky: {
-    backgroundColor: '#4ADE80',
-  },
-
-  activeTabLuxury: {
-    backgroundColor: '#FFD700',
-  },
-
   tabText: {
-    color: '#999',
-    fontSize: 13,
+    color: '#fff',
     fontWeight: '600',
-  },
-
-  activeTabText: {
-    color: '#000',
-  },
-
-  /* Info Text */
-  infoContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 12,
-  },
-
-  infoText: {
-    color: '#888',
-    fontSize: 12,
   },
 
   /* Gift Grid */
@@ -343,138 +250,92 @@ const styles = StyleSheet.create({
   giftGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: 12,
     paddingBottom: 16,
   },
 
   giftItem: {
-    width: (width - 52) / 4,
+    width: (width - 60) / 4,
+    paddingVertical: 12,
+    backgroundColor: '#232323',
+    borderRadius: 14,
     alignItems: 'center',
-    padding: 10,
-    borderRadius: 12,
-    backgroundColor: '#2A2A2A',
-    borderWidth: 2,
-    borderColor: 'transparent',
   },
 
-  selectedGiftItem: {
+  selectedGift: {
+    backgroundColor: '#304438',
     borderColor: '#7FE5A8',
-    backgroundColor: '#1F2E26',
+    borderWidth: 1.3,
   },
 
-  giftImgWrapper: {
-    marginBottom: 6,
-  },
+  giftEmoji: { fontSize: 38 },
+  price: { color: '#FFD700', fontWeight: '700', fontSize: 13 },
+  giftName: { color: '#AAA', fontSize: 10, textAlign: 'center' },
 
-  giftEmoji: {
-    fontSize: 40,
-  },
-
-  giftPrice: {
-    color: '#FFD700',
-    fontWeight: 'bold',
-    fontSize: 12,
-    marginBottom: 2,
-  },
-
-  giftName: {
-    color: '#CCC',
-    fontSize: 10,
-    textAlign: 'center',
-  },
-
-  /* FOOTER */
-  footer: {
-    paddingHorizontal: 16,
-    paddingBottom: 20,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#2A2A2A',
-  },
+  /* Footer */
+  footer: { paddingHorizontal: 16, paddingVertical: 10 },
 
   balanceRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
-    gap: 8,
+    gap: 6,
+    marginBottom: 10,
   },
 
-  balanceText: {
-    color: '#FFD700',
-    fontSize: 16,
-    fontWeight: '700',
-  },
+  balance: { color: '#FFD700', fontSize: 15, fontWeight: '700' },
+  recharge: { color: '#7FE5A8', fontSize: 14, fontWeight: '600' },
 
-  rechargeText: {
-    color: '#7FE5A8',
-    marginLeft: 'auto',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-
-  /* LAYOUT BARU: Combo List (Kiri) + Send Button (Kanan) */
-  bottomActionRow: {
+  /* Action Row */
+  actionRow: {
     flexDirection: 'row',
-    gap: 12,
-    alignItems: 'stretch',
-  },
-
-  comboListContainer: {
-    flex: 1,
-    gap: 8,
-  },
-
-  comboItemButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    backgroundColor: '#2A2A2A',
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'transparent',
+    gap: 10,
   },
 
-  comboItemButtonActive: {
-    backgroundColor: '#1F2E26',
-    borderColor: '#7FE5A8',
+  /* Combo */
+  comboBox: { position: 'relative' },
+
+  comboBtn: {
+    backgroundColor: '#333',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 10,
   },
 
-  comboItemText: {
-    color: '#999',
+  comboText: {
+    color: '#fff',
     fontSize: 15,
-    fontWeight: '600',
-  },
-
-  comboItemTextActive: {
-    color: '#7FE5A8',
     fontWeight: '700',
   },
 
-  sendButtonSide: {
+  comboDropdown: {
+    position: 'absolute',
+    bottom: 48,
+    width: 60,
+    backgroundColor: '#000',
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#7FE5A8',
+    paddingVertical: 4,
+    zIndex: 50,
+  },
+
+  comboItem: { paddingVertical: 6, alignItems: 'center' },
+
+  comboItemText: { color: '#fff', fontSize: 14, fontWeight: '700' },
+
+  /* Send */
+  sendBtn: {
     backgroundColor: '#7FE5A8',
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    minWidth: 100,
+    paddingVertical: 10,
+    paddingHorizontal: 26,
+    borderRadius: 16,
   },
 
-  /* Send Button Normal (tanpa combo) */
-  sendButton: {
-    backgroundColor: '#7FE5A8',
-    paddingVertical: 14,
-    borderRadius: 24,
-    alignItems: 'center',
+  sendDisabled: {
+    backgroundColor: '#555',
   },
 
-  sendButtonDisabled: {
-    backgroundColor: '#333',
-  },
-
-  sendButtonText: {
-    color: '#000',
-    fontSize: 16,
-    fontWeight: '800',
-  },
+  sendText: { fontWeight: '800', fontSize: 15, color: '#000' },
 });
