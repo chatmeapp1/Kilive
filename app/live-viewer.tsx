@@ -130,9 +130,6 @@ export default function LiveViewerScreen() {
                   <IncomeHost balance={hostIncome} />
                 )}
 
-                {/* Pass the activeGift state to FloatingGiftMultiContainer */}
-                <FloatingGiftMultiContainer activeGift={activeGift} />
-
                 <SystemMessage message="Platform ini melarang menampilkan ketelanjangan." />
 
                 <ChatMessageList messages={messages} />
