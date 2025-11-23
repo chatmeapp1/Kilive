@@ -9,7 +9,7 @@ import LevelBadge from '@/components/level/LevelBadge';
 import { useAuth } from '@/contexts/AuthContext';
 import ApiService from '@/services/ApiService';
 
-export default function ProfileScreen() {
+function ProfileScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const [userLevel, setUserLevel] = useState(1);
@@ -206,6 +206,8 @@ export default function ProfileScreen() {
     </ScrollView>
   );
 }
+
+export default ProfileScreen;
 
 const styles = StyleSheet.create({
   container: {
