@@ -37,18 +37,29 @@ export default function LiveViewerScreen() {
   const [luxuryGiftName, setLuxuryGiftName] = useState<string | null>(null);
   const [jpInfo, setJpInfo] = useState<{ milestone: number; amount: number } | null>(null);
 
-  const [floatingGift, setFloatingGift] = useState<any>(null);
+  // State for the active gift to be displayed in FloatingGiftMultiContainer
+  const [activeGift, setActiveGift] = useState(null);
 
   const handleSendGift = (gift: any, combo: number) => {
     const result = sendGift(gift, combo);
 
-    // Floating multi-banner (spender tap-tap)
-    setFloatingGift({
-      spenderId: "USER_" + Math.random(),
-      username: gift.name,
-      avatar: gift.icon || "https://i.imgur.com/4ZQZ4zO.png",
+    // Set the active gift for the FloatingGiftMultiContainer
+    setActiveGift({
+      spenderId: "USER_" + Math.random(), // Placeholder, should be user ID
+      username: String(hostName || "Host"), // Placeholder, should be sender's username
+      avatar: "https://i.imgur.com/4ZQZ4zO.png", // Placeholder, should be sender's avatar
       giftName: gift.name,
+      type: gift.category,
     });
+
+    // Floating multi-banner (spender tap-tap)
+    // The previous setFloatingGift state is replaced by setActiveGift for consistency
+    // setFloatingGift({
+    //   spenderId: "USER_" + Math.random(),
+    //   username: gift.name,
+    //   avatar: gift.icon || "https://i.imgur.com/4ZQZ4zO.png",
+    //   giftName: gift.name,
+    // });
 
     // Luxury Layer
     if (result.isLuxuryLayer) {
@@ -106,6 +117,7 @@ export default function LiveViewerScreen() {
               <LiveOverlay
                 hostName={String(hostName || "Host")}
                 hostId={String(hostId || "0")}
+                onSendGift={handleSendGift} // Pass the handleSendGift function as onSendGift prop
               >
                 <TopBar
                   hostName={String(hostName || "Host")}
@@ -118,7 +130,8 @@ export default function LiveViewerScreen() {
                   <IncomeHost balance={hostIncome} />
                 )}
 
-                <FloatingGiftMultiContainer activeGift={floatingGift} />
+                {/* Pass the activeGift state to FloatingGiftMultiContainer */}
+                <FloatingGiftMultiContainer activeGift={activeGift} />
 
                 <SystemMessage message="Platform ini melarang menampilkan ketelanjangan." />
 

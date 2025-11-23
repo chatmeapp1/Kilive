@@ -33,6 +33,7 @@ interface LiveOverlayProps {
   jpQueue?: any[];
   onSendMessage: (msg: string) => void;
   onGiftPress: () => void;
+  onSendGift?: (gift: any, combo: number) => void;
   agoraEngine: any;
   isHostAway: boolean;
   viewers?: Viewer[];
@@ -48,6 +49,7 @@ export default function LiveOverlay({
   jpQueue,
   onSendMessage,
   onGiftPress,
+  onSendGift,
   agoraEngine,
   isHostAway,
   viewers,
@@ -57,6 +59,7 @@ export default function LiveOverlay({
   const [selectedViewerId, setSelectedViewerId] = useState<string | null>(null);
   const [showMiniProfile, setShowMiniProfile] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [activeGift, setActiveGift] = useState<any>(null);
 
   // BEAUTY FILTER
   const [beautyOpen, setBeautyOpen] = useState(false);
@@ -87,6 +90,20 @@ export default function LiveOverlay({
   const handleViewerPress = (viewerId: string) => {
     setSelectedViewerId(viewerId);
     setShowMiniProfile(true);
+  };
+
+  const handleGiftSent = (gift: any, combo: number) => {
+    setActiveGift({
+      spenderId: hostId,
+      username: hostName,
+      avatar: hostAvatar || '',
+      giftName: gift.name,
+      type: gift.category,
+    });
+
+    if (onSendGift) {
+      onSendGift(gift, combo);
+    }
   };
 
   return (
@@ -209,7 +226,7 @@ export default function LiveOverlay({
       )}
 
       {/* =============== OVERLAY GIFT JP MULTI FLYING (WAJIB PALING ATAS) =============== */}
-      <FloatingGiftMultiContainer />
+      <FloatingGiftMultiContainer activeGift={activeGift} />
     </KeyboardAvoidingView>
   );
 }
