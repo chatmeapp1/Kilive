@@ -1,18 +1,6 @@
 
 import { useState, useCallback } from 'react';
-
-interface Message {
-  id: string;
-  username: string;
-  level: number;
-  message: string;
-}
-
-interface Viewer {
-  id: string;
-  avatar: string;
-  username: string;
-}
+import type { Message, Viewer, LiveState } from '@/types/live.types';
 
 export function useLiveState() {
   const [isBroadcasting, setIsBroadcasting] = useState(false);
@@ -42,24 +30,41 @@ export function useLiveState() {
     setIsMicMuted(prev => !prev);
   }, []);
 
-  const addMessage = useCallback((username: string, message: string, level: number = 1) => {
+  const addMessage = useCallback((username: string, message: string, level: number = 1, vip?: number) => {
     const newMessage: Message = {
-      id: Date.now().toString(),
+      id: Date.now().toString() + Math.random(),
       username,
       level,
+      vip,
       message: message.trim()
     };
-    setMessages(prev => [...prev, newMessage]);
+    setMessages(prev => [...prev, newMessage].slice(-50)); // Keep last 50 messages
   }, []);
 
   const addViewer = useCallback((viewer: Viewer) => {
-    setViewers(prev => [...prev, viewer]);
+    setViewers(prev => {
+      const exists = prev.find(v => v.id === viewer.id);
+      if (exists) return prev;
+      return [...prev, viewer];
+    });
     setViewerCount(prev => prev + 1);
   }, []);
 
   const removeViewer = useCallback((viewerId: string) => {
     setViewers(prev => prev.filter(v => v.id !== viewerId));
     setViewerCount(prev => Math.max(0, prev - 1));
+  }, []);
+
+  const clearMessages = useCallback(() => {
+    setMessages([]);
+  }, []);
+
+  const reset = useCallback(() => {
+    setMessages([]);
+    setViewers([]);
+    setViewerCount(0);
+    setIsBroadcasting(false);
+    setIsHostAway(false);
   }, []);
 
   return {
@@ -87,5 +92,7 @@ export function useLiveState() {
     addMessage,
     addViewer,
     removeViewer,
+    clearMessages,
+    reset,
   };
 }

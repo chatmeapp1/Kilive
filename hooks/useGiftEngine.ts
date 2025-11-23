@@ -22,13 +22,17 @@ export interface GiftResult {
   doubleReward?: number;
 }
 
+// Define the types for Gift and GiftSendResult
+export type Gift = GiftItem;
+export interface GiftSendResult extends GiftResult {}
+
 const JP_MILESTONES = [20, 50, 100, 200, 300, 500];
 
 export function useGiftEngine(initialUserBalance: number = 0) {
   const [userBalance, setUserBalance] = useState(initialUserBalance);
   const [hostIncome, setHostIncome] = useState(0);
 
-  function sendGift(gift: GiftItem, combo: number): GiftResult {
+  const sendGift = (gift: Gift, combo: number = 1): GiftSendResult => {
     const totalCost = gift.price * combo;
 
     setUserBalance(prev => prev - totalCost);
@@ -89,7 +93,7 @@ export function useGiftEngine(initialUserBalance: number = 0) {
       jackpot: jackpotInfo,
       doubleReward: doubleReward || undefined,
     };
-  }
+  };
 
   return {
     userBalance,
