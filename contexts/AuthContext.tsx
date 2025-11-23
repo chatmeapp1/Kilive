@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import ApiService from '@/services/ApiService';
 
 interface User {
@@ -35,8 +35,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loadUserFromStorage = async () => {
     try {
-      const token = await AsyncStorage.getItem('authToken');
-      const userData = await AsyncStorage.getItem('userData');
+      const token = await SecureStore.getItemAsync('authToken');
+      const userData = await SecureStore.getItemAsync('userData');
 
       if (token && userData) {
         ApiService.setAuthToken(token);
@@ -53,8 +53,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response: any = await ApiService.login(phone, password);
       
-      await AsyncStorage.setItem('authToken', response.token);
-      await AsyncStorage.setItem('userData', JSON.stringify(response.user));
+      await SecureStore.setItemAsync('authToken', response.token);
+      await SecureStore.setItemAsync('userData', JSON.stringify(response.user));
       
       ApiService.setAuthToken(response.token);
       setUser(response.user);
@@ -68,8 +68,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response: any = await ApiService.register(phone, password, nickname);
       
-      await AsyncStorage.setItem('authToken', response.token);
-      await AsyncStorage.setItem('userData', JSON.stringify(response.user));
+      await SecureStore.setItemAsync('authToken', response.token);
+      await SecureStore.setItemAsync('userData', JSON.stringify(response.user));
       
       ApiService.setAuthToken(response.token);
       setUser(response.user);
@@ -81,8 +81,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
-      await AsyncStorage.removeItem('authToken');
-      await AsyncStorage.removeItem('userData');
+      await SecureStore.deleteItemAsync('authToken');
+      await SecureStore.deleteItemAsync('userData');
       
       ApiService.clearAuthToken();
       setUser(null);
@@ -95,7 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (user) {
       const updatedUser = { ...user, ...userData };
       setUser(updatedUser);
-      AsyncStorage.setItem('userData', JSON.stringify(updatedUser));
+      SecureStore.setItemAsync('userData', JSON.stringify(updatedUser));
     }
   };
 
