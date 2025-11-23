@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, Modal, Text } from 'react-native';
 import { SvgIcon } from '@/components/ui/SvgIcon';
 
 interface LiveActionsHostProps {
@@ -26,7 +26,23 @@ export default function LiveActionsHost({
   isFlashOn = false,
   isBeautyOn = false,
 }: LiveActionsHostProps) {
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
+  const handleEndLivePress = () => {
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirm = () => {
+    setShowConfirmDialog(false);
+    onEndLive?.();
+  };
+
+  const handleCancel = () => {
+    setShowConfirmDialog(false);
+  };
+
   return (
+    <>
     <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={onSwitchCamera}>
         <SvgIcon name="camera-switch" size={22} color="#fff" />
@@ -65,10 +81,43 @@ export default function LiveActionsHost({
         <SvgIcon name="person-add" size={22} color="#fff" />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.endButton} onPress={onEndLive}>
+      <TouchableOpacity style={styles.endButton} onPress={handleEndLivePress}>
         <SvgIcon name="close" size={26} color="#fff" />
       </TouchableOpacity>
+
+      {/* Confirmation Dialog */}
+      <Modal
+        visible={showConfirmDialog}
+        transparent
+        animationType="fade"
+        onRequestClose={handleCancel}
+      >
+        <View style={styles.dialogOverlay}>
+          <View style={styles.dialogContainer}>
+            <Text style={styles.dialogTitle}>Hint</Text>
+            <Text style={styles.dialogMessage}>
+              Are you sure to exit the room?
+            </Text>
+            <View style={styles.dialogButtons}>
+              <TouchableOpacity
+                style={[styles.dialogButton, styles.cancelButton]}
+                onPress={handleCancel}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <View style={styles.buttonDivider} />
+              <TouchableOpacity
+                style={[styles.dialogButton, styles.confirmButton]}
+                onPress={handleConfirm}
+              >
+                <Text style={styles.confirmButtonText}>Confirm</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
+    </>
   );
 }
 
@@ -103,5 +152,65 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 8,
+  },
+  dialogOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dialogContainer: {
+    width: '80%',
+    maxWidth: 400,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  dialogTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#000',
+    textAlign: 'center',
+    paddingTop: 24,
+    paddingBottom: 16,
+  },
+  dialogMessage: {
+    fontSize: 15,
+    color: '#333',
+    textAlign: 'center',
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    lineHeight: 22,
+  },
+  dialogButtons: {
+    flexDirection: 'row',
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+  },
+  dialogButton: {
+    flex: 1,
+    paddingVertical: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonDivider: {
+    width: 1,
+    backgroundColor: '#E0E0E0',
+  },
+  cancelButton: {
+    backgroundColor: 'transparent',
+  },
+  confirmButton: {
+    backgroundColor: 'transparent',
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    color: '#999',
+    fontWeight: '500',
+  },
+  confirmButtonText: {
+    fontSize: 16,
+    color: '#007AFF',
+    fontWeight: '600',
   },
 });

@@ -13,31 +13,43 @@ import JpBanner from '@/components/live/JpBanner';
 
 import useGiftEngine from '@/hooks/useGiftEngine';
 import { useLiveState } from '@/hooks/useLiveState';
+import { useAgoraEngine } from '@/hooks/useAgoraEngine';
+import { useSocketConnection } from '@/hooks/useSocketConnection';
+import LiveEndSummary from '@/components/live/LiveEndSummary';
 
 export default function BroadcastScreen() {
   const router = useRouter();
-  const agoraEngineRef = useRef<any>(null);
 
   const [hostName] = useState('MyChannel');
   const [hostId] = useState('12345');
+  const [startTime] = useState(Date.now());
 
   // Use custom hooks
   const liveState = useLiveState();
   const { userBalance, hostIncome, sendGift } = useGiftEngine(1000);
   
+  const agoraEngine = useAgoraEngine({
+    channelName: `live_${hostId}`,
+    uid: parseInt(hostId),
+    isHost: true,
+  });
+
+  const socket = useSocketConnection({
+    roomId: `live_${hostId}`,
+    userId: hostId,
+    username: hostName,
+  });
+  
   const [showGiftModal, setShowGiftModal] = useState(false);
+  const [showEndSummary, setShowEndSummary] = useState(false);
   const [luxuryGiftName, setLuxuryGiftName] = useState<string | null>(null);
   const [jpInfo, setJpInfo] = useState<{ milestone: number; amount: number } | null>(null);
   const [activeGift, setActiveGift] = useState<any>(null);
 
   useEffect(() => {
-    // Initialize Agora here if needed
     return () => {
-      // Cleanup Agora
-      if (agoraEngineRef.current) {
-        agoraEngineRef.current.leaveChannel();
-        agoraEngineRef.current.destroy();
-      }
+      agoraEngine.cleanup();
+      socket.disconnectSocket();
     };
   }, []);
 
@@ -52,28 +64,29 @@ export default function BroadcastScreen() {
   };
 
   const handleEndBroadcast = async () => {
-    Alert.alert(
-      'End Broadcast',
-      'Are you sure you want to end this broadcast?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'End',
-          style: 'destructive',
-          onPress: () => {
-            liveState.setIsBroadcasting(false);
-            if (agoraEngineRef.current) {
-              agoraEngineRef.current.leaveChannel();
-            }
-            router.back();
-          }
-        }
-      ]
-    );
+    liveState.setIsBroadcasting(false);
+    await agoraEngine.cleanup();
+    socket.disconnectSocket();
+    setShowEndSummary(true);
+  };
+
+  const handleCloseSummary = () => {
+    setShowEndSummary(false);
+    router.back();
+  };
+
+  const handleShareSummary = () => {
+    // TODO: Implement share functionality
+    Alert.alert('Share', 'Share functionality coming soon!');
+  };
+
+  const calculateDuration = () => {
+    return Math.floor((Date.now() - startTime) / 1000);
   };
 
   const handleSendMessage = (msg: string) => {
     if (!msg.trim()) return;
+    socket.sendMessage(msg);
     liveState.addMessage(hostName, msg, 99);
   };
 
@@ -123,7 +136,7 @@ export default function BroadcastScreen() {
           onSendMessage={handleSendMessage}
           onGiftPress={() => setShowGiftModal(true)}
           onSendGift={handleSendGift}
-          agoraEngine={agoraEngineRef.current}
+          agoraEngine={agoraEngine.agoraEngine}
           isHostAway={liveState.isHostAway}
           viewers={liveState.viewers}
           viewerCount={liveState.viewerCount}
@@ -158,6 +171,20 @@ export default function BroadcastScreen() {
 
         {/* Floating Gift Container */}
         <FloatingGiftMultiContainer activeGift={activeGift} />
+
+        {/* Live End Summary */}
+        <LiveEndSummary
+          visible={showEndSummary}
+          onClose={handleCloseSummary}
+          onShare={handleShareSummary}
+          hostName={hostName}
+          hostAvatar="https://i.pravatar.cc/150?img=50"
+          duration={calculateDuration()}
+          viewers={liveState.viewerCount}
+          crystalEarned={hostIncome}
+          newFans={5}
+          thumbsUp={120}
+        />
 
       </View>
     </GestureHandlerRootView>
