@@ -120,6 +120,29 @@ class ApiService {
       body: data,
     });
   }
+
+  // Follow endpoints
+  async getFollowing() {
+    return this.request('/api/user/following');
+  }
+
+  async followUser(userId: string) {
+    return this.request('/api/user/follow', {
+      method: 'POST',
+      body: { userId },
+    });
+  }
+
+  async unfollowUser(userId: string) {
+    return this.request('/api/user/unfollow', {
+      method: 'POST',
+      body: { userId },
+    });
+  }
+
+  async getUserProfileDetail(userId: string) {
+    return this.request(`/api/user/profile-detail/${userId}`);
+  }
 }
 
 export default ApiService.getInstance();

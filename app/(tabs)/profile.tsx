@@ -1,15 +1,57 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Image, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import LevelBadge from '@/components/level/LevelBadge';
+import { useAuth } from '@/contexts/AuthContext';
+import ApiService from '@/services/ApiService';
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const { user } = useAuth();
+  const [userLevel, setUserLevel] = useState(1);
+  const [followCount, setFollowCount] = useState(0);
+  const [fansCount, setFansCount] = useState(0);
+  
   // Simulasi role agency - nanti diganti dengan data dari backend/auth
-  const isAgency = true; // Set true untuk testing, nanti dari user profile
+  const isAgency = user?.role === 'agency';
+
+  useEffect(() => {
+    if (user) {
+      fetchUserStats();
+    }
+  }, [user]);
+
+  const fetchUserStats = async () => {
+    try {
+      if (!user?.id) return;
+      
+      const response: any = await ApiService.getUserProfile(user.id);
+      if (response.success) {
+        // Calculate level from total_income
+        const income = response.data.total_income || 0;
+        const level = Math.floor(income / 1000) + 1;
+        setUserLevel(level);
+      }
+
+      // Get follow count
+      const followingRes: any = await ApiService.request('/api/user/following');
+      if (followingRes.success) {
+        setFollowCount(followingRes.data.totalFollowing);
+      }
+
+      // Get fans count
+      const fansRes: any = await ApiService.request(`/api/user/fans/${user.id}`);
+      if (fansRes.success) {
+        setFansCount(fansRes.data.totalFans);
+      }
+    } catch (error) {
+      console.error('Error fetching user stats:', error);
+    }
+  };
   
   return (
     <ScrollView style={styles.container}>
@@ -36,22 +78,24 @@ export default function ProfileScreen() {
 
         <View style={styles.userInfo}>
           <View style={styles.nameRow}>
-            <ThemedText style={styles.username}>anna</ThemedText>
-            <View style={styles.badges}>
-            </View>
+            <ThemedText style={styles.username}>{user?.nickname || user?.username || 'anna'}</ThemedText>
+            <LevelBadge level={userLevel} type="user" />
           </View>
           
-          <ThemedText style={styles.userId}>ID:703256893</ThemedText>
-          <ThemedText style={styles.bio}>karakteristik aku justru tanda tangan !</ThemedText>
+          <ThemedText style={styles.userId}>ID:{user?.id || '703256893'}</ThemedText>
+          <ThemedText style={styles.bio}>{user?.bio || 'karakteristik aku justru tanda tangan !'}</ThemedText>
 
           <View style={styles.statsRow}>
-            <View style={styles.statItem}>
-              <ThemedText style={styles.statNumber}>100</ThemedText>
+            <TouchableOpacity 
+              style={styles.statItem}
+              onPress={() => router.push('/follow/')}
+            >
+              <ThemedText style={styles.statNumber}>{followCount}</ThemedText>
               <ThemedText style={styles.statLabel}>Follow</ThemedText>
-            </View>
+            </TouchableOpacity>
             <View style={styles.divider} />
             <View style={styles.statItem}>
-              <ThemedText style={styles.statNumber}>0</ThemedText>
+              <ThemedText style={styles.statNumber}>{fansCount}</ThemedText>
               <ThemedText style={styles.statLabel}>Fans</ThemedText>
             </View>
           </View>

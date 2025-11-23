@@ -24,4 +24,12 @@ router.get('/fans/:userId', checkOwnership, userController.getUserFans);
 // Viewer-specific routes
 router.get('/coins', userController.getUserCoins);
 
+// Follow/Following routes
+router.get('/following', userController.getUserFollowing);
+router.post('/follow', userController.followUser);
+router.post('/unfollow', userController.unfollowUser);
+
+// User profile with level
+router.get('/profile-detail/:userId', userController.getUserProfileWithLevel);
+
 module.exports = router;

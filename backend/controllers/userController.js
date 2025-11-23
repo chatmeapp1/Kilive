@@ -379,6 +379,173 @@ const userController = {
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
     }
+  },
+
+  // ==========================================================
+  // GET USER FOLLOWING LIST
+  // ==========================================================
+  getUserFollowing: async (req, res) => {
+    try {
+      const userId = req.user.userId;
+
+      const following = await db.query(
+        `SELECT u.id, u.username, u.avatar_url, 
+                COUNT(f.follower_id) as fans_count
+         FROM fans fo
+         JOIN users u ON fo.user_id = u.id
+         LEFT JOIN fans f ON f.user_id = u.id
+         WHERE fo.follower_id = $1
+         GROUP BY u.id, u.username, u.avatar_url
+         ORDER BY fo.created_at DESC`,
+        [userId]
+      );
+
+      return res.json({
+        success: true,
+        data: {
+          totalFollowing: following.rowCount,
+          following: following.rows
+        }
+      });
+
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  },
+
+  // ==========================================================
+  // FOLLOW USER
+  // ==========================================================
+  followUser: async (req, res) => {
+    try {
+      const followerId = req.user.userId;
+      const { userId } = req.body;
+
+      if (followerId === userId) {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot follow yourself"
+        });
+      }
+
+      // Check if already following
+      const existing = await db.query(
+        `SELECT * FROM fans WHERE follower_id = $1 AND user_id = $2`,
+        [followerId, userId]
+      );
+
+      if (existing.rowCount > 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Already following this user"
+        });
+      }
+
+      await db.query(
+        `INSERT INTO fans (follower_id, user_id) VALUES ($1, $2)`,
+        [followerId, userId]
+      );
+
+      return res.json({
+        success: true,
+        message: "Successfully followed user"
+      });
+
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  },
+
+  // ==========================================================
+  // UNFOLLOW USER
+  // ==========================================================
+  unfollowUser: async (req, res) => {
+    try {
+      const followerId = req.user.userId;
+      const { userId } = req.body;
+
+      await db.query(
+        `DELETE FROM fans WHERE follower_id = $1 AND user_id = $2`,
+        [followerId, userId]
+      );
+
+      return res.json({
+        success: true,
+        message: "Successfully unfollowed user"
+      });
+
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  },
+
+  // ==========================================================
+  // GET USER PROFILE WITH LEVEL
+  // ==========================================================
+  getUserProfileWithLevel: async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const currentUserId = req.user.userId;
+
+      const result = await db.query(
+        `SELECT id, username, email, avatar_url, bio, role, diamonds, coins, total_income 
+         FROM users 
+         WHERE id = $1`,
+        [userId]
+      );
+
+      if (result.rowCount === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found"
+        });
+      }
+
+      const user = result.rows[0];
+
+      // Calculate user level
+      const income = Number(user.total_income) || 0;
+      const userLevel = Math.floor(income / 1000) + 1;
+
+      // Get host level (based on income)
+      const hostLevel = Math.floor(income / 5000) + 1;
+
+      // Get follow/fans count
+      const followCount = await db.query(
+        `SELECT COUNT(*) as count FROM fans WHERE follower_id = $1`,
+        [userId]
+      );
+
+      const fansCount = await db.query(
+        `SELECT COUNT(*) as count FROM fans WHERE user_id = $1`,
+        [userId]
+      );
+
+      // Check if current user is following
+      const isFollowing = await db.query(
+        `SELECT * FROM fans WHERE follower_id = $1 AND user_id = $2`,
+        [currentUserId, userId]
+      );
+
+      return res.json({
+        success: true,
+        data: {
+          id: user.id,
+          username: user.username,
+          avatarUrl: user.avatar_url,
+          bio: user.bio,
+          role: user.role,
+          userLevel,
+          hostLevel,
+          followCount: Number(followCount.rows[0].count),
+          fansCount: Number(fansCount.rows[0].count),
+          isFollowing: isFollowing.rowCount > 0
+        }
+      });
+
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
   }
 
 };
