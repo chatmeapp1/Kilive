@@ -28,6 +28,10 @@ externalPort = 3001
 localPort = 19000
 externalPort = 19000
 
+[[ports]]
+localPort = 35113
+externalPort = 3002
+
 [workflows]
 runButton = "Project"
 
@@ -113,4 +117,6 @@ expertMode = true
 [userenv]
 
 [userenv.development]
-EXPO_PUBLIC_URL = "https://e627e9aa-02b6-4a87-b3ca-a178a7d00cca-00-ypsrwcbh0d4s.pike.replit.dev"
+
+[userenv.shared]
+EXPO_PUBLIC_URL = "https://c7097ad8-0daa-460b-a96b-ab143929004a-00-2ua20pwpvr1he.pike.replit.dev"

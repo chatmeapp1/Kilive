@@ -36,7 +36,7 @@ export default function MiniProfileModal({
     setLoading(true);
     try {
       const response = await fetch(
-        getApiUrl(`${API_CONFIG.ENDPOINTS.USER_PROFILE}/${userId}`)
+        getApiUrl(`${API_CONFIG.ENDPOINTS.GET_PROFILE}/${userId}`)
       );
       const data = await response.json();
       
