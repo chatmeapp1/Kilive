@@ -2,6 +2,19 @@
 
 This is a mobile live streaming application built with Expo and React Native. The app provides a TikTok-like live streaming experience where users can broadcast live video, watch other users' streams, and interact through real-time chat. The application includes features for user profiles, following creators, virtual gifts, and social engagement.
 
+# Recent Changes
+
+**November 23, 2025 - Secure Storage Implementation**
+- Implemented platform-aware secure storage system for authentication tokens
+- Created `utils/storage.ts` abstraction layer:
+  - iOS/Android: Uses expo-secure-store for encrypted keychain storage
+  - Web: Uses localStorage for browser persistence
+  - Fallback: In-memory storage for error handling
+- Updated `contexts/AuthContext.tsx` to use secure storage wrapper
+- Installed expo-secure-store package with proper Expo config plugin
+- Fixed AsyncStorage error by migrating to encrypted native storage
+- Ensures auth tokens are properly encrypted on mobile devices while maintaining web compatibility
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
